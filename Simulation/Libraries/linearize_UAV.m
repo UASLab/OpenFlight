@@ -1,6 +1,4 @@
-function [longmod,spmod,latmod,linmodel]=linearize_UAV(OperatingPoint,AC)
-
-
+function [longmod, spmod, latmod, linmodel] = linearize_UAV(OperatingPoint, AC)
 % [longmod,spmod,latmod,linmodel]=linearize_UAV(OperatingPoint,verbose)
 %
 % Linearizes the UAV model about a given operating point using

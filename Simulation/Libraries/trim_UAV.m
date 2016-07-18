@@ -1,4 +1,4 @@
-function [TrimCondition,OperatingPoint]=trim_UAV(TrimCondition,AC,savefile,verbose)
+function [TrimCondition, OperatingPoint] = trim_UAV(TrimCondition, AC, savefile, verbose)
 %[TrimCondition,OperatingPoint]=trim_UAV(TrimCondition,AC,savefile,verbose)
 %
 % Trims the UAV simulation to target conditions using ..\NL_Sim\UAV_NL.mdl.
@@ -151,6 +151,8 @@ end
 % fails (even if at a trim point!!) if the model is overconstrained.
 %
 op_spec = operspec('UAV_NL');
+
+
 %% STATE SPECIFICATIONS
 % phi, theta, psi -- Euler angles
 % op_spec.States(1).StateName   = '[phi theta psi]';
@@ -349,14 +351,14 @@ end
 
 %% FIND OPERATING POINT (TRIM)
 opt1 = optimset('MaxFunEvals',1e+04,'Algorithm','interior-point');
-opt = linoptions('OptimizationOptions',opt1,'DisplayReport','off');  
+opt = findopOptions('OptimizationOptions', opt1, 'DisplayReport', 'off');  
 clear opt1
 if verbose
     opt.OptimizationOptions.Display = 'iter'; 
-    opt.Displayreport = 'on';
+    opt.DisplayReport = 'on';
 end
 
-[op_point,op_report] = findop('UAV_NL',op_spec,opt);
+[op_point, op_report] = findop('UAV_NL', op_spec, opt);
 
 %% SET NONLINEAR SIMULATION TO TRIM CONDITION
 % Pull initial state for trim solution and initialize the nonlinear model

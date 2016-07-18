@@ -31,8 +31,8 @@ warning off Simulink:Commands:LoadMdlParameterizedLink
 warning off Simulink:ID:DuplicateSID
 
 %% Configure Airframe, either 'UltraStick120', 'UltraStick25e', or 'miniMUTT'
-% [AC,Env] = UAV_config('UltraStick120'); 
-[AC,Env] = UAV_config('UltraStick25e');
+[AC,Env] = UAV_config('UltraStick120'); 
+% [AC,Env] = UAV_config('UltraStick25e');
 % [AC,Env] = UAV_config('miniMUTT');
 
 %% Simulation sample time
@@ -136,14 +136,14 @@ end
 % specify as a target.
 
 % straight and level, (m/s, rad)
-TrimCondition.target = struct('V_s',TrimCondition.VelocitiesIni(1),'gamma',0,'h',100);
+TrimCondition.target = struct('V_s',TrimCondition.VelocitiesIni(1), 'gamma', 0, 'h', 100);
 % TrimCondition.target = struct('V_s',TrimCondition.VelocitiesIni(1),'gamma',5/180*pi); % level climb, (m/s, rad)
 % TrimCondition.target = struct('V_s',TrimCondition.VelocitiesIni(1),'gamma',0,'psidot',20/180*pi); % level turn, (m/s, rad, rad/sec)
 % TrimCondition.target = struct('V_s',TrimCondition.VelocitiesIni(1),'gamma',5/180*pi,'psidot',20/180*pi); % climbing turn, (m/s, rad, rad/sec)
 % TrimCondition.target = struct('V_s',TrimCondition.VelocitiesIni(1),'gamma',0,'beta',5/180*pi); % level steady heading sideslip, (m/s, rad, rad)
 
 % Find the trim solution
-[TrimCondition,OperatingPoint] = trim_UAV(TrimCondition,AC);
+[TrimCondition, OperatingPoint] = trim_UAV(TrimCondition, AC);
 
 %% Linearize about the operating point
-[longmod,spmod,latmod,linmodel]=linearize_UAV(OperatingPoint,AC);
+[longmod, spmod, latmod, linmodel] = linearize_UAV(OperatingPoint, AC);
