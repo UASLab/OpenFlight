@@ -23,8 +23,8 @@
 
 // ***********************************************************************************
 
-//#include "../aircraft/thor_config.h"  // for SIL_Sim
-#include AIRCRAFT_UP1DIR            // for Flight Code
+#include "../aircraft/thor_config.h"  // for SIL_Sim
+//#include AIRCRAFT_UP1DIR            // for Flight Code
 
 // ***********************************************************************************
 

@@ -19,7 +19,7 @@ switch lower(aircraft)
     case 'ultrastick120'
         AC = UltraStick120_config;
     case 'ultrastick25e'
-        AC = UltraStick25e_config;
+        AC = Config_UltraStick25e;
     case 'minimutt'
         AC = miniMUTT_config;
 end

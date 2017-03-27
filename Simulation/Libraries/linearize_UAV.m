@@ -33,10 +33,20 @@ if ~isLoaded
 end
 
 %% LINEARIZE
-io(1) = linio('UAV_NL/Control Inputs',1,'in');
-for k = 1:9, io(k+1) = linio('UAV_NL/States',k,'out');end
-for k = 1:5, io(k+10) = linio('UAV_NL/AuxVar',k,'out');end
+
+% Set inputs
+io(1) = linio('UAV_NL/Trim and Linearization Help/Actuator State Bus',1,'in');
+
+% Set outputs
+for k = 1:14 
+    io(k+1)  = linio('UAV_NL/Aircraft States',k,'out');
+end
+
+% Obtain lineariziation
 linmodel = linearize('UAV_NL',OperatingPoint.op_point,io);
+
+
+
 
 % Longitudinal and lateral models are only generated for UltraSticks not
 % miniMUTT (miniMUTT does not have a clear decoupling of both motions)

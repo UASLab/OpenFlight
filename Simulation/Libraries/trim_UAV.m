@@ -95,7 +95,7 @@ end
 % surpression flaps for miniMUTT)
 switch lower(AC.aircraft)
     case {'ultrastick120', 'ultrastick25e'}
-        InputNames = {'elevator','rudder','aileron','l_flap','r_flap'};
+        InputNames = {'throttle','elevator','rudder','aileron','l_flap','r_flap'};
         if ~isfield(target,'l_flap'),  target.l_flap=0; end
         if ~isfield(target,'r_flap'),  target.r_flap=0; end
     case 'minimutt'
@@ -315,38 +315,38 @@ end
 %
 
 % set wind input to specified known value
-op_spec.inputs(3).Known = [1; 1; 1];
-op_spec.inputs(3).u = TrimCondition.Inputs.Wind;
+%op_spec.inputs(3).Known = [1; 1; 1];
+%op_spec.inputs(3).u = TrimCondition.Inputs.Wind;
 
-% if a target throttle, set as known and use target value
-if isfield(target,'throttle')
-    op_spec.inputs(1).Known = 1;
-    op_spec.inputs(1).u = target.throttle;
-else
-    % else set to unkown and use intial value from setup.m
-    op_spec.inputs(1).Known = 0;
-    op_spec.inputs(1).u = TrimCondition.Inputs.Throttle;
-end
+% % if a target throttle, set as known and use target value
+% if isfield(target,'throttle')
+%     op_spec.inputs(1).Known = 1;
+%     op_spec.inputs(1).u = target.throttle;
+% else
+%     % else set to unkown and use intial value from setup.m
+%     op_spec.inputs(1).Known = 0;
+%     op_spec.inputs(1).u = TrimCondition.Inputs.Throttle;
+% end
 
 
 %default is not known and intial guess as specified in setup.m
-op_spec.inputs(2).Known = zeros(length(InputNames),1);
-op_spec.inputs(2).u = TrimCondition.Inputs.CtrlSurf;
+op_spec.inputs(1).Known = zeros(length(InputNames),1);
+op_spec.inputs(1).u = TrimCondition.Inputs.CtrlSurf;
 
-%default actutator position limits
-op_spec.inputs(2).max = 0.4363*ones(length(InputNames),1); % 25deg default
-op_spec.inputs(2).min = -0.4363*ones(length(InputNames),1); % -25deg default
+% %default actutator position limits
+% op_spec.inputs(1).max = 0.4363*ones(length(InputNames),1); % 25deg default
+% op_spec.inputs(1).min = -0.4363*ones(length(InputNames),1); % -25deg default
 
 for ii=1:length(InputNames)
     if isfield(target,InputNames{ii}) % if a target, set as known and use target value
-        op_spec.inputs(2).Known(ii) = 1;
-        op_spec.inputs(2).u(ii) = target.(InputNames{ii});
+        op_spec.inputs(1).Known(ii) = 1;
+        op_spec.inputs(1).u(ii) = target.(InputNames{ii});
     end
-    try
-        op_spec.inputs(2).max(ii) = AC.Actuator.(InputNames{ii}).PosLim;
-        op_spec.inputs(2).min(ii) = AC.Actuator.(InputNames{ii}).NegLim;
-    catch
-    end
+%     try
+%         op_spec.inputs(1).max(ii) = AC.Actuator.(InputNames{ii}).PosLim;
+%         op_spec.inputs(1).min(ii) = AC.Actuator.(InputNames{ii}).NegLim;
+%     catch
+%     end
 end
 
 %% FIND OPERATING POINT (TRIM)
@@ -386,11 +386,20 @@ switch lower(AC.aircraft)
 end                          
                           
                           
+% % Pull throttle value for trim solution
+% TrimCondition.Inputs.Throttle = op_point.Inputs(1).u;
+% 
+% % Pull control surface values for trim solution
+% TrimCondition.Inputs.CtrlSurf = op_point.Inputs(2).u;
+
 % Pull throttle value for trim solution
 TrimCondition.Inputs.Throttle = op_point.Inputs(1).u;
+TrimCondition.Inputs.Throttle = TrimCondition.Inputs.Throttle(1) ;
+
 
 % Pull control surface values for trim solution
-TrimCondition.Inputs.CtrlSurf = op_point.Inputs(2).u;
+TrimCondition.Inputs.CtrlSurf = op_point.Inputs(1).u;
+TrimCondition.Inputs.CtrlSurf = TrimCondition.Inputs.CtrlSurf(2:6);
 
 
 % Handle combined aileron input option

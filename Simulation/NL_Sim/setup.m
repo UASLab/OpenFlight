@@ -24,19 +24,48 @@ close all
 bdclose all
 clc
 
-%% Add Libraries folder to MATLAB path
+
+%% Add Libraries and controllers folder to MATLAB path
 addpath ../Libraries
+addpath ../Controllers
+
+
+%% Configure Airframe
+% 1 = UltraStick25e, standard outfit
+aircraft_type = 1 ;
+
+
+% Configure simulation specifically for this airfame
+switch aircraft_type
+    
+    case 1 % UltraStick25e, standard outfit
+
+        % Configure variant for model refenence        
+        aircraft_config_var = Simulink.Variant('aircraft_type == 1');
+
+        % Add path for airframe specific location
+        addpath ../Libraries/UltraStick25e
+
+        % Setup aircraft specific buses
+        AircraftSpecificBuses_UltraStick25e ;
+        
+        % UAV Config
+        [AC,Env] = UAV_config('UltraStick25e');
+end
+
+
+
+%% Add Libraries folder to MATLAB path
 warning off Simulink:Engine:SaveWithParameterizedLinks_Warning
 warning off Simulink:Commands:LoadMdlParameterizedLink 
 warning off Simulink:ID:DuplicateSID
 
-%% Configure Airframe, either 'UltraStick120', 'UltraStick25e', or 'miniMUTT'
-[AC,Env] = UAV_config('UltraStick120'); 
-% [AC,Env] = UAV_config('UltraStick25e');
-% [AC,Env] = UAV_config('miniMUTT');
 
 %% Simulation sample time
 SampleTime = 0.02; % sec
+
+%% Setup simulation buses
+GeneralBuses ;
 
 %% Set aircraft initial conditions 
 % Note: these are NOT the trim condition targets. If the trim fails to
@@ -74,8 +103,8 @@ switch lower(AC.aircraft)
         
     case 'ultrastick25e'
         % Control surface initial values, rad:
-        % elevator, rudder, aileron, left flap, right flap
-        TrimCondition.Inputs.CtrlSurf = [0.091 0 0 0 0]';
+        % throttle, elevator, rudder, aileron, left flap, right flap
+        TrimCondition.Inputs.CtrlSurf = [0.559 0.091 0 0 0 0]';
         
         % number of the control surfaces (required to initialize the input
         % port dimension; dynamically relocating it returns an error)
