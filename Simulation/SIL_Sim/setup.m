@@ -58,7 +58,7 @@ controller_mode = 2;
 switch controller_mode
     case 1 % Baseline controller in C
         % Compile Flight Software:
-        control_code_path = '../../Software/FlightCode/control/baseline_control.c';
+        control_code_path = '../../FlightCode/control/baseline_control.c';
         
     case 2 % Baseline controller in Simulink.
         baseline_gains;   % Declare baseline controller gains
@@ -70,7 +70,7 @@ switch controller_mode
         
     case 3 % Heading controller in C
         % Compile Flight Software:
-        control_code_path ='../../Software/FlightCode/control/heading_tracker.c';
+        control_code_path ='../../FlightCode/control/heading_tracker.c';
         
     case 4 % Heading controller in Simulink
         baseline_gains;  % heading controller lays on top of the baseline controller        
@@ -86,7 +86,7 @@ switch controller_mode
         
     case 5 % LQR controller in C
         % Compile Flight Software:
-        control_code_path ='../../Software/FlightCode/control/lqr_control.c';
+        control_code_path ='../../FlightCode/control/lqr_control.c';
         
     case 6 % LQR controller in Simulink
         % Parameters defined here are identical to those in lqr_control.c
@@ -96,14 +96,14 @@ switch controller_mode
         
     case 7 % Student controller in C 
         % Compile Flight Software:
-        control_code_path ='../../Software/FlightCode/control/student_control.c'; % Specify your control code file name here       
+        control_code_path ='../../FlightCode/control/student_control.c'; % Specify your control code file name here       
            
     case 8 % Student controller in Simulink        
         % Get control gains
         
     case 9 % Waypoint tracker in C
         % Compile Flight Software:
-        control_code_path ='../../Software/FlightCode/control/waypoint_tracker.c';
+        control_code_path ='../../FlightCode/control/waypoint_tracker.c';
 end
 
 % Advanced Users: Include guidance, system ID, or fault injection codes.
@@ -112,32 +112,34 @@ end
 %%%%% GUIDANCE LAW %%%%%
 % Point to the desired guidance code here. Use '-DSIMULINK_GUIDANCE' to
 % input the reference commands from the simulink diagram.
-% GUIDANCE = '../../Software/FlightCode/guidance/straight_level.c';
-% GUIDANCE = '../../Software/FlightCode/guidance/doublet_phi_theta.c';
+% GUIDANCE = '../../FlightCode/guidance/straight_level.c';
+% GUIDANCE = '../../FlightCode/guidance/doublet_phi_theta.c';
  GUIDANCE = '-DSIMULINK_GUIDANCE';
 
 %%%%%% SYSTEM ID SELECTION %%%%%
 % Point to the desired system ID code here
-% SYSTEM_ID = '../../Software/FlightCode/system_id/chirp_sysid.c';
- SYSTEM_ID = '../../Software/FlightCode/system_id/systemid_none.c';
+% SYSTEM_ID = '../../FlightCode/system_id/chirp_sysid.c';
+ SYSTEM_ID = '../../FlightCode/system_id/systemid_none.c';
 
 %%%%%% SURFACE FAULT MODE SELECTION %%%%%
 % Point to the desired fault code here
-% SURFACE_FAULT = '../../Software/FlightCode/faults/fault_onesurf.c';
-% SURFACE_FAULT = '../../Software/FlightCode/faults/fault_onesurf_SingleStep.c';
- SURFACE_FAULT = '../../Software/FlightCode/faults/surffault_none.c';
+% SURFACE_FAULT = '../../FlightCode/faults/fault_onesurf.c';
+% SURFACE_FAULT = '../../FlightCode/faults/fault_onesurf_SingleStep.c';
+ SURFACE_FAULT = '../../FlightCode/faults/surffault_none.c';
 
 
 %%%%%% SENS0R FAULT MODE SELECTION %%%%%
 % Point to the desired fault code here
- SENSOR_FAULT = '../../Software/FlightCode/faults/sensfault_none.c';
+ SENSOR_FAULT = '../../FlightCode/faults/sensfault_none.c';
 
 % Compile control software
+BASE_HZ = num2str(round(1/SampleTime))
 if exist('control_code_path','var')
-    eval(['mex -I../../Software/FlightCode/ control_SIL.c  ' control_code_path...
+    eval(['mex -I../../FlightCode/ control_SIL.c  ' control_code_path...
                        ' ' GUIDANCE ' ' SYSTEM_ID ' ' SURFACE_FAULT ' ' SENSOR_FAULT ...
-                       ' ../../Software/FlightCode/faults/fault_functions.c ' ...
-                       ' ../../Software/FlightCode/system_id/systemid_functions.c ']);
+                       ' ../../FlightCode/faults/fault_functions.c ' ...
+                       ' ../../FlightCode/system_id/systemid_functions.c ' ...
+                       '-DSIL_SIM -DBASE_HZ=' BASE_HZ]);
 end
 
 

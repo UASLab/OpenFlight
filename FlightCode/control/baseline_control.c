@@ -22,10 +22,11 @@
 
 
 // ***********************************************************************************
-
-//#include "../aircraft/thor_config.h"  // for SIL_Sim
-#include AIRCRAFT_UP1DIR            // for Flight Code
-
+#ifdef SIL_SIM
+  #include "../aircraft/thor_config.h"  // for SIL_Sim
+#else
+  #include AIRCRAFT_UP1DIR            // for Flight Code
+#endif
 // ***********************************************************************************
 
 
@@ -78,6 +79,10 @@ static double dr; // Delta rudder
 	static double roll_gain[3]  = {-0.52,-0.20,-0.07};  // PI gains for roll tracker and roll damper
 	static double pitch_gain[3] = {-0.84,-0.23,-0.08};  // PI gains for theta tracker and pitch damper
 #endif
+#ifdef HIL_SIM
+	static double roll_gain[3]  = {-0.64,-0.20,-0.07};  // PI gains for roll tracker and roll damper
+	static double pitch_gain[3] = {-0.90,-0.30,-0.08};  // PI gains for theta tracker and pitch damper
+#endif
 static double da; // Delta aileron
 static double de; // Delta elevator
 /// *****************************************************************************************
@@ -109,6 +114,9 @@ extern void get_control(double time, struct sensordata *sensorData_ptr, struct n
 #endif
 #ifdef AIRCRAFT_BALDR
 	double base_pitch_cmd= 0.0872664;  // (Faser Trim value) use 5 deg (0.0872664  rad) for flight, use 4.669 deg (0.0814990 rad) in sim
+#endif
+#ifdef HIL_SIM
+	double base_pitch_cmd= 0.0872664;  // (Thor Trim value) use 5 deg (0.0872664 rad) for flight, use 3.082 deg (0.0537910 rad) in sim
 #endif
 
 	double phi   = navData_ptr->phi;

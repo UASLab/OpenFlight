@@ -40,7 +40,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-2.0, -2.0, 1378.0, 744.0]
+      Location		      [128.0, 57.0, 1378.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -64,7 +64,7 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1326.0, 568.0]
+	Extents			[1326.0, 565.0]
 	ZoomFactor		[0.8]
 	Offset			[-123.0, -2.5]
       }
@@ -74,10 +74,10 @@ Model {
   Creator		  "Paul Freeman"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "brtaylor"
+  LastModifiedBy	  "mokh0006"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue May 20 12:02:43 2014"
-  RTWModifiedTimeStamp	  322488160
+  LastModifiedDate	  "Mon Apr 27 12:54:20 2015"
+  RTWModifiedTimeStamp	  352040011
   ModelVersionFormat	  "$Id: UAV_SIL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
@@ -894,7 +894,7 @@ Model {
   }
   System {
     Name		    "UAV_SIL"
-    Location		    [-2, -2, 1376, 742]
+    Location		    [128, 57, 1506, 801]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -973,7 +973,7 @@ Model {
 	TiledPageScale		1
 	ShowPageBoundaries	off
 	ZoomFactor		"100"
-	SIDHighWatermark	"910"
+	SIDHighWatermark	"956"
 	Block {
 	  BlockType		  Inport
 	  Name			  "cmds"
@@ -985,12 +985,12 @@ Model {
 	Block {
 	  BlockType		  Reference
 	  Name			  "UltraStick"
-	  SID			  "1425::668"
+	  SID			  "1425::949"
 	  Ports			  [1, 1]
 	  Position		  [100, 40, 140, 80]
 	  ZOrder		  -1
 	  BackgroundColor	  "lightBlue"
-	  LibraryVersion	  "$Id: UAV_SIL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
+	  LibraryVersion	  "$Id: Actuator_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
 	  SourceBlock		  "Actuator_Lib/UltraStick"
 	  SourceType		  "SubSystem"
 	}
@@ -1071,7 +1071,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"Control Software"
-	Location		[-2, -2, 1376, 742]
+	Location		[-1372, 83, 6, 827]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1126,7 +1126,7 @@ Model {
 	  BlockMirror		  on
 	  ShowName		  off
 	  OutputSignals		  "phi [rad],theta [rad],psi [rad],p [rad/s],q [rad/s],r [rad/s],Ax [m/s^2],Ay [m/s^2],Az [m/s^2],h "
-	  "[m],V_s [m/s],alpha [rad],beta [rad],Geodetic Latitude [rad],Geodetic Longitude [rad],Altitude [m],Xdot [m/s],Ydot "
+	  "[m],V_s [m/s],alpha [rad],beta [rad],Geodetic Latitude [deg],Geodetic Longitude [deg],Altitude [m],Xdot [m/s],Ydot "
 	  "[m/s],Zdot [m/s]"
 	  OutputAsBus		  on
 	}
@@ -1312,7 +1312,7 @@ Model {
 	  BlockMirror		  on
 	  BackgroundColor	  "lightBlue"
 	  DropShadow		  on
-	  LibraryVersion	  "$Id: UAV_SIL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
+	  LibraryVersion	  "$Id: Actuator_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
 	  SourceBlock		  "Actuator_Lib/Trim setting "
 	  SourceType		  "SubSystem"
 	}
@@ -1455,7 +1455,7 @@ Model {
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       NamePlacement	      "alternate"
-      LibraryVersion	      "$Id: UAV_SIL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
+      LibraryVersion	      "$Id: Environment_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
       SourceBlock	      "Environment_Lib/Environment"
       SourceType	      "SubSystem"
     }
@@ -1483,7 +1483,7 @@ Model {
       }
       System {
 	Name			"Flight Data Display"
-	Location		[-8, -8, 1374, 736]
+	Location		[-1272, 121, 106, 865]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1530,7 +1530,7 @@ Model {
 	  ZOrder		  -2
 	  ShowName		  off
 	  OutputSignals		  "V_s [m/s],alpha [rad],beta [rad],phi [rad],theta [rad],psi [rad],p [rad/s],q [rad/s],r [rad/s],Ax"
-	  " [m/s^2],Ay [m/s^2],Az [m/s^2],h [m],Pd [Kpa],Ps [Kpa],Geodetic Latitude [rad],Geodetic Longitude [rad]"
+	  " [m/s^2],Ay [m/s^2],Az [m/s^2],h [m],Pd [Kpa],Ps [Kpa],Geodetic Latitude [deg],Geodetic Longitude [deg]"
 	  Port {
 	    PortNumber		    1
 	    Name		    "<V_s [m/s]>"
@@ -1623,13 +1623,13 @@ Model {
 	  }
 	  Port {
 	    PortNumber		    16
-	    Name		    "<Geodetic Latitude [rad]>"
+	    Name		    "<Geodetic Latitude [deg]>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    17
-	    Name		    "<Geodetic Longitude [rad]>"
+	    Name		    "<Geodetic Longitude [deg]>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -2986,7 +2986,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Geodetic Latitude [rad]>"
+	  Name			  "<Geodetic Latitude [deg]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  16
@@ -2994,7 +2994,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Geodetic Longitude [rad]>"
+	  Name			  "<Geodetic Longitude [deg]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  17
@@ -3186,7 +3186,6 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector5"
 	  SrcPort		  1
-	  Points		  [0, 0]
 	  DstBlock		  "To Workspace27"
 	  DstPort		  1
 	}
@@ -3195,7 +3194,6 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector5"
 	  SrcPort		  2
-	  Points		  [0, 0]
 	  DstBlock		  "To Workspace28"
 	  DstPort		  1
 	}
@@ -3204,7 +3202,6 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector5"
 	  SrcPort		  3
-	  Points		  [0, 0]
 	  DstBlock		  "To Workspace29"
 	  DstPort		  1
 	}
@@ -3213,7 +3210,6 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector5"
 	  SrcPort		  4
-	  Points		  [0, 0]
 	  DstBlock		  "To Workspace30"
 	  DstPort		  1
 	}
@@ -3222,7 +3218,6 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector5"
 	  SrcPort		  5
-	  Points		  [0, 0]
 	  DstBlock		  "To Workspace31"
 	  DstPort		  1
 	}
@@ -3231,7 +3226,6 @@ Model {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector5"
 	  SrcPort		  6
-	  Points		  [0, 0]
 	  DstBlock		  "To Workspace32"
 	  DstPort		  1
 	}
@@ -3368,7 +3362,7 @@ Model {
       "\n\n== SVN Info ==\nLast modified by %<LastModifiedBy> on %<LastModificationDate>"
       MaskDisplayString	      "MODEL INFORMATION\\nUMN UAV Software-in-the-Loop Simulation\\n\\nUniversity of Minnesot"
       "a\\nAerospace Engineering and Mechanics\\nCopyright 2011 Regents of the University of Minnesota. All rights rese"
-      "rved.\\n\\n== SVN Info ==\\nLast modified by brtaylor on 20-May-2014 11:55:23"
+      "rved.\\n\\n== SVN Info ==\\nLast modified by mokh0006 on 27-Apr-2015 12:54:12"
       HorizontalTextAlignment "Left"
       LeftAlignmentValue      "0.02"
       SourceBlockDiagram      "UAV_SIL"
@@ -3383,7 +3377,7 @@ Model {
       ZOrder		      -9
       BackgroundColor	      "lightBlue"
       DropShadow	      on
-      LibraryVersion	      "$Id: UAV_SIL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
+      LibraryVersion	      "$Id: NonlinearModel_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
       LinkData {
 	BlockName		"Forces and Moments/Electric Propulsion Forces and Moments"
 	DialogParameters {
@@ -3403,7 +3397,7 @@ Model {
       ZOrder		      -11
       BackgroundColor	      "lightBlue"
       DropShadow	      on
-      LibraryVersion	      "$Id: UAV_SIL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
+      LibraryVersion	      "$Id: Sensors_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
       FontSize		      12
       SourceBlock	      "Sensors_Lib/Sensors"
       SourceType	      "SubSystem"

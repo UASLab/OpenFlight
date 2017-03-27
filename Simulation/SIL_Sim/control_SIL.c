@@ -39,6 +39,7 @@
 #define OP0_SIZE  7		    /* size of output port 0*/
 #define OP1_SIZE  12	    /* size of output port 1*/
 #define NPAR 1				/* number of S-function parameters */
+#define D2R  0.01745329251994 /* degrees to radians conversion factor */  
 
 #define dt        		*mxGetPr(ssGetSFcnParam(S,0))		// Software sample TIME, as an input parameter
 #define TIME			ssGetT(S)							// Current simulation TIME		
@@ -51,6 +52,8 @@ struct  gps   gpsData;
 struct  nav   navData;
 struct  control controlData;
 struct  airdata adData;
+struct  mission missionData;
+struct  inceptor inceptorData;
 // sensor data 
 static struct sensordata sensorData;
 
@@ -97,7 +100,7 @@ static void mdlStart(SimStruct *S) {
     static int run_num=0;
     run_num++;
     reset_control(&controlData); // reset any internal states in the controller
-    controlData.run_num = run_num;
+    missionData.run_num = run_num;
 }
 
 /*========================================================================*
@@ -105,6 +108,7 @@ static void mdlStart(SimStruct *S) {
  *========================================================================*/
 static void mdlOutputs(SimStruct *S, int_T tid) {
     // local variables
+    static int count = 0;
     real_T  *y0, *y1;
 
     // outputs
@@ -126,9 +130,9 @@ static void mdlOutputs(SimStruct *S, int_T tid) {
 	sensorData.adData_ptr->h = *ssGetInputPortRealSignalPtrs(S, 0)[9]; // h
 	sensorData.adData_ptr->ias = *ssGetInputPortRealSignalPtrs(S, 0)[10]; // ias
     sensorData.adData_ptr->aoa = *ssGetInputPortRealSignalPtrs(S, 0)[11]; // alpha
-    sensorData.adData_ptr->aos = *ssGetInputPortRealSignalPtrs(S, 0)[12]; // beta     
-	navData.lat = *ssGetInputPortRealSignalPtrs(S, 0)[13]; // lat
-    navData.lon = *ssGetInputPortRealSignalPtrs(S, 0)[14]; // lon
+    sensorData.adData_ptr->aos = *ssGetInputPortRealSignalPtrs(S, 0)[12]; // beta  
+	navData.lat = (*ssGetInputPortRealSignalPtrs(S, 0)[13])*D2R; // lat [rad]
+    navData.lon = (*ssGetInputPortRealSignalPtrs(S, 0)[14])*D2R; // lon [rad]
     navData.alt = *ssGetInputPortRealSignalPtrs(S, 0)[15]; // alt
     navData.vn = *ssGetInputPortRealSignalPtrs(S, 0)[16]; // vn
     navData.ve = *ssGetInputPortRealSignalPtrs(S, 0)[17]; // ve
@@ -136,7 +140,28 @@ static void mdlOutputs(SimStruct *S, int_T tid) {
     navData.phi = *ssGetInputPortRealSignalPtrs(S, 0)[0]; // phi
     navData.the = *ssGetInputPortRealSignalPtrs(S, 0)[1]; // theta
     navData.psi = *ssGetInputPortRealSignalPtrs(S, 0)[2]; // psi
-    
+
+    // Update GPS based on 1 Hz rate.  This routine is also in sensors_hil.c
+    if (++count > BASE_HZ) {
+        sensorData.gpsData_ptr->newData = 1; // set newData flag at 1Hz                
+        count = 0;
+        /* gps position */    
+        sensorData.gpsData_ptr->lat = *ssGetInputPortRealSignalPtrs(S, 0)[13]; // lat [deg]
+        sensorData.gpsData_ptr->lon = *ssGetInputPortRealSignalPtrs(S, 0)[14]; // lon [deg]
+        sensorData.gpsData_ptr->alt = *ssGetInputPortRealSignalPtrs(S, 0)[15]; // alt
+
+        /* gps velocity in m/s */
+        sensorData.gpsData_ptr->vn = *ssGetInputPortRealSignalPtrs(S, 0)[16]; // vn
+        sensorData.gpsData_ptr->ve = *ssGetInputPortRealSignalPtrs(S, 0)[17]; // ve
+        sensorData.gpsData_ptr->vd = *ssGetInputPortRealSignalPtrs(S, 0)[18]; // vd
+
+        // Set err_type fields
+        sensorData.gpsData_ptr->err_type = data_valid;
+        sensorData.gpsData_ptr->navValid = 0;
+    } else {
+        sensorData.gpsData_ptr->newData = 0;
+    }
+
     //**** GUIDANCE **********************************************************
     #ifdef SIMULINK_GUIDANCE
         // Assign doublet sequences to references vector from Simulink
@@ -155,7 +180,7 @@ static void mdlOutputs(SimStruct *S, int_T tid) {
 
     #else
         // Compute guidance (reference) commands for the control law
-         get_guidance(TIME, &sensorData, &navData, &controlData);   
+         get_guidance(TIME, &sensorData, &navData, &controlData, &missionData);   
     #endif  
     //************************************************************************		
 
@@ -164,7 +189,7 @@ static void mdlOutputs(SimStruct *S, int_T tid) {
     //************************************************************************
 
     //**** CONTROL ***********************************************************
-    get_control(TIME, &sensorData, &navData, &controlData);
+    get_control(TIME, &sensorData, &navData, &controlData, &missionData);
     //************************************************************************
 
     //**** SYSTEM ID *********************************************************

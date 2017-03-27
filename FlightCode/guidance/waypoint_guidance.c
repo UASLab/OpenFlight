@@ -24,10 +24,12 @@
 
 
 //////////////////////////////////////////////////////////////
-//#include "../utils/matrix.c" //Required for SIL sim only. Also must comment out #include <unistd.h> and #include <termios.h> inside matrix.c
-
-//#include "../aircraft/thor_config.h"  // for SIL sim only, use "thor" or "faser"
-#include AIRCRAFT_UP1DIR
+#ifdef SIL_SIM
+	#include "../utils/matrix.c" //Required for SIL sim only. Also must comment out #include <unistd.h> and #include <termios.h> inside matrix.c
+	#include "../aircraft/thor_config.h"  // for SIL sim only, use "thor" or "faser"
+#else
+	#include AIRCRAFT_UP1DIR
+#endif
 //////////////////////////////////////////////////////////////
 
 
@@ -94,7 +96,9 @@ if (time>0.05){
 	#ifdef AIRCRAFT_BALDR
 		controlData_ptr->ias_cmd = 23;
 	#endif
-
+	#ifdef HIL_SIM
+		controlData_ptr->ias_cmd = 17;
+	#endif
 	// Initialization of algorithm and variables	
     if (guide_init==0)  // init variables
     {

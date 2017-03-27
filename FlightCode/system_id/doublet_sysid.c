@@ -17,9 +17,11 @@
 #include "../globaldefs.h"
 #include "systemid_interface.h"
 
-
-//#include "aircraft/thor_config.h"  // for SIL sim only
-#include AIRCRAFT_UP1DIR
+#ifdef SIL_SIM
+  #include "aircraft/thor_config.h"  // for SIL sim only
+#else
+  #include AIRCRAFT_UP1DIR
+#endif
 
 
 extern void get_system_id( double time, struct sensordata *sensorData_ptr, struct nav *navData_ptr, struct control *controlData_ptr){

@@ -35,7 +35,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1382.0, 744.0]
+      Location		      [56.0, 213.0, 1382.0, 744.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -61,7 +61,7 @@ Model {
 	LoadSaveID		"0"
 	Extents			[1330.0, 568.0]
 	ZoomFactor		[0.8]
-	Offset			[-138.25, 2.5]
+	Offset			[-167.0, 2.0]
       }
     }
   }
@@ -69,10 +69,10 @@ Model {
   Creator		  "Paul"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "brtaylor"
+  LastModifiedBy	  "lars3319"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Wed May 21 10:41:51 2014"
-  RTWModifiedTimeStamp	  322569698
+  LastModifiedDate	  "Mon Apr 13 14:30:26 2015"
+  RTWModifiedTimeStamp	  350836121
   ModelVersionFormat	  "$Id: UAV_PIL.mdl 965 2013-03-21 01:08:53Z escobar $"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
@@ -1471,7 +1471,7 @@ Model {
   }
   System {
     Name		    "UAV_HIL"
-    Location		    [-8, -8, 1374, 736]
+    Location		    [56, 213, 1438, 957]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    212
@@ -1612,7 +1612,7 @@ Model {
 	  Position		  [100, 40, 140, 80]
 	  ZOrder		  -1
 	  BackgroundColor	  "lightBlue"
-	  LibraryVersion	  "$Id: Actuator_Lib.mdl 861 2012-07-18 19:18:34Z joh07594 $"
+	  LibraryVersion	  "$Id: Actuator_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
 	  SourceBlock		  "Actuator_Lib/UltraStick"
 	  SourceType		  "SubSystem"
 	}
@@ -1666,7 +1666,7 @@ Model {
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       NamePlacement	      "alternate"
-      LibraryVersion	      "$Id: Environment_Lib.mdl 277 2011-02-23 21:42:02Z murch $"
+      LibraryVersion	      "$Id: Environment_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
       SourceBlock	      "Environment_Lib/Environment"
       SourceType	      "SubSystem"
     }
@@ -1694,7 +1694,7 @@ Model {
       }
       System {
 	Name			"Flight Data Display"
-	Location		[-8, -8, 1374, 736]
+	Location		[65, 111, 1447, 855]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1741,7 +1741,7 @@ Model {
 	  ZOrder		  -2
 	  ShowName		  off
 	  OutputSignals		  "V_s [m/s],alpha [rad],beta [rad],phi [rad],theta [rad],psi [rad],p [rad/s],q [rad/s],r [rad/s],Ax"
-	  " [m/s^2],Ay [m/s^2],Az [m/s^2],h [m],Pd [Kpa],Ps [Kpa],Geodetic Latitude [rad],Geodetic Longitude [rad]"
+	  " [m/s^2],Ay [m/s^2],Az [m/s^2],h [m],Pd [Kpa],Ps [Kpa],Geodetic Latitude [deg],Geodetic Longitude [deg]"
 	  Port {
 	    PortNumber		    1
 	    Name		    "<V_s [m/s]>"
@@ -1834,13 +1834,13 @@ Model {
 	  }
 	  Port {
 	    PortNumber		    16
-	    Name		    "<Geodetic Latitude [rad]>"
+	    Name		    "<Geodetic Latitude [deg]>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
 	  Port {
 	    PortNumber		    17
-	    Name		    "<Geodetic Longitude [rad]>"
+	    Name		    "<Geodetic Longitude [deg]>"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -2749,7 +2749,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Geodetic Latitude [rad]>"
+	  Name			  "<Geodetic Latitude [deg]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  16
@@ -2757,7 +2757,7 @@ Model {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "<Geodetic Longitude [rad]>"
+	  Name			  "<Geodetic Longitude [deg]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  17
@@ -2946,7 +2946,7 @@ Model {
       MaskHideContents	      off
       System {
 	Name			"MPC5200"
-	Location		[-8, -8, 1374, 736]
+	Location		[56, 213, 1438, 957]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -3010,9 +3010,9 @@ Model {
 	  ZOrder		  -5
 	  BlockMirror		  on
 	  ShowName		  off
-	  OutputSignals		  "p [rad/s],q [rad/s],r [rad/s],Ax [m/s^2],Ay [m/s^2],Az [m/s^2],Magnetic Field [nT],Geodetic Latit"
-	  "ude [rad],Geodetic Longitude [rad],Altitude [m],Xdot [m/s],Ydot [m/s],Zdot [m/s],alpha [rad],beta [rad],Pd [Kpa],Ps"
-	  " [Kpa]"
+	  OutputSignals		  "p [rad/s],q [rad/s],r [rad/s],Ax [m/s^2],Ay [m/s^2],Az [m/s^2],Magnetic Field [gauss],Geodetic La"
+	  "titude [deg],Geodetic Longitude [deg],Altitude [m],Xdot [m/s],Ydot [m/s],Zdot [m/s],alpha [rad],beta [rad],Pd [Kpa]"
+	  ",Ps [Kpa]"
 	  OutputAsBus		  on
 	}
 	Block {
@@ -3033,7 +3033,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Control Inputs\nfrom MPC5200\nvia Serial Port"
-	    Location		    [-8, -8, 1374, 736]
+	    Location		    [65, 111, 1447, 855]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3519,7 +3519,7 @@ Model {
 	  MaskHideContents	  off
 	  System {
 	    Name		    "Sensor Data\nto MPC5200 \nvia Serial Port"
-	    Location		    [-8, -8, 1374, 736]
+	    Location		    [65, 111, 1447, 855]
 	    Open		    off
 	    ModelBrowserVisibility  off
 	    ModelBrowserWidth	    200
@@ -3802,7 +3802,7 @@ Model {
 	  BlockMirror		  on
 	  BackgroundColor	  "lightBlue"
 	  DropShadow		  on
-	  LibraryVersion	  "$Id: Actuator_Lib.mdl 861 2012-07-18 19:18:34Z joh07594 $"
+	  LibraryVersion	  "$Id: Actuator_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
 	  SourceBlock		  "Actuator_Lib/Trim setting "
 	  SourceType		  "SubSystem"
 	}
@@ -3998,7 +3998,7 @@ Model {
       "\n\n== SVN Info ==\nLast modified by %<LastModifiedBy> on %<LastModificationDate>"
       MaskDisplayString	      "MODEL INFORMATION\\nUMN UAV Hardware-in-the-Loop Simulation\\n\\nUniversity of Minnesot"
       "a\\nAerospace Engineering and Mechanics\\nCopyright 2011 Regents of the University of Minnesota. All rights rese"
-      "rved.\\n\\n== SVN Info ==\\nLast modified by brtaylor on 20-May-2014 16:22:45"
+      "rved.\\n\\n== SVN Info ==\\nLast modified by lars3319 on 10-Apr-2015 16:56:22"
       HorizontalTextAlignment "Left"
       LeftAlignmentValue      "0.02"
       SourceBlockDiagram      "UAV_HIL"
@@ -4013,8 +4013,13 @@ Model {
       ZOrder		      -14
       BackgroundColor	      "lightBlue"
       DropShadow	      on
-      LibraryVersion	      "$Id: NonlinearModel_Lib.mdl 559 2011-09-01 19:44:55Z murch $"
+      LibraryVersion	      "$Id: NonlinearModel_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
       LinkData {
+	BlockName		"Auxiliary Equations/Navigation/Flat Earth to LLA"
+	DialogParameters {
+	  F			  "1/298.257223563"
+	  R			  "6378137"
+	}
 	BlockName		"Forces and Moments/Electric Propulsion Forces and Moments"
 	DialogParameters {
 	  BlockChoice		  "UltraStick"
@@ -4033,7 +4038,7 @@ Model {
       ZOrder		      -16
       BackgroundColor	      "lightBlue"
       DropShadow	      on
-      LibraryVersion	      "$Id: Sensors_Lib.mdl 908 2012-10-04 20:40:18Z joh07594 $"
+      LibraryVersion	      "$Id: Sensors_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
       FontSize		      12
       SourceBlock	      "Sensors_Lib/Sensors"
       SourceType	      "SubSystem"
@@ -4643,7 +4648,7 @@ Stateflow {
     midPoint		    [23.5747 24.9468]
     chart		    16
     linkNode		    [16 0 0]
-    dataLimits		    [23.575 23.575 14.625 34.575]
+    dataLimits		    [21.175 25.975 14.625 42.575]
     subviewer		    16
     drawStyle		    SMART
     slide {

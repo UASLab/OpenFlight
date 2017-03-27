@@ -73,10 +73,13 @@ static double rud_amp_3=-10*D2R;
 ///////////////////////////////////////////////////////////////////////////
 
 //warming up the filters in SIL sim
-//only SIL sim
-//static int wtime=25;
-//in flight mode
-static int wtime=0;
+#ifdef SIL_SIM
+    //only SIL sim
+    static int wtime=25;
+#else
+    //in flight mode
+    static int wtime=0;
+#endif
 
 
 //FILE *rudder;

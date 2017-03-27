@@ -19,7 +19,7 @@ Library {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1378.0, 744.0]
+      Location		      [-8.0, -8.0, 1296.0, 1000.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -28,7 +28,7 @@ Library {
 	DockPosition		"Left"
 	Width			[50]
 	Height			[50]
-	Filter			[9]
+	Filter			[15]
       }
       Object {
 	$PropName		"ExplorerBarInfo"
@@ -43,7 +43,7 @@ Library {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1326.0, 576.0]
+	Extents			[1244.0, 832.0]
 	ZoomFactor		[1.0]
 	Offset			[0.0, 0.0]
       }
@@ -53,10 +53,10 @@ Library {
   Creator		  "austinmurch"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "brtaylor"
+  LastModifiedBy	  "lars3319"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Tue May 20 15:01:18 2014"
-  RTWModifiedTimeStamp	  322498875
+  LastModifiedDate	  "Fri Apr 10 16:31:24 2015"
+  RTWModifiedTimeStamp	  350584277
   ModelVersionFormat	  "$Id: Sensors_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
   ConfigurationManager	  "None"
   SampleTimeColors	  off
@@ -837,7 +837,7 @@ Library {
   }
   System {
     Name		    "Sensors_Lib"
-    Location		    [-8, -8, 1370, 736]
+    Location		    [-8, -8, 1288, 992]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    200
@@ -851,7 +851,7 @@ Library {
     ShowPageBoundaries	    off
     ZoomFactor		    "100"
     ReportName		    "simulink-default.rpt"
-    SIDHighWatermark	    "845"
+    SIDHighWatermark	    "868"
     Block {
       BlockType		      Reference
       Name		      "Model Info1"
@@ -874,7 +874,7 @@ Library {
       " modified by %<LastModifiedBy> on %<LastModificationDate>"
       MaskDisplayString	      "MODEL INFORMATION\\nSensors Library\\n\\nUniversity of Minnesota\\nAerospace Engineerin"
       "g and Mechanics\\nCopyright 2011 Regents of the University of Minnesota. All rights reserved.\\n\\n== SVN Info ="
-      "=\\nLast modified by brtaylor on 20-May-2014 11:39:45"
+      "=\\nLast modified by lars3319 on 10-Apr-2015 16:31:22"
       HorizontalTextAlignment "Left"
       LeftAlignmentValue      "0.02"
       SourceBlockDiagram      "Sensors_Lib"
@@ -1118,7 +1118,7 @@ Library {
       SID		      "704"
       Ports		      [3, 1]
       Position		      [65, 213, 205, 277]
-      ZOrder		      -11
+      ZOrder		      -16
       BackgroundColor	      "lightBlue"
       DropShadow	      on
       LibraryVersion	      "*$Id: Sensors_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
@@ -1132,7 +1132,7 @@ Library {
       MaskHideContents	      off
       System {
 	Name			"Sensors"
-	Location		[-8, -8, 1374, 736]
+	Location		[-8, -8, 1288, 992]
 	Open			off
 	ModelBrowserVisibility	off
 	ModelBrowserWidth	200
@@ -1144,12 +1144,12 @@ Library {
 	TiledPaperMargins	[0.500000, 0.500000, 0.500000, 0.500000]
 	TiledPageScale		1
 	ShowPageBoundaries	off
-	ZoomFactor		"100"
+	ZoomFactor		"60"
 	Block {
 	  BlockType		  Inport
 	  Name			  "States"
 	  SID			  "705"
-	  Position		  [25, 148, 55, 162]
+	  Position		  [25, 208, 55, 222]
 	  ZOrder		  -1
 	  IconDisplay		  "Port number"
 	}
@@ -1157,7 +1157,7 @@ Library {
 	  BlockType		  Inport
 	  Name			  "AuxVar"
 	  SID			  "843"
-	  Position		  [25, 433, 55, 447]
+	  Position		  [25, 568, 55, 582]
 	  ZOrder		  1
 	  Port			  "2"
 	  IconDisplay		  "Port number"
@@ -1166,7 +1166,7 @@ Library {
 	  BlockType		  Inport
 	  Name			  "EnvData"
 	  SID			  "821"
-	  Position		  [25, 698, 55, 712]
+	  Position		  [25, 828, 55, 842]
 	  ZOrder		  -2
 	  Port			  "3"
 	  IconDisplay		  "Port number"
@@ -1176,7 +1176,7 @@ Library {
 	  Name			  "Bus\nCreator"
 	  SID			  "831"
 	  Ports			  [22, 1]
-	  Position		  [560, 13, 565, 687]
+	  Position		  [800, 14, 805, 896]
 	  ZOrder		  -3
 	  ShowName		  off
 	  Inputs		  "22"
@@ -1186,13 +1186,13 @@ Library {
 	  BlockType		  BusSelector
 	  Name			  "Bus\nSelector1"
 	  SID			  "709"
-	  Ports			  [1, 9]
-	  Position		  [95, 21, 100, 289]
+	  Ports			  [1, 10]
+	  Position		  [75, 22, 80, 408]
 	  ZOrder		  -4
 	  ShowName		  off
 	  OutputSignals		  "Euler [rad].phi [rad],Euler [rad].theta [rad],Euler [rad].psi [rad],AngVel [rad/s].p [rad/s],AngV"
 	  "el [rad/s].q [rad/s],AngVel [rad/s].r [rad/s],Accels [m/s^2].Ax [m/s^2],Accels [m/s^2].Ay [m/s^2],Accels [m/s^2].Az"
-	  " [m/s^2]"
+	  " [m/s^2],R_be [3x3]"
 	  Port {
 	    PortNumber		    1
 	    Name		    "<phi [rad]>"
@@ -1247,13 +1247,19 @@ Library {
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
+	  Port {
+	    PortNumber		    10
+	    Name		    "<R_be [3x3]>"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
 	}
 	Block {
 	  BlockType		  BusSelector
 	  Name			  "Bus\nSelector2"
 	  SID			  "746"
 	  Ports			  [1, 3]
-	  Position		  [95, 631, 100, 779]
+	  Position		  [75, 763, 80, 907]
 	  ZOrder		  -5
 	  ShowName		  off
 	  OutputSignals		  "Density [kg/m^3],Pressure [Pa],Magnetic Field [nT]"
@@ -1281,7 +1287,7 @@ Library {
 	  Name			  "Bus\nSelector3"
 	  SID			  "844"
 	  Ports			  [1, 10]
-	  Position		  [95, 300, 100, 580]
+	  Position		  [115, 384, 120, 766]
 	  ZOrder		  2
 	  ShowName		  off
 	  OutputSignals		  "Nav.Geodetic Latitude [deg],Nav.Geodetic Longitude [deg],Nav.Altitude [m],V_e [m/s].Xdot [m/s],V_"
@@ -1350,36 +1356,17 @@ Library {
 	}
 	Block {
 	  BlockType		  Gain
-	  Name			  "D2R"
-	  SID			  "841"
-	  Position		  [300, 290, 330, 320]
-	  ZOrder		  -6
-	  Gain			  "pi/180"
+	  Name			  "Gain"
+	  SID			  "858"
+	  Position		  [610, 860, 640, 890]
+	  ZOrder		  14
+	  Gain			  "1/100000"
 	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
 	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
 	  SaturateOnIntegerOverflow off
-	  SampleTime		  "SampleTime"
 	  Port {
 	    PortNumber		    1
-	    Name		    "Geodetic Latitude [rad]"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
-	}
-	Block {
-	  BlockType		  Gain
-	  Name			  "D2R "
-	  SID			  "842"
-	  Position		  [300, 320, 330, 350]
-	  ZOrder		  -7
-	  Gain			  "pi/180"
-	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
-	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
-	  SaturateOnIntegerOverflow off
-	  SampleTime		  "SampleTime"
-	  Port {
-	    PortNumber		    1
-	    Name		    "Geodetic Longitude [rad]"
+	    Name		    "Magnetic Field [gauss]"
 	    RTWStorageClass	    "Auto"
 	    DataLoggingNameMode	    "SignalName"
 	  }
@@ -1389,7 +1376,7 @@ Library {
 	  Name			  "Math\nFunction"
 	  SID			  "835"
 	  Ports			  [1, 1]
-	  Position		  [195, 595, 225, 625]
+	  Position		  [295, 730, 325, 760]
 	  ZOrder		  -8
 	  ShowName		  off
 	  Operator		  "square"
@@ -1399,7 +1386,7 @@ Library {
 	  Name			  "NoiseModel"
 	  SID			  "736"
 	  Ports			  [1, 1]
-	  Position		  [275, 114, 355, 136]
+	  Position		  [480, 144, 560, 166]
 	  ZOrder		  -9
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1425,7 +1412,7 @@ Library {
 	  Name			  "NoiseModel1"
 	  SID			  "737"
 	  Ports			  [1, 1]
-	  Position		  [275, 144, 355, 166]
+	  Position		  [480, 184, 560, 206]
 	  ZOrder		  -10
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1451,7 +1438,7 @@ Library {
 	  Name			  "NoiseModel10"
 	  SID			  "828"
 	  Ports			  [1, 1]
-	  Position		  [275, 564, 355, 586]
+	  Position		  [480, 744, 560, 766]
 	  ZOrder		  -11
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1477,7 +1464,7 @@ Library {
 	  Name			  "NoiseModel11"
 	  SID			  "832"
 	  Ports			  [1, 1]
-	  Position		  [275, 694, 355, 716]
+	  Position		  [480, 824, 560, 846]
 	  ZOrder		  -12
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1503,7 +1490,7 @@ Library {
 	  Name			  "NoiseModel12"
 	  SID			  "837"
 	  Ports			  [1, 1]
-	  Position		  [310, 619, 390, 641]
+	  Position		  [480, 784, 560, 806]
 	  ZOrder		  -13
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1529,7 +1516,7 @@ Library {
 	  Name			  "NoiseModel2"
 	  SID			  "738"
 	  Ports			  [1, 1]
-	  Position		  [275, 174, 355, 196]
+	  Position		  [480, 224, 560, 246]
 	  ZOrder		  -14
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1555,7 +1542,7 @@ Library {
 	  Name			  "NoiseModel3"
 	  SID			  "739"
 	  Ports			  [1, 1]
-	  Position		  [275, 204, 355, 226]
+	  Position		  [480, 264, 560, 286]
 	  ZOrder		  -15
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1581,7 +1568,7 @@ Library {
 	  Name			  "NoiseModel4"
 	  SID			  "740"
 	  Ports			  [1, 1]
-	  Position		  [275, 234, 355, 256]
+	  Position		  [480, 304, 560, 326]
 	  ZOrder		  -16
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1607,7 +1594,7 @@ Library {
 	  Name			  "NoiseModel5"
 	  SID			  "741"
 	  Ports			  [1, 1]
-	  Position		  [275, 264, 355, 286]
+	  Position		  [480, 344, 560, 366]
 	  ZOrder		  -17
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1633,7 +1620,7 @@ Library {
 	  Name			  "NoiseModel6"
 	  SID			  "742"
 	  Ports			  [1, 1]
-	  Position		  [275, 474, 355, 496]
+	  Position		  [480, 624, 560, 646]
 	  ZOrder		  -18
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1659,7 +1646,7 @@ Library {
 	  Name			  "NoiseModel7"
 	  SID			  "748"
 	  Ports			  [1, 1]
-	  Position		  [275, 504, 355, 526]
+	  Position		  [480, 664, 560, 686]
 	  ZOrder		  -19
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1685,7 +1672,7 @@ Library {
 	  Name			  "NoiseModel8"
 	  SID			  "827"
 	  Ports			  [1, 1]
-	  Position		  [275, 534, 355, 556]
+	  Position		  [480, 704, 560, 726]
 	  ZOrder		  -20
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
@@ -1711,8 +1698,8 @@ Library {
 	  Name			  "NoiseModel9"
 	  SID			  "747"
 	  Ports			  [1, 1]
-	  Position		  [275, 744, 355, 766]
-	  ZOrder		  -21
+	  Position		  [365, 874, 445, 896]
+	  ZOrder		  17
 	  BackgroundColor	  "lightBlue"
 	  ShowName		  off
 	  LibraryVersion	  "$Id: Sensors_Lib.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
@@ -1725,18 +1712,12 @@ Library {
 	  bias			  "[AC.Sensors.IMU.hx_bias, AC.Sensors.IMU.hy_bias, AC.Sensors.IMU.hz_bias]"
 	  scf			  "[AC.Sensors.IMU.hx_scf, AC.Sensors.IMU.hy_scf, AC.Sensors.IMU.hz_scf]"
 	  timestep		  "SampleTime"
-	  Port {
-	    PortNumber		    1
-	    Name		    "Magnetic Field [nT]"
-	    RTWStorageClass	    "Auto"
-	    DataLoggingNameMode	    "SignalName"
-	  }
 	}
 	Block {
 	  BlockType		  Gain
 	  Name			  "Pa2Kpa"
 	  SID			  "833"
-	  Position		  [205, 690, 235, 720]
+	  Position		  [295, 820, 325, 850]
 	  ZOrder		  -22
 	  Gain			  "1/1000"
 	  ParamDataTypeStr	  "Inherit: Inherit via internal rule"
@@ -1748,7 +1729,7 @@ Library {
 	  Name			  "Product"
 	  SID			  "836"
 	  Ports			  [2, 1]
-	  Position		  [260, 612, 290, 643]
+	  Position		  [390, 774, 420, 816]
 	  ZOrder		  -23
 	  ShowName		  off
 	  InputSameDT		  off
@@ -1756,10 +1737,28 @@ Library {
 	  SaturateOnIntegerOverflow off
 	}
 	Block {
+	  BlockType		  Product
+	  Name			  "Rotate Mag"
+	  SID			  "867"
+	  Ports			  [2, 1]
+	  Position		  [495, 857, 540, 893]
+	  ZOrder		  16
+	  Multiplication	  "Matrix(*)"
+	  InputSameDT		  off
+	  OutDataTypeStr	  "Inherit: Inherit via internal rule"
+	  SaturateOnIntegerOverflow off
+	  Port {
+	    PortNumber		    1
+	    Name		    "Magnetic Field [nT]"
+	    RTWStorageClass	    "Auto"
+	    DataLoggingNameMode	    "SignalName"
+	  }
+	}
+	Block {
 	  BlockType		  Gain
 	  Name			  "gain"
 	  SID			  "834"
-	  Position		  [200, 640, 230, 670]
+	  Position		  [295, 770, 325, 800]
 	  ZOrder		  -25
 	  ShowName		  off
 	  Gain			  "1/2000"
@@ -1771,47 +1770,34 @@ Library {
 	  BlockType		  Outport
 	  Name			  "Sensors"
 	  SID			  "830"
-	  Position		  [620, 343, 650, 357]
+	  Position		  [905, 448, 935, 462]
 	  ZOrder		  -26
 	  IconDisplay		  "Port number"
-	}
-	Line {
-	  Name			  "Geodetic Latitude [rad]"
-	  Labels		  [1, 1]
-	  SrcBlock		  "D2R"
-	  SrcPort		  1
-	  DstBlock		  "Bus\nCreator"
-	  DstPort		  10
-	}
-	Line {
-	  Name			  "Geodetic Longitude [rad]"
-	  Labels		  [1, 1]
-	  SrcBlock		  "D2R "
-	  SrcPort		  1
-	  DstBlock		  "Bus\nCreator"
-	  DstPort		  11
 	}
 	Line {
 	  Name			  "<Geodetic Latitude [deg]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  1
-	  DstBlock		  "D2R"
-	  DstPort		  1
+	  Points		  [660, 0]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  10
 	}
 	Line {
 	  Name			  "<Geodetic Longitude [deg]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  2
-	  DstBlock		  "D2R "
-	  DstPort		  1
+	  Points		  [660, 0]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  11
 	}
 	Line {
 	  Name			  "<Altitude [m]>"
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  3
+	  Points		  [660, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  12
 	}
@@ -1820,6 +1806,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  4
+	  Points		  [660, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  13
 	}
@@ -1828,6 +1815,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  5
+	  Points		  [660, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  14
 	}
@@ -1836,6 +1824,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  6
+	  Points		  [660, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  15
 	}
@@ -1844,13 +1833,13 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector3"
 	  SrcPort		  7
-	  Points		  [63, 0]
+	  Points		  [157, 0]
 	  Branch {
 	    DstBlock		    "NoiseModel6"
 	    DstPort		    1
 	  }
 	  Branch {
-	    Points		    [0, 125]
+	    Points		    [0, 110]
 	    DstBlock		    "Math\nFunction"
 	    DstPort		    1
 	  }
@@ -1886,20 +1875,11 @@ Library {
 	  DstPort		  1
 	}
 	Line {
-	  Name			  "Magnetic Field [nT]"
-	  Labels		  [0, 0]
-	  SrcBlock		  "NoiseModel9"
-	  SrcPort		  1
-	  Points		  [105, 0; 0, -90]
-	  DstBlock		  "Bus\nCreator"
-	  DstPort		  22
-	}
-	Line {
 	  Name			  "Ps [Kpa]"
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel11"
 	  SrcPort		  1
-	  Points		  [80, 0; 0, -70]
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  21
 	}
@@ -1908,7 +1888,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel12"
 	  SrcPort		  1
-	  Points		  [55, 0; 0, -25]
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  20
 	}
@@ -1917,6 +1897,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel10"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  19
 	}
@@ -1925,6 +1906,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel8"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  18
 	}
@@ -1933,6 +1915,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel7"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  17
 	}
@@ -1941,6 +1924,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel6"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  16
 	}
@@ -1949,6 +1933,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel5"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  9
 	}
@@ -1957,6 +1942,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel4"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  8
 	}
@@ -1965,6 +1951,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel3"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  7
 	}
@@ -1973,6 +1960,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel2"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  6
 	}
@@ -1981,6 +1969,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel1"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  5
 	}
@@ -1989,6 +1978,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "NoiseModel"
 	  SrcPort		  1
+	  Points		  [220, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  4
 	}
@@ -1997,6 +1987,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  3
+	  Points		  [700, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  3
 	}
@@ -2005,6 +1996,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  2
+	  Points		  [700, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  2
 	}
@@ -2013,6 +2005,7 @@ Library {
 	  Labels		  [0, 0]
 	  SrcBlock		  "Bus\nSelector1"
 	  SrcPort		  1
+	  Points		  [700, 0]
 	  DstBlock		  "Bus\nCreator"
 	  DstPort		  1
 	}
@@ -2031,14 +2024,14 @@ Library {
 	Line {
 	  SrcBlock		  "gain"
 	  SrcPort		  1
-	  Points		  [10, 0]
+	  Points		  [39, 0; 0, 20]
 	  DstBlock		  "Product"
 	  DstPort		  2
 	}
 	Line {
 	  SrcBlock		  "Math\nFunction"
 	  SrcPort		  1
-	  Points		  [0, 10]
+	  Points		  [45, 0]
 	  DstBlock		  "Product"
 	  DstPort		  1
 	}
@@ -2131,6 +2124,37 @@ Library {
 	  SrcPort		  9
 	  DstBlock		  "NoiseModel5"
 	  DstPort		  1
+	}
+	Line {
+	  Name			  "Magnetic Field [nT]"
+	  SrcBlock		  "Rotate Mag"
+	  SrcPort		  1
+	  DstBlock		  "Gain"
+	  DstPort		  1
+	}
+	Line {
+	  Name			  "Magnetic Field [gauss]"
+	  Labels		  [-1, 0]
+	  SrcBlock		  "Gain"
+	  SrcPort		  1
+	  Points		  [140, 0]
+	  DstBlock		  "Bus\nCreator"
+	  DstPort		  22
+	}
+	Line {
+	  Name			  "<R_be [3x3]>"
+	  Labels		  [3, 1]
+	  SrcBlock		  "Bus\nSelector1"
+	  SrcPort		  10
+	  Points		  [9, 0; 0, -22; 244, 0; 0, 492]
+	  DstBlock		  "Rotate Mag"
+	  DstPort		  1
+	}
+	Line {
+	  SrcBlock		  "NoiseModel9"
+	  SrcPort		  1
+	  DstBlock		  "Rotate Mag"
+	  DstPort		  2
 	}
       }
     }

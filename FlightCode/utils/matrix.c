@@ -19,9 +19,11 @@
 #include "matrix.h"
 
 
-/////////////////////////////////// comment out for SIL sim
-#include <unistd.h>
-#include <termios.h>
+/////////////////////////////////// don't use for SIL sim
+#if !defined(SIL_SIM)
+	#include <unistd.h>
+	#include <termios.h>
+#endif
 //////////////////////////////////////////////////////////////
 
 /*

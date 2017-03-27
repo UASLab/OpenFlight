@@ -22,8 +22,11 @@
 
 
 //////////////////////////////////////////////////////////////
-//#include "../aircraft/thor_config.h"  // for SIL sim only, use "thor" or "faser"
-#include AIRCRAFT_UP1DIR
+#ifdef SIL_SIM
+	#include "../aircraft/thor_config.h"  // for SIL sim only, use "thor" or "faser"
+#else 
+	#include AIRCRAFT_UP1DIR
+#endif
 //////////////////////////////////////////////////////////////
 
 
@@ -33,7 +36,9 @@ static double heading_control (double head_ref, double head_angle, double roll_a
 static double altitude_control(double alt_ref, double altitude, double pitch, double pitchrate, double delta_t);
 static double speed_control(double speed_ref, double airspeed, double delta_t);
 static double phase_wrapper(double psi, double psiDelta);
-//static double lp_filter(double signal, double *u, double *y);   //USE FOR SIL ONLY
+#ifdef SIL_SIM
+	static double lp_filter(double signal, double *u, double *y);   //USE FOR SIL ONLY
+#endif
 
 
 // initialize pitch and roll angle tracking errors, integrators, and anti wind-up operators
@@ -100,15 +105,15 @@ static double de; // Delta elevator
 static double dthr; // Delta throttle
 
 
-/*
-// USE FOR SIL ONLY
-/// Low Pass Filter for speed and altitude signals initialization
-static double u_alt[2] = {0,0}; //input of altitude low pass filter { u(k), u(k-1) }
-static double y_alt[2] = {0,0}; //output of altitude low pass filter { y(k), y(k-1) }
+#ifdef SIL_SIM
+	// USE FOR SIL ONLY
+	/// Low Pass Filter for speed and altitude signals initialization
+	static double u_alt[2] = {0,0}; //input of altitude low pass filter { u(k), u(k-1) }
+	static double y_alt[2] = {0,0}; //output of altitude low pass filter { y(k), y(k-1) }
 
-static double u_speed[2] = {0,0}; //input of altitude low pass filter { u(k), u(k-1) }
-static double y_speed[2] = {0,0}; //output of altitude low pass filter { y(k), y(k-1) }
-*/
+	static double u_speed[2] = {0,0}; //input of altitude low pass filter { u(k), u(k-1) }
+	static double y_speed[2] = {0,0}; //output of altitude low pass filter { y(k), y(k-1) }
+#endif
 
 
 /// Return control outputs based on references and feedback signals.
@@ -146,10 +151,11 @@ extern void get_control(double time, struct sensordata *sensorData_ptr, struct n
     double h_cmd   = controlData_ptr->h_cmd;
     double ias_cmd = controlData_ptr->ias_cmd;
 
-
-    // Filter altitude and airspeed signals FOR SIL ONLY
-	//sensorData_ptr->adData_ptr->h_filt = lp_filter(sensorData_ptr->adData_ptr->h, u_alt, y_alt);  	    // filtered ALTITUDE
-	//sensorData_ptr->adData_ptr->ias_filt = lp_filter(sensorData_ptr->adData_ptr->ias, u_speed, y_speed);	// filtered AIRSPEED
+#ifdef SIL_SIM
+  // Filter altitude and airspeed signals FOR SIL ONLY
+	sensorData_ptr->adData_ptr->h_filt = lp_filter(sensorData_ptr->adData_ptr->h, u_alt, y_alt);  	    // filtered ALTITUDE
+	sensorData_ptr->adData_ptr->ias_filt = lp_filter(sensorData_ptr->adData_ptr->ias, u_speed, y_speed);	// filtered AIRSPEED
+#endif
 
 
 
@@ -190,22 +196,22 @@ double phase_wrapper(double psi, double psiDelta)
 		 return psiActual;
 }
 
-
-/*	//USE FOR SIL ONLY
+#ifdef SIL_SIM
+	//USE FOR SIL ONLY
 double lp_filter(double signal, double *u, double *y)
-{
-	const int m=1;  //m = order of denominator of low pass filter
-
-	u[m] = signal;
-
-	y[m] = 0.9608*y[m-1] + 0.0392*u[m-1];	// these coefficients come from a discretized low pass filter with a pole at 2 rad/sec
-
-	u[m-1] = u[m];		// initialize past values for next frame
-	y[m-1] = y[m];
-
-	return y[m];
-}
-*/
+	{
+		const int m=1;  //m = order of denominator of low pass filter
+	
+		u[m] = signal;
+	
+		y[m] = 0.9608*y[m-1] + 0.0392*u[m-1];	// these coefficients come from a discretized low pass filter with a pole at 2 rad/sec
+	
+		u[m-1] = u[m];		// initialize past values for next frame
+		y[m-1] = y[m];
+	
+		return y[m];
+	}
+#endif 
 
 
 // Discrete time filter equation at time step k

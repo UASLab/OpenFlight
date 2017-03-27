@@ -146,6 +146,7 @@ int read_gps(struct gps *gpsData_ptr) {
 		gpsData_ptr->navValid = 0;
 		return 1;
 	} else
+		gpsData_ptr->newData = 0;
 		return -1;
 }
 
