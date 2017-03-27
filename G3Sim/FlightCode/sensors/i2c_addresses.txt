@@ -1,0 +1,19 @@
+These are the read addresses (left shift 1, add 1) for all I2C devices currently in use.
+$Id: i2c_addresses.txt 755 2011-12-22 22:20:53Z murch $
+
+On I2C bus 0:
+MAX127_ADC			0x51
+Semtech SX8724C ADC	0x91
+AMS pressure sensors	
+	0x09
+	0x0B
+	0x07
+	0x05
+PWM-I2C		0xF3
+
+
+On I2C bus 1:
+EEPROM		0xA1
+RTC			0xA2
+
+
