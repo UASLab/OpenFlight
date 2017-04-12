@@ -19,6 +19,7 @@ clc
 %% Add Libraries and controllers folder to MATLAB path
 addpath ../Libraries
 addpath ../Controllers
+addpath ../Config
 
 
 %% Set aircraft type
@@ -36,7 +37,7 @@ switch aircraft_type
         aircraft_config_var = Simulink.Variant('aircraft_type == 1');
 
         % Add path for airframe specific location
-        addpath ../Libraries/UltraStick25e
+        addpath ../Config/UltraStick25e
 
         % Setup aircraft specific buses
         AircraftSpecificBuses_UltraStick25e ;

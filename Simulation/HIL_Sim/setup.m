@@ -19,6 +19,8 @@ clear all;
 %% Add Libraries and controllers folder to MATLAB path
 addpath ../Libraries
 addpath ../Controllers
+addpath ../Config
+
 warning off Simulink:Engine:SaveWithParameterizedLinks_Warning
 warning off Simulink:Commands:LoadMdlParameterizedLink 
 warning off Simulink:ID:DuplicateSID
