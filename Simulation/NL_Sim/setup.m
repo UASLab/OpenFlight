@@ -26,6 +26,7 @@ clc
 
 
 %% Add Libraries and controllers folder to MATLAB path
+addpath ../Config
 addpath ../Libraries
 addpath ../Controllers
 
@@ -44,7 +45,7 @@ switch aircraft_type
         aircraft_config_var = Simulink.Variant('aircraft_type == 1');
 
         % Add path for airframe specific location
-        addpath ../Libraries/UltraStick25e
+        addpath ../Config/UltraStick25e
 
         % Setup aircraft specific buses
         AircraftSpecificBuses_UltraStick25e ;
@@ -56,9 +57,9 @@ end
 
 
 %% Add Libraries folder to MATLAB path
-warning off Simulink:Engine:SaveWithParameterizedLinks_Warning
-warning off Simulink:Commands:LoadMdlParameterizedLink 
-warning off Simulink:ID:DuplicateSID
+% warning off Simulink:Engine:SaveWithParameterizedLinks_Warning
+% warning off Simulink:Commands:LoadMdlParameterizedLink 
+% warning off Simulink:ID:DuplicateSID
 
 
 %% Simulation sample time

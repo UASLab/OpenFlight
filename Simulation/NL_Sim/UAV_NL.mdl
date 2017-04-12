@@ -150,7 +150,7 @@ Model {
       $ObjectID		      2
       $ClassName	      "Simulink.WindowInfo"
       IsActive		      [1]
-      Location		      [-8.0, -8.0, 1936.0, 1056.0]
+      Location		      [-1691.0, -112.0, 1625.0, 978.0]
       Object {
 	$PropName		"ModelBrowserInfo"
 	$ObjectID		3
@@ -174,7 +174,7 @@ Model {
 	IsActive		[1]
 	ViewObjType		"SimulinkTopLevel"
 	LoadSaveID		"0"
-	Extents			[1886.0, 877.0]
+	Extents			[1575.0, 799.0]
 	ZoomFactor		[1.0]
 	Offset			[-236.0546875, -286.0]
       }
@@ -196,7 +196,7 @@ Model {
       "AAAAAAA+wAAABYARABvAGMAawBXAGkAZABnAGUAdAA0AAAAAAD/////AAAAAAAAAAD7AAAAUgBHAEwAVQBFADIAIAB0AHIAZQBlACAAYwBvAG0Ac"
       "ABvAG4AZQBuAHQALwBHAEwAVQBFADIAIAB0AHIAZQBlACAAYwBvAG0AcABvAG4AZQBuAHQAAAAAAP////8AAABfAP///wAAAAEAAAAAAAAAAPwCA"
       "AAAAfsAAABUAEcATABVAEUAMgA6AFAAcgBvAHAAZQByAHQAeQBJAG4AcwBwAGUAYwB0AG8AcgAvAFAAcgBvAHAAZQByAHQAeQAgAEkAbgBzAHAAZ"
-      "QBjAHQAbwByAAAAAAD/////AAAAJwD///8AAAeAAAADowAAAAEAAAACAAAAAQAAAAL8AAAAAQAAAAIAAAAP/////wAAAAAA/////wAAAAAAAAAA/"
+      "QBjAHQAbwByAAAAAAD/////AAAAJwD///8AAAZJAAADVQAAAAEAAAACAAAAAQAAAAL8AAAAAQAAAAIAAAAP/////wAAAAAA/////wAAAAAAAAAA/"
       "////wEAAAAA/////wAAAAAAAAAA/////wAAAAAA/////wAAAAAAAAAA/////wAAAAAA/////wAAAAAAAAAA/////wAAAAAA/////wAAAAAAAAAA/"
       "////wEAAAB5/////wAAAAAAAAAA/////wEAAADa/////wAAAAAAAAAA/////wAAAAAA/////wAAAAAAAAAA/////wEAAAFT/////wAAAAAAAAAA/"
       "////wAAAAAA/////wAAAAAAAAAA/////wAAAAAA/////wAAAAAAAAAA/////wAAAAAA/////wAAAAAAAAAA/////wEAAAL9/////wAAAAAAAAAA/"
@@ -207,15 +207,15 @@ Model {
   Creator		  "Paul Freeman"
   UpdateHistory		  "UpdateHistoryNever"
   ModifiedByFormat	  "%<Auto>"
-  LastModifiedBy	  "UAVLAB"
+  LastModifiedBy	  "rega0051"
   ModifiedDateFormat	  "%<Auto>"
-  LastModifiedDate	  "Mon Mar 20 21:57:56 2017"
-  RTWModifiedTimeStamp	  411947873
+  LastModifiedDate	  "Tue Apr 11 21:12:19 2017"
+  RTWModifiedTimeStamp	  413845927
   ModelVersionFormat	  "$Id: UAV_NL.mdl 1030 2014-05-21 20:23:20Z brtaylor $"
   ConfigurationManager	  "none"
   SampleTimeColors	  off
   SampleTimeAnnotations	  off
-  LibraryLinkDisplay	  "user"
+  LibraryLinkDisplay	  "all"
   WideLines		  off
   ShowLineDimensions	  off
   ShowPortDataTypes	  off
@@ -264,14 +264,17 @@ Model {
     model_		    "UAV_NL"
     Array {
       Type		      "Cell"
-      Dimension		      1
+      Dimension		      2
       Cell		      "UAV_NL"
+      Cell		      "UAV_NL/Aircraft Model/Nonlinear UAV Model/Forces and Moments/Aerodynamic Forces and Moments/Aerodyn"
+      "amic Coefficients"
       PropName		      "logAsSpecifiedByModels_"
     }
     Array {
       Type		      "Cell"
-      Dimension		      1
+      Dimension		      2
       Cell		      ""
+      Cell		      "UAV_NL:552:1430"
       PropName		      "logAsSpecifiedByModelsSSIDs_"
     }
   }
@@ -364,7 +367,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  off
@@ -1024,7 +1027,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  off
@@ -1684,7 +1687,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  off
@@ -2344,7 +2347,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  off
@@ -3004,7 +3007,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  off
@@ -3664,7 +3667,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -4324,7 +4327,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -4984,7 +4987,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -5644,7 +5647,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -6304,7 +6307,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -6964,7 +6967,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -7624,7 +7627,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -8284,7 +8287,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -8944,7 +8947,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -9604,7 +9607,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -10264,7 +10267,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -10924,7 +10927,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -11584,7 +11587,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -12244,7 +12247,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -12904,7 +12907,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -13564,7 +13567,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -14224,7 +14227,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -14884,7 +14887,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -15544,7 +15547,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -16204,7 +16207,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -16864,7 +16867,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -17524,7 +17527,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -18184,7 +18187,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -18844,7 +18847,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -19504,7 +19507,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -20164,7 +20167,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -20824,7 +20827,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -21484,7 +21487,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -22144,7 +22147,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -22804,7 +22807,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -23464,7 +23467,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -24124,7 +24127,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -24784,7 +24787,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  off
 	  SaveState		  off
@@ -25444,7 +25447,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  on
@@ -26104,7 +26107,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  on
@@ -26764,7 +26767,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  on
@@ -27424,7 +27427,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  on
@@ -28035,7 +28038,7 @@ Model {
 	  DisabledProps		  []
 	  Description		  ""
 	  StartTime		  "0.0"
-	  StopTime		  "300"
+	  StopTime		  "1"
 	  AbsTol		  "auto"
 	  FixedStep		  "SampleTime"
 	  InitialStep		  "auto"
@@ -28084,7 +28087,7 @@ Model {
 	  LoadInitialState	  off
 	  SaveFinalState	  off
 	  SaveCompleteFinalSimState off
-	  SaveFormat		  "Array"
+	  SaveFormat		  "Dataset"
 	  SignalLoggingSaveFormat "ModelDataLogs"
 	  SaveOutput		  on
 	  SaveState		  on
@@ -28676,7 +28679,7 @@ Model {
       }
       Name		      "Configuration42"
       ExtraOptions	      ""
-      CurrentDlgPage	      "Solver"
+      CurrentDlgPage	      "Data Import//Export"
       ConfigPrmDlgPosition     [ 235, 71, 1331, 749 ] 
     }
     PropName		    "ConfigurationSets"
@@ -28852,7 +28855,7 @@ Model {
   }
   System {
     Name		    "UAV_NL"
-    Location		    [-8, -8, 1928, 1048]
+    Location		    [-1691, -112, -66, 866]
     Open		    on
     ModelBrowserVisibility  off
     ModelBrowserWidth	    285
@@ -28882,7 +28885,7 @@ Model {
       Ports		      [1, 1]
       Position		      [110, -95, 340, 65]
       ZOrder		      69
-      LibraryVersion	      "1.23"
+      LibraryVersion	      "1.24"
       SourceBlock	      "AircraftModel/Aircraft Model"
       SourceType	      "SubSystem"
       ContentPreviewEnabled   off

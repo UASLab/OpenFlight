@@ -9,7 +9,6 @@ function [AC,Env] = UAV_config(aircraft,savefile)
 % Copyright 2011 Regents of the University of Minnesota. 
 % All rights reserved.
 %
-% SVN Info: $Id: UAV_config.m 1030 2014-05-21 20:23:20Z brtaylor $
 
 if nargin < 2
     savefile = 1;
@@ -57,7 +56,7 @@ Env.GroundAlt = 0;
 
 %% Save workspace variables to MAT file
 if savefile
-    save(['../Libraries/' cfgmatfile],'AC','Env');
+    save(['../Config/' cfgmatfile],'AC','Env');
     
     % Output a message to the screen
     fprintf(strcat('\n Aircraft configuration saved as:\t', strcat(cfgmatfile),'.mat'));
