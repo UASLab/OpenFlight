@@ -1,11 +1,9 @@
-function [longmod, spmod, latmod, linmodel] = linearize_UAV(OperatingPoint, AC)
-% [longmod,spmod,latmod,linmodel]=linearize_UAV(OperatingPoint,verbose)
+function [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, OperatingPoint, AC)
+% [longmod, spmod, latmod, linmodel = LinearizeSim(simModel, OperatingPoint, AC)
 %
-% Linearizes the UAV model about a given operating point using
-% ../NL_Sim/UAV_NL.mdl. This function can be called from any of the three
-% sim directories. However, this function will use your workspace
-% variables. Requires the Control System Toolbox and Simulink Control
-% Design.
+% Linearizes the UAV model about a given operating point.
+% This function will use your workspace variables. 
+% Requires the Control System Toolbox and Simulink Control Design.
 %
 % Inputs:
 %   OperatingPoint - Operating point object of a trim condition
@@ -27,23 +25,23 @@ function [longmod, spmod, latmod, linmodel] = linearize_UAV(OperatingPoint, AC)
 %
 
 %% Load model into memory
-isLoaded = bdIsLoaded('UAV_NL'); % check to see if model is loaded or open
+isLoaded = bdIsLoaded(simModel); % check to see if model is loaded or open
 if ~isLoaded
-    load_system('../NL_Sim/UAV_NL.mdl') % load model into system memory without opening diagram
+    load_system(simModel) % load model into system memory without opening diagram
 end
 
 %% LINEARIZE
 
 % Set inputs
-io(1) = linio('UAV_NL/Trim and Linearization Help/Actuator State Bus',1,'in');
+io(1) = linio('SimNL/Trim and Linearization Help/Actuator State Bus', 1, 'in');
 
 % Set outputs
 for k = 1:14 
-    io(k+1)  = linio('UAV_NL/Aircraft States',k,'out');
+    io(k+1)  = linio('SimNL/Aircraft States', k, 'out');
 end
 
 % Obtain lineariziation
-linmodel = linearize('UAV_NL',OperatingPoint.op_point,io);
+linmodel = linearize(simModel, OperatingPoint.op_point, io);
 
 
 
@@ -125,5 +123,5 @@ end
 
 %% Cleanup
 if ~isLoaded
-    bdclose UAV_NL % clear model from system memory if we had to load it
+    bdclose(simModel) % clear model from system memory if we had to load it
 end

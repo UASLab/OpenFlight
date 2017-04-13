@@ -10,28 +10,20 @@
 % is needed to avoid delays due to data in the serial buffer. 
 %
 
-clc;
-close all;
-bdclose all;
-clear all;
 
-
-%% Add Libraries and controllers folder to MATLAB path
-addpath ../Libraries
-addpath ../Controllers
-addpath ../Config
-
-warning off Simulink:Engine:SaveWithParameterizedLinks_Warning
-warning off Simulink:Commands:LoadMdlParameterizedLink 
-warning off Simulink:ID:DuplicateSID
+% warning off Simulink:Engine:SaveWithParameterizedLinks_Warning
+% warning off Simulink:Commands:LoadMdlParameterizedLink 
+% warning off Simulink:ID:DuplicateSID
 
 %% Load airframe configuration and trim condition
 % To change these, use the functions "UAV_config.m" and "trim_UAV.m"
 load UAV_modelconfig
 load UAV_trimcondition
 
+
 %% Sensor reconfiguration configuration
 AC.Sensors.NoiseOn = 1 ; 
+
 
 %% Env. reconfiguration
 

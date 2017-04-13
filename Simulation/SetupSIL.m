@@ -10,47 +10,27 @@
 % All rights reserved.
 %
 
-%% Clean up
-clear all
-close all
-bdclose all
-clc
-
-%% Add Libraries and controllers folder to MATLAB path
-addpath ../Libraries
-addpath ../Controllers
-addpath ../Config
-
 
 %% Set aircraft type
-
 % 1 = UltraStick25e, standard outfit
 aircraft_type = 1 ;
 
-
 % Configure simulation specifically for this airfame
 switch aircraft_type
-    
     case 1 % UltraStick25e, standard outfit
-
         % Configure variant for model refenence        
         aircraft_config_var = Simulink.Variant('aircraft_type == 1');
-
-        % Add path for airframe specific location
-        addpath ../Config/UltraStick25e
 
         % Setup aircraft specific buses
         AircraftSpecificBuses_UltraStick25e ;
 end
 
 
-
-
-
 %% Load airframe configuration and trim condition
 % To change these, use the functions "UAV_config.m" and "trim_UAV.m"
 load UAV_modelconfig
 load UAV_trimcondition
+
 
 %% Simulation sample time
 SampleTime = 0.02; % sec

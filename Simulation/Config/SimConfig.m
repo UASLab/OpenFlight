@@ -1,5 +1,5 @@
-function [AC,Env] = UAV_config(aircraft,savefile)
-% function [AC,Env] = UAV_config(aircraft,savefile)
+function [AC,Env] = SimConfig(aircraft, fileSave)
+% function [AC,Env] = SimConfig(aircraft, fileSave)
 %
 % Defines aircraft parameters. Input desired aircraft and savefile boolean.
 % Sets Env data structure.
@@ -10,21 +10,23 @@ function [AC,Env] = UAV_config(aircraft,savefile)
 % All rights reserved.
 %
 
-if nargin < 2
-    savefile = 1;
-end
+if nargin < 2, fileSave = []; end
+
 
 switch lower(aircraft)
     case 'ultrastick120'
-        AC = UltraStick120_config;
+        AC = Config_UltraStick120;
     case 'ultrastick25e'
-        AC = Config_UltraStick25e;
+        % Defice Aircraft Specific Parameters
+        AC = ParamDef_UltraStick25e;
+        
+        % Define Aircraft Specific Buses
+        BusDef_UltraStick25e;
+        
     case 'minimutt'
-        AC = miniMUTT_config;
+        AC = Config_miniMUTT;
 end
 
-% Name of mat-file
-cfgmatfile = 'UAV_modelconfig';
 
 %% Environmental Parameters
 %%% Dryden Wind Turbulence Model (+q +r)
@@ -55,10 +57,9 @@ Env.GroundAlt = 0;
 
 
 %% Save workspace variables to MAT file
-if savefile
-    save(['../Config/' cfgmatfile],'AC','Env');
+if ~isempty(fileSave)
+    save(fileSave, 'AC', 'Env');
     
     % Output a message to the screen
-    fprintf(strcat('\n Aircraft configuration saved as:\t', strcat(cfgmatfile),'.mat'));
-    fprintf('\n');
+    fprintf('\n Aircraft configuration saved as:\t %s\n', fileSave);
 end

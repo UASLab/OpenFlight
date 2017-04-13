@@ -15,16 +15,18 @@
 % Copyright 2011 Regents of the University of Minnesota. 
 % All rights reserved.
 %
-addpath ../Controllers
 
 %% Obtain UAV trim condition matrices and linear model. 
 % To update trim targets, edit this m-file.
-run ../NL_Sim/setup.m 
+run setup_NL.m 
 
 %% Simulation sample time
 SampleTime = 0.02; %sec
+
+
 %% Integer Time delay in flight software loop
 IntegerTimeDelay = 2; % .04sec
+
 
 %% Set controller variants
 % Each variant corresponds to a different Simulink model that will be
@@ -33,6 +35,7 @@ baseline_control_var = Simulink.Variant('controller_mode == 1');
 heading_control_var = Simulink.Variant('controller_mode == 2');
 student_control_var = Simulink.Variant('controller_mode == 3');
 lqr_control_var = Simulink.Variant('controller_mode == 4');
+
 
 %% Set controller mode
 % Use this variable to quickly change what controller is used in the

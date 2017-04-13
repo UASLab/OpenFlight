@@ -1,7 +1,7 @@
-function [TrimCondition, OperatingPoint] = trim_UAV(TrimCondition, AC, savefile, verbose)
-%[TrimCondition,OperatingPoint]=trim_UAV(TrimCondition,AC,savefile,verbose)
+function [TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, fileSave, verbose)
+%[TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, fileSave, verbose)
 %
-% Trims the UAV simulation to target conditions using ..\NL_Sim\UAV_NL.mdl.
+% Trims the UAV simulation to target conditions.
 % This function can be called from any of the three sim directories.
 % However, this function will use your workspace variables. Requires 
 % Simulink Control Design.
@@ -34,7 +34,7 @@ function [TrimCondition, OperatingPoint] = trim_UAV(TrimCondition, AC, savefile,
 %     flap         - flap control input, rad. Defaults to fixed at zero.
 %
 %     AC       - Aircraft configuration structure, from UAV_config.m
-%     savefile - boolean flag to save trim condition; default "true"
+%     fileSave - File to save the trim data
 %     verbose  - boolean flag to suppress output; default "true"
 %
 % Outputs:
@@ -65,28 +65,25 @@ function [TrimCondition, OperatingPoint] = trim_UAV(TrimCondition, AC, savefile,
 % Copyright 2011 Regents of the University of Minnesota. 
 % All rights reserved.
 %
-% SVN Info: $Id: trim_UAV.m 1030 2014-05-21 20:23:20Z brtaylor $
 
-if nargin < 4
-    verbose = 1;
+if nargin < 5, verbose = [];
+    if nargin < 4, fileSave = []; end
 end
-if nargin < 3
-    savefile = 1;
-end
-% Name of the MAT-files that will be generated
-trimmatfile = 'UAV_trimcondition';
+
+if isempty(verbose), verbose = 1; end
+
 
 %% Pull out target structure
 target = TrimCondition.target;
 
 %% Invalid target checking. This section can be expanded greatly.
-if isfield(target,'alpha')&&isfield(target,'theta')&&isfield(target,'gamma'),
+if isfield(target,'alpha') && isfield(target,'theta') && isfield(target,'gamma')
     error('Lacking free variable, cannot specify target in alpha, theta and gamma');
 end
-if isfield(target,'alpha')&&isfield(target,'V_s')&&isfield(target,'gamma'),
+if isfield(target,'alpha') && isfield(target,'V_s') && isfield(target,'gamma')
     error('Lacking free variable, cannot specify target in alpha, V_s and gamma');
 end
-if isfield(target,'aileron')&&isfield(target,'l_aileron')||isfield(target,'aileron')&&isfield(target,'r_aileron')
+if isfield(target,'aileron') && isfield(target,'l_aileron') || isfield(target,'aileron') && isfield(target,'r_aileron')
     error('Cannot specify a target for l/r_aileron AND combined aileron input');
 end
 
@@ -95,34 +92,32 @@ end
 % surpression flaps for miniMUTT)
 switch lower(AC.aircraft)
     case {'ultrastick120', 'ultrastick25e'}
-        InputNames = {'throttle','elevator','rudder','aileron','l_flap','r_flap'};
-        if ~isfield(target,'l_flap'),  target.l_flap=0; end
-        if ~isfield(target,'r_flap'),  target.r_flap=0; end
+        InputNames = {'throttle', 'elevator', 'rudder', 'aileron', 'l_flap', 'r_flap'};
+        if ~isfield(target,'l_flap'), target.l_flap=0; end
+        if ~isfield(target,'r_flap'), target.r_flap=0; end
     case 'minimutt'
         InputNames = {'elevator', 'aileron', 'L1','L4','R1','R4'};
-        if ~isfield(target,'L1'),  target.L1=0; end
-        if ~isfield(target,'L4'),  target.L4=0; end
-        if ~isfield(target,'R1'),  target.R1=0; end
-        if ~isfield(target,'R4'),  target.R4=0; end
+        if ~isfield(target,'L1'), target.L1=0; end
+        if ~isfield(target,'L4'), target.L4=0; end
+        if ~isfield(target,'R1'), target.R1=0; end
+        if ~isfield(target,'R4'), target.R4=0; end
 end
 
 
 %% Error checking for unknown fields
-knownfields={'V_s','alpha','beta','gamma',...
-    'phi','theta','psi',...
-    'phidot','thetadot','psidot',...
-    'p','q','r','h'};
-knownfields = [knownfields,InputNames];
+knownfields = {'V_s', 'alpha', 'beta', 'gamma', 'phi', 'theta', 'psi',...
+    'phidot', 'thetadot', 'psidot', 'p', 'q', 'r', 'h'};
+knownfields = [knownfields, InputNames];
 
-saywhat=setdiff(fieldnames(target),knownfields);
-if ~isempty(saywhat),
-    for i=1:length(saywhat),fprintf(1,'Unknown field in target: %s\n',saywhat{i});end
+saywhat = setdiff(fieldnames(target),knownfields);
+if ~isempty(saywhat)
+    for i = 1:length(saywhat), fprintf(1, 'Unknown field in target: %s\n', saywhat{i});end
     error('Unknown fields');
 end
 
 %% Set defaults if not specified
-if ~isfield(target,'beta'),    target.beta=0; end
-if ~isfield(target,'gamma'),   target.gamma=0; end
+if ~isfield(target, 'beta'), target.beta=0; end
+if ~isfield(target, 'gamma'), target.gamma=0; end
 
 % If either of the individual ailerons are set, set combined aileron input
 % to zero. Otherwise, use combined aileron input
@@ -134,23 +129,24 @@ if ~isfield(target,'gamma'),   target.gamma=0; end
 % end
 
 %% Remove fields assocated with empty targets (overrides defaults);
-fn=fieldnames(target);
-for i=1:length(fn)
+fn = fieldnames(target);
+for i = 1:length(fn)
     if isempty(target.(fn{i}))
-        target=rmfield(target,fn{i});
+        target = rmfield(target,fn{i});
     end
 end
 
 %% Load model into memory
-isLoaded = bdIsLoaded('UAV_NL'); % check to see if model is loaded or open
+isLoaded = bdIsLoaded(simModel); % check to see if model is loaded or open
 if ~isLoaded
-    load_system('../NL_Sim/UAV_NL.mdl') % load model into system memory without opening diagram
+    load_system(simModel) % load model into system memory without opening diagram
 end
+
 %% SET OPERATING POINT SPECIFICATIONS
 % Note: beware of overconstraining the states of the model. "findop" often
 % fails (even if at a trim point!!) if the model is overconstrained.
 %
-op_spec = operspec('UAV_NL');
+op_spec = operspec(simModel);
 
 
 %% STATE SPECIFICATIONS
@@ -187,6 +183,7 @@ switch lower(AC.aircraft)
         op_spec.States(5).Known       = 0;
         op_spec.States(5).x           = TrimCondition.EngineSpeedIni;
         op_spec.States(5).steadystate = 1;
+        
     case 'minimutt'
         % structural modes
         % displacements
@@ -204,9 +201,9 @@ switch lower(AC.aircraft)
         op_spec.States(7).steadystate = ones(size(TrimCondition.LagStatesIni));
         
         % DT1 filter states to obtain control surface velocities
-        op_spec.States(6).Known = zeros(size(TrimCondition.DT1CtrlSurfIni));
-        op_spec.States(6).x = TrimCondition.DT1CtrlSurfIni;
-        op_spec.States(6).steadystate = ones(size(TrimCondition.DT1CtrlSurfIni));
+        op_spec.States(6).Known = zeros(size(TrimCondition.DT1EffectorIni));
+        op_spec.States(6).x = TrimCondition.DT1EffectorIni;
+        op_spec.States(6).steadystate = ones(size(TrimCondition.DT1EffectorIni));
         
         % DT1 filter states to obtain accelerations
         op_spec.States(5).Known = zeros(size(TrimCondition.DT1AccAllModes));
@@ -219,7 +216,7 @@ end
 
 %% OUTPUT SPECIFICATIONS
 % accelerations not included at this point
-if isfield(target,'V_s')
+if isfield(target, 'V_s')
     op_spec.Outputs(1).Known = 1;
     op_spec.Outputs(1).y = target.V_s;
 end
@@ -284,7 +281,7 @@ if isfield(target,'gamma')
 end
 
 if isfield(target,'phidot')||isfield(target,'thetadot')||isfield(target,'psidot')
-    op_spec=addoutputspec(op_spec,'UAV_NL/Nonlinear UAV Model/6DoF EOM/Calculate DCM & Euler Angles/phidot thetadot psidot',1); % add output spec if eulerdot targets are used
+    op_spec=addoutputspec(op_spec,'SimNL/Nonlinear UAV Model/6DoF EOM/Calculate DCM & Euler Angles/phidot thetadot psidot',1); % add output spec if eulerdot targets are used
     if isfield(target,'phidot')
         op_spec.Outputs(15).Known(1) = 1;
         op_spec.Outputs(15).y(1) = target.phidot;
@@ -331,7 +328,7 @@ end
 
 %default is not known and intial guess as specified in setup.m
 op_spec.inputs(1).Known = zeros(length(InputNames),1);
-op_spec.inputs(1).u = TrimCondition.Inputs.CtrlSurf;
+op_spec.inputs(1).u = TrimCondition.Inputs.Effector;
 
 % %default actutator position limits
 % op_spec.inputs(1).max = 0.4363*ones(length(InputNames),1); % 25deg default
@@ -343,8 +340,8 @@ for ii=1:length(InputNames)
         op_spec.inputs(1).u(ii) = target.(InputNames{ii});
     end
 %     try
-%         op_spec.inputs(1).max(ii) = AC.Actuator.(InputNames{ii}).PosLim;
-%         op_spec.inputs(1).min(ii) = AC.Actuator.(InputNames{ii}).NegLim;
+%         op_spec.inputs(1).max(ii) = AC.Effector.(InputNames{ii}).PosLim;
+%         op_spec.inputs(1).min(ii) = AC.Effector.(InputNames{ii}).NegLim;
 %     catch
 %     end
 end
@@ -358,7 +355,7 @@ if verbose
     opt.DisplayReport = 'on';
 end
 
-[op_point, op_report] = findop('UAV_NL', op_spec, opt);
+[op_point, op_report] = findop(simModel, op_spec, opt);
 
 %% SET NONLINEAR SIMULATION TO TRIM CONDITION
 % Pull initial state for trim solution and initialize the nonlinear model
@@ -381,7 +378,7 @@ switch lower(AC.aircraft)
         TrimCondition.FlexIni = op_point.States(8).x;
         TrimCondition.FlexRatesIni = op_point.States(9).x;
         TrimCondition.LagStatesIni = op_point.States(7).x;
-        TrimCondition.DT1CtrlSurfIni = op_point.States(6).x;
+        TrimCondition.DT1EffectorIni = op_point.States(6).x;
         TrimCondition.DT1AccAllModes = op_point.States(5).x;
 end                          
                           
@@ -390,7 +387,7 @@ end
 % TrimCondition.Inputs.Throttle = op_point.Inputs(1).u;
 % 
 % % Pull control surface values for trim solution
-% TrimCondition.Inputs.CtrlSurf = op_point.Inputs(2).u;
+% TrimCondition.Inputs.Effector = op_point.Inputs(2).u;
 
 % Pull throttle value for trim solution
 TrimCondition.Inputs.Throttle = op_point.Inputs(1).u;
@@ -398,8 +395,8 @@ TrimCondition.Inputs.Throttle = TrimCondition.Inputs.Throttle(1) ;
 
 
 % Pull control surface values for trim solution
-TrimCondition.Inputs.CtrlSurf = op_point.Inputs(1).u;
-TrimCondition.Inputs.CtrlSurf = TrimCondition.Inputs.CtrlSurf(2:6);
+TrimCondition.Inputs.Effector = op_point.Inputs(1).u;
+TrimCondition.Inputs.Effector = TrimCondition.Inputs.Effector(2:6);
 
 
 % Handle combined aileron input option
@@ -421,14 +418,15 @@ OperatingPoint.op_point  = op_point;
 OperatingPoint.op_report = op_report;
 OperatingPoint.op_spec   = op_spec;
 
-if savefile
+if ~isempty(fileSave)
     % Save variables to MAT file
-    save(['../Libraries/' trimmatfile],'TrimCondition','OperatingPoint');
+    save(fileSave, 'TrimCondition', 'OperatingPoint');
+    
     % Output a message to the screen
-    fprintf('\n Trim conditions saved as:\t %s.mat\n',trimmatfile);
+    fprintf('\n Trim conditions saved as:\t %s\n', fileSave);
 end
 
 %% Cleanup
 if ~isLoaded
-    bdclose UAV_NL % clear model from system memory if we had to load it
+    bdclose(simModel) % clear model from system memory if we had to load it
 end
