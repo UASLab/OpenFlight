@@ -33,11 +33,12 @@ end
 %% LINEARIZE
 
 % Set inputs
-io(1) = linio('SimNL/Trim and Linearization Help/Actuator State Bus', 1, 'in');
+io(1) = linio('SimNL/Trim and Linearization Help/Motor State Bus', 1, 'in');
+io(end+1) = linio('SimNL/Trim and Linearization Help/Actuator State Bus', 1, 'in');
 
 % Set outputs
 for k = 1:14 
-    io(k+1)  = linio('SimNL/Aircraft States', k, 'out');
+    io(end+1)  = linio('SimNL/Aircraft States', k, 'out');
 end
 
 % Obtain lineariziation

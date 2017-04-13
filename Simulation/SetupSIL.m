@@ -13,32 +13,27 @@
 
 %% Set aircraft type
 % 1 = UltraStick25e, standard outfit
-aircraft_type = 1 ;
+aircraftType = 1 ;
 
 % Configure simulation specifically for this airfame
-switch aircraft_type
+switch aircraftType
     case 1 % UltraStick25e, standard outfit
         % Configure variant for model refenence        
-        aircraft_config_var = Simulink.Variant('aircraft_type == 1');
+        aircraftVariant = Simulink.Variant('aircraftType == 1');
 
         % Setup aircraft specific buses
-        AircraftSpecificBuses_UltraStick25e ;
+        SetupNL
 end
 
 
 %% Load airframe configuration and trim condition
 % To change these, use the functions "UAV_config.m" and "trim_UAV.m"
-load UAV_modelconfig
-load UAV_trimcondition
+% load UAV_modelconfig
+% load UAV_trimcondition
 
 
 %% Simulation sample time
-SampleTime = 0.02; % sec
 MPCSampleTime = 0.02; % sec
-
-%% Setup simulation buses
-GeneralBuses ;
-
 
 %% Set controller mode
 % Use this variable to quickly change what controller is used in the
@@ -46,26 +41,26 @@ GeneralBuses ;
 %
 % 1 = baseline controller (C implementation)
 % 2 = baseline controller (Simulink)
-controller_mode = 2 ;
+cntrlMode = 2 ;
 
 
 % Load controller parameters or compile flight code
-switch controller_mode
+switch cntrlMode
     case 1 % Baseline controller in C
         % Compile Flight Software:
-        control_code_path = '../../FlightCode/control/baseline_control.c';
+        cntrlPath = '../../FlightCode/control/baseline_control.c';
         
+        cntrlType = 'C Code' ;
         
-        controller_type = 'C Code' ;
     case 2 % Baseline controller in Simulink.
-        baseline_gains;   % Declare baseline controller gains
+        CntrlBaselineSetup;   % Declare baseline controller gains
         pitch_gains = [kp_PT, ki_PT, kp_PD];
         roll_gains = [kp_RT, ki_RT, kp_RD];
         yaw_damper_num = [YDz_num]; % discrete transfer function yaw damper coefficients
         yaw_damper_den = [YDz_den];
 
-        controller_type = 'Simulink' ;
-        baseline_control_var = Simulink.Variant('controller_mode == 2');
+        cntrlType = 'Simulink' ;
+        cntrlBaselineVariant = Simulink.Variant('cntrlMode == 2');
 end
 
 
@@ -97,7 +92,7 @@ end
 
 % Compile control software
 if exist('control_code_path','var')
-    eval(['mex -I../../FlightCode/ control_SIL.c  ' control_code_path...
+    eval(['mex -I../../FlightCode/ control_SIL.c  ' cntrlPath...
                        ' ' GUIDANCE ' ' SYSTEM_ID ' ' SURFACE_FAULT ' ' SENSOR_FAULT ...
                        ' ../../FlightCode/faults/fault_functions.c ' ...
                        ' ../../FlightCode/system_id/systemid_functions.c ']);
@@ -106,14 +101,14 @@ end
 
 
 %% Open sim diagram
-UAV_SIL
+open_system('SimSIL')
 
 % Set up controller wrapper
-blockpath = 'UAV_SIL/Flight Computer/Interrupt Service Routine/Controller Type' ;
-switch controller_type
+blockpath = 'SimSIL/Flight Computer/Interrupt Service Routine/Controller Type' ;
+switch cntrlType
     case 'C Code'
-        set_param(blockpath,'BlockChoice','C Code');
+        set_param(blockpath, 'BlockChoice', 'C Code');
     case 'Simulink'
-        set_param(blockpath,'BlockChoice','Simulink');
+        set_param(blockpath, 'BlockChoice', 'Simulink');
 end
 

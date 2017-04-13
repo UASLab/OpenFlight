@@ -18,7 +18,8 @@
 
 %% Obtain UAV trim condition matrices and linear model. 
 % To update trim targets, edit this m-file.
-run setup_NL.m 
+aircraftType = 1;
+SetupNL
 
 %% Simulation sample time
 SampleTime = 0.02; %sec
@@ -31,10 +32,10 @@ IntegerTimeDelay = 2; % .04sec
 %% Set controller variants
 % Each variant corresponds to a different Simulink model that will be
 % referenced in the "UAV_Lin/Control Software/Control Software" block.
-baseline_control_var = Simulink.Variant('controller_mode == 1');
-heading_control_var = Simulink.Variant('controller_mode == 2');
-student_control_var = Simulink.Variant('controller_mode == 3');
-lqr_control_var = Simulink.Variant('controller_mode == 4');
+cntrlBaselineVariant = Simulink.Variant('cntrlMode == 1');
+cntrlHeadingVariant = Simulink.Variant('cntrlMode == 2');
+cntrlStudentVariant = Simulink.Variant('cntrlMode == 3');
+cntrlLqrVariant = Simulink.Variant('cntrlMode == 4');
 
 
 %% Set controller mode
@@ -45,19 +46,19 @@ lqr_control_var = Simulink.Variant('controller_mode == 4');
 % 2 = Heading controller (Simulink)
 % 3 = Student controller (Simulink)     
 % 4 = LQR controller (Simulink)
-controller_mode = 1;
+cntrlMode = 1;
 
 % Load controller parameters or compile flight code
-switch controller_mode
+switch cntrlMode
     case 1 %Basleine controller in Simulink
-        baseline_gains;   % Declare baseline controller gains
+        CntrlBaselineSetup;   % Declare baseline controller gains
         pitch_gains = [kp_PT, ki_PT, kp_PD];
         roll_gains = [kp_RT, ki_RT, kp_RD];
         yaw_damper_num = [YDz_num]; % discrete transfer function yaw damper coefficients
         yaw_damper_den = [YDz_den];
         
     case 2 %Heading controller in Simulink
-        baseline_gains;  % heading controller lays on top of the baseline controller        
+        CntrlBaselineSetup;  % heading controller lays on top of the baseline controller        
         pitch_gains = [kp_PT, ki_PT, kp_PD];
         roll_gains = [kp_RT, ki_RT, kp_RD];
         yaw_damper_num = [YDz_num]; % discrete transfer function yaw damper coefficients
@@ -79,4 +80,4 @@ end
 
 
 %% Open UAV_Lin model
-UAV_Lin
+open_system(SimLin)

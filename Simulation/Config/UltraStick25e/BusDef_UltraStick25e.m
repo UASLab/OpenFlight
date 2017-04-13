@@ -21,13 +21,17 @@ assignin('base', 'Refs', CreateBus(busNames));
 
 
 %% Initialize Commands bus
-busNames = {'throttle_nd','elevator_rad','rudder_rad','l_aileron_rad','r_aileron_rad','l_flap_rad','r_flap_rad'};
+busNames = {'throttle_nd', 'elevator_rad', 'rudder_rad', 'l_aileron_rad', 'r_aileron_rad', 'l_flap_rad', 'r_flap_rad'};
 assignin('base', 'Commands', CreateBus(busNames));
 
 
 %% Effectors
+% Motor bus
+busNames = {'throttle_nd'};
+assignin('base', 'Motor', CreateBus(busNames));
+
 % Actuator bus
-busNames = {'throttle_nd', 'elevator_rad','rudder_rad','l_aileron_rad','r_aileron_rad','l_flap_rad','r_flap_rad'};
+busNames = {'elevator_rad','rudder_rad','l_aileron_rad','r_aileron_rad','l_flap_rad','r_flap_rad'};
 assignin('base', 'Actuator', CreateBus(busNames));
 
 % CtrlSurf bus
@@ -36,8 +40,8 @@ assignin('base', 'CtrlSurf', CreateBus(busNames));
 
 
 % Effectors bus
-busNames = {'Actuator', 'CtrlSurf'};
-busDataType = {'Bus: Actuator', 'Bus: CtrlSurf'};
+busNames = {'Motor', 'Actuator', 'CtrlSurf'};
+busDataType = {'Bus: Motor', 'Bus: Actuator', 'Bus: CtrlSurf'};
 assignin('base', 'Effectors', CreateBus(busNames, busDataType));
 
 

@@ -23,7 +23,7 @@ d2r = pi/180;
 
 %% Configure Airframe
 % 1 = UltraStick25e, standard outfit
-aircraftType = 1 ;
+if ~exist('aircraftType', 'var'), aircraftType = 1; end
 
 % Configure simulation specifically for this airfame
 switch aircraftType
