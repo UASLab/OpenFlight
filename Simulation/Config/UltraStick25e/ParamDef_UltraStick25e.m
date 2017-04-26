@@ -19,16 +19,16 @@ AC.aircraft = 'UltraStick25e';
 AC.Mass = 1.793;
 
 % CG location [x y z], [m]
-AC.Geometry.rCG = [0.222 0 0.0272]; % 3/30/17
+AC.Geometry.rCG = [0.222428 0.000000 0.027178]; % 4/20/17
 
 % Gross moments of inertia [Jx Jy Jz Jxz] [kg*m^2]
 % AC.Inertia.Ixx = 0.0894; % 
 % AC.Inertia.Iyy = 0.1444; % 
 % AC.Inertia.Izz = 0.162; % 
-AC.Inertia.Ixx = 0.043820; % 3/30/17
-AC.Inertia.Iyy = 0.083730; % 3/30/17
-AC.Inertia.Izz = 0.119300; % 3/30/17
-AC.Inertia.Ixz = 0.000482; % 3/30/17
+AC.Inertia.Ixx = 0.043800; % 4/20/17
+AC.Inertia.Iyy = 0.083800; % 4/20/17
+AC.Inertia.Izz = 0.119000; % 4/20/17
+AC.Inertia.Ixz = 0.000000; % 4/20/17
 AC.Inertia.Matrix = [AC.Inertia.Ixx  0               -AC.Inertia.Ixz;...
     0         AC.Inertia.Iyy  0;...
     -AC.Inertia.Ixz 0               AC.Inertia.Izz];
@@ -65,32 +65,32 @@ AC.Aero.betaBkPts = [-15, -10, -5, 0, 5, 10, 15] * pi/180 ; % FIXME - Must be Mo
 
 %% Lift coefficient
 % CL_zero
-AC.Aero.CL.zero = 0.1086; % FASER
+AC.Aero.CL.zero = [0.1086 0.1086 0.1086 0.1086 0.1086 0.1086 0.1086 0.1086];%0.1086; %put value into an array % FASER
 AC.Aero.CL.zero = repmat(AC.Aero.CL.zero, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % CL_alpha (/rad)
-AC.Aero.CL.alpha = 4.58; %NASA DATA (UNCHANGED BY AD 3/16/2011)
+AC.Aero.CL.alpha = [3.600744 3.902652 3.964720 3.969411 3.971401 3.972357 3.972859 3.973142]; %NASA DATA (UNCHANGED BY AD 3/16/2011) % 4/20/17
 AC.Aero.CL.alpha = repmat(AC.Aero.CL.alpha, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CL_qHat (/rad); qHat = c / (2*V) * q
-AC.Aero.CL.qHat = 6.1639; % AD 3/16/2011
+AC.Aero.CL.qHat = [7.497787 7.949705 8.105073 8.127211 8.139927 8.147931 8.153305 8.157091]; % 4/20/2017
 AC.Aero.CL.qHat = repmat(AC.Aero.CL.qHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CL_alphaDot (/rps)
-AC.Aero.CL.alphadot = 1.9724;
+AC.Aero.CL.alphadot = [1.9724 1.9724 1.9724 1.9724 1.9724 1.9724 1.9724 1.9724];%1.9724; %put value into an array
 AC.Aero.CL.alphadot = repmat(AC.Aero.CL.alphadot, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % CL_de (/rad)
-AC.Aero.CL.delev = 0.0983; % AD 3/16/2011
+AC.Aero.CL.delev = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.CL.delev = repmat(AC.Aero.CL.delev, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CL_dailL (/rad)
-AC.Aero.CL.dailL = 0.5 * 0.4751;  %estimate based on roll power and moment arm
+AC.Aero.CL.dailL = [0.006421 0.007032 0.007155 0.007164 0.007168 0.007170 0.007171 0.007172];  % 4/20/17 %estimate based on roll power and moment arm
 AC.Aero.CL.dailL = repmat(AC.Aero.CL.dailL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CL_dailR (/rad)
 AC.Aero.CL.dailR = AC.Aero.CL.dailL; % FIXME - Copy of Left Side
 % CL_drud (/rad)
-AC.Aero.CL.drud = 0.0;
+AC.Aero.CL.drud = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.CL.drud = repmat(AC.Aero.CL.drud, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CL_dflapL (/rad)
-AC.Aero.CL.dflapL = 0.5 * 0.7400;
+AC.Aero.CL.dflapL = [4.873000e-03 5.354000e-03 5.451000e-03 5.458000e-03 5.461000e-03 5.463000e-03 5.464000e-03 5.464000e-03]; % 4/20/2017
 AC.Aero.CL.dflapL = repmat(AC.Aero.CL.dflapL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CL_dflapR (/rad)
 AC.Aero.CL.dflapR = AC.Aero.CL.dflapL; % FIXME - Copy of Left Side
@@ -112,25 +112,25 @@ AC.Aero.CL.minD = 0.23;
 % Minimum drag
 AC.Aero.CDw.min = 0.0434;
 % Oswald's coefficient
-AC.Aero.CDw.osw = 0.75;
+AC.Aero.CDw.osw = [0.777200 0.789600 0.794900 0.795800 0.796300 0.796700 0.796900 0.797100]; % 4/20/17
 
 % CDw_zero
-AC.Aero.CDw.zero = 0.0; 
+AC.Aero.CDw.zero = [0 0 0 0 0 0 0 0]; %4/20/2017
 AC.Aero.CDw.zero = repmat(AC.Aero.CDw.zero, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % CDw_de (/rad)
-AC.Aero.CDw.delev = 0.0135;
+AC.Aero.CDw.delev = [2.290000e-04 1.320000e-04 5.200000e-05 3.700000e-05 2.700000e-05 2.100000e-05 1.700000e-05 1.400000e-05]; % 4/20/17
 AC.Aero.CDw.delev = repmat(AC.Aero.CDw.delev, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CDw_dailL (/rad)
-AC.Aero.CDw.dailL = 0.5 *0.0302;
+AC.Aero.CDw.dailL = [1.126000e-03 5.010000e-04 1.800000e-04 1.250000e-04 9.200000e-05 7.000000e-05 5.500000e-05 4.500000e-05]; % 4/20/17
 AC.Aero.CDw.dailL = repmat(AC.Aero.CDw.dailL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CDw_dailR (/rad)
 AC.Aero.CDw.dailR = AC.Aero.CDw.dailL; % FIXME - Copy of Left Side
 % CDw_drud (/rad)
-AC.Aero.CDw.drud = 0.0303;
+AC.Aero.CDw.drud = [0 0 0 0 0 0 0 0]; % 4/20/17
 AC.Aero.CDw.drud = repmat(AC.Aero.CDw.drud, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CDw_dflapL (/rad)
-AC.Aero.CDw.dflapL = 0.5 * 0.1467; 
+AC.Aero.CDw.dflapL = [8.440000e-04 3.780000e-04 1.360000e-04 9.400000e-05 6.900000e-05 5.300000e-05 4.200000e-05 3.400000e-05]; % 4/20/17
 AC.Aero.CDw.dflapL = repmat(AC.Aero.CDw.dflapL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CDw_dflapR (/rad)
 AC.Aero.CDw.dflapR = AC.Aero.CDw.dflapL; % FIXME - Copy of Left Side
@@ -148,32 +148,32 @@ AC.Aero.CDw.tableSel = 1:size(AC.Aero.CDw.table, AC.Aero.CDw.tableDim);
 
 %% Side Force coefficient
 % CYw_zero
-AC.Aero.CYw.zero = 0.0; 
+AC.Aero.CYw.zero = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.CYw.zero = repmat(AC.Aero.CYw.zero, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % CYw_beta (/rad)
-AC.Aero.CYw.beta = -0.4889; % AD 3/30/2011
+AC.Aero.CYw.beta = [-0.116451 -0.114087 -0.110915 -0.110254 -0.109838 -0.109562 -0.109370 -0.109231]; % 4/20/2017
 AC.Aero.CYw.beta = repmat(AC.Aero.CYw.beta, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CYw_pHat (/rad); pHat = b / (2*V) * p
-AC.Aero.CYw.pHat = -0.0375; % AD 3/30/2011
+AC.Aero.CYw.pHat = [0.392617 0.170300 0.056280 0.036780 0.025042 0.017431 0.012217 0.008490]; % 4/20/2017
 AC.Aero.CYw.pHat = repmat(AC.Aero.CYw.pHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CYw_rHat (/rad); rHat = b / (2*V) * r
-AC.Aero.CYw.rHat = 0.1500; % AD 3/30/2011
+AC.Aero.CYw.rHat = [0.039175 0.128017 0.141584 0.141978 0.141948 0.141822 0.141686 0.141565]; % 4/20/2017
 AC.Aero.CYw.rHat = repmat(AC.Aero.CYw.rHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % CYw_de (/rad)
-AC.Aero.CYw.delev = 0.0;
+AC.Aero.CYw.delev = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.CYw.delev = repmat(AC.Aero.CYw.delev, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CYw_dailL (/rad)
-AC.Aero.CYw.dailL = 0.5 * 0; % AD 3/30/2011
+AC.Aero.CYw.dailL = [1.000000e-06 5.000000e-06 7.000000e-06 8.000000e-06 8.000000e-06 8.000000e-06 8.000000e-06 8.000000e-06]; % 4/20/2017
 AC.Aero.CYw.dailL = repmat(AC.Aero.CYw.dailL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CYw_dailR (/rad)
 AC.Aero.CYw.dailR = AC.Aero.CYw.dailL; % FIXME - Copy of Left Side
 % CYw_drud (/rad)
-AC.Aero.CYw.drud = 0.1913; % AD 3/30/2011
+AC.Aero.CYw.drud = [1.711000e-03 1.721000e-03 1.687000e-03 1.679000e-03 1.674000e-03 1.670000e-03 1.668000e-03 1.666000e-03]; % 4/20/2017
 AC.Aero.CYw.drud = repmat(AC.Aero.CYw.drud, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CYw_dflapL (/rad)
-AC.Aero.CYw.dflapL = 0.5 * 0.0; 
+AC.Aero.CYw.dflapL = [5.100000e-05 7.000000e-05 7.800000e-05 7.900000e-05 8.000000e-05 8.000000e-05 8.000000e-05 8.100000e-05]; % 4/20/2017 
 AC.Aero.CYw.dflapL = repmat(AC.Aero.CYw.dflapL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % CYw_dflapR (/rad)
 AC.Aero.CYw.dflapR = AC.Aero.CYw.dflapL; % FIXME - Copy of Left Side
@@ -191,32 +191,32 @@ AC.Aero.CYw.tableSel = 1:size(AC.Aero.CYw.table, AC.Aero.CYw.tableDim);
 
 %% Roll moment coefficient
 % Cl_zero
-AC.Aero.Cl.zero = 0.0; 
+AC.Aero.Cl.zero = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.Cl.zero = repmat(AC.Aero.Cl.zero, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % Cl_beta (/rad)
-AC.Aero.Cl.beta = -0.0545; % AD 3/30/2011
+AC.Aero.Cl.beta = [-1.181490e-01 -5.491100e-02 -2.124100e-02 -1.539700e-02 -1.186600e-02 -9.572000e-03 -7.998000e-03 -6.872000e-03]; % 4/20/2017
 AC.Aero.Cl.beta = repmat(AC.Aero.Cl.beta, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cl_pHat (/rad); pHat = b / (2*V) * p
-AC.Aero.Cl.pHat = -0.4496; % AD 3/30/2011
+AC.Aero.Cl.pHat = [-0.362382 -0.390916 -0.397620 -0.398263 -0.398578 -0.398754 -0.398862 -0.398932]; % 4/20/2017
 AC.Aero.Cl.pHat = repmat(AC.Aero.Cl.pHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cl_rHat (/rad); rHat = b / (2*V) * r
-AC.Aero.Cl.rHat = 0.1086; % AD 3/30/2011
+AC.Aero.Cl.rHat = [0.244031 0.109987 0.041471 0.029663 0.022537 0.017909 0.014735 0.012464]; % 4/20/2017
 AC.Aero.Cl.rHat = repmat(AC.Aero.Cl.rHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % Cl_de (/rad)
-AC.Aero.Cl.delev = 0.0;
+AC.Aero.Cl.delev = [0.007770 0.008356 0.008476 0.008485 0.008490 0.008492 0.008493 0.008493]; % 4/20/2017
 AC.Aero.Cl.delev = repmat(AC.Aero.Cl.delev, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cl_dailL (/rad)
-AC.Aero.Cl.dailL = 0.5 * 0.1646; % AD 3/30/2011
+AC.Aero.Cl.dailL = [1.772000e-03 1.907000e-03 1.934000e-03 1.936000e-03 1.937000e-03 1.938000e-03 1.938000e-03 1.938000e-03]; % 4/20/2017
 AC.Aero.Cl.dailL = repmat(AC.Aero.Cl.dailL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cl_dailR (/rad)
 AC.Aero.Cl.dailR = -AC.Aero.Cl.dailL; % FIXME - Copy of Left Side
 % Cl_drud (/rad)
-AC.Aero.Cl.drud = 0.0115; % AD 3/30/2011
+AC.Aero.Cl.drud = [0.007770 0.008356 0.008476 0.008485 0.008490 0.008492 0.008493 0.008493]; % 4/20/2017
 AC.Aero.Cl.drud = repmat(AC.Aero.Cl.drud, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cl_dflapL (/rad)
-AC.Aero.Cl.dflapL = 0.5 * 0.0692; % AD 3/30/2011
+AC.Aero.Cl.dflapL = [7.480000e-04 8.080000e-04 8.200000e-04 8.210000e-04 8.220000e-04 8.220000e-04 8.220000e-04 8.220000e-04]; % 4/20/2017
 AC.Aero.Cl.dflapL = repmat(AC.Aero.Cl.dflapL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cl_dflapR (/rad)
 AC.Aero.Cl.dflapR = -AC.Aero.Cl.dflapL; % FIXME - Copy of Left Side
@@ -234,32 +234,32 @@ AC.Aero.Cl.tableSel = 1:size(AC.Aero.Cl.table, AC.Aero.Cl.tableDim);
 
 %% Pitch moment coefficient
 % Cm_zero
-AC.Aero.Cm.zero = -0.0278; 
+AC.Aero.Cm.zero = [-0.0278 -0.0278 -0.0278 -0.0278 -0.0278 -0.0278 -0.0278 -0.0278];%-0.0278; %turned this value into a array
 AC.Aero.Cm.zero = repmat(AC.Aero.Cm.zero, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % Cm_alpha (/rad)
-AC.Aero.Cm.alpha = -0.7230; % AD 3/16/2011
+AC.Aero.Cm.alpha = [-1.828045 -1.681784 -1.615002 -1.603768 -1.597016 -1.592640 -1.589643 -1.587501]; % 4/20/2017
 AC.Aero.Cm.alpha = repmat(AC.Aero.Cm.alpha, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cm_qHat (/rad); qHat = c / (2*V) * q
-AC.Aero.Cm.qHat = -13.5664; % AD 3/16/2011
+AC.Aero.Cm.qHat = [-10.372008 -10.841953 -10.951923 -10.963196 -10.968946 -10.972261 -10.974345 -10.975740]; % 4/20/2017
 AC.Aero.Cm.qHat = repmat(AC.Aero.Cm.qHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cm_alphaDot (/rps)
-AC.Aero.Cm.alphaDot = 0.0;
+AC.Aero.Cm.alphaDot = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.Cm.alphaDot = repmat(AC.Aero.Cm.alphaDot, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % Cm_de (/rad)
-AC.Aero.Cm.delev = -0.8488; % AD 3/16/2011
+AC.Aero.Cm.delev = [-1.848800e-02 -1.998400e-02 -2.030100e-02 -2.032900e-02 -2.034100e-02 -2.034800e-02 -2.035200e-02 -2.035500e-02]; % 4/20/2017
 AC.Aero.Cm.delev = repmat(AC.Aero.Cm.delev, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cm_dailL (/rad)
-AC.Aero.Cm.dailL = 0.5 * 0.0467;
+AC.Aero.Cm.dailL = [-2.789000e-03 -2.948000e-03 -2.964000e-03 -2.963000e-03 -2.962000e-03 -2.961000e-03 -2.960000e-03 -2.960000e-03]; % 4/20/2017
 AC.Aero.Cm.dailL = repmat(AC.Aero.Cm.dailL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cm_dailR (/rad)
 AC.Aero.Cm.dailR = AC.Aero.Cm.dailL; % FIXME - Copy of Left Side
 % Cm_drud (/rad)
-AC.Aero.Cm.drud = 0.0;
+AC.Aero.Cm.drud = [0 0 0 0 0 0 0 0];
 AC.Aero.Cm.drud = repmat(AC.Aero.Cm.drud, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cm_dflapL (/rad)
-AC.Aero.Cm.dflapL = 0.5 * 0.0467;
+AC.Aero.Cm.dflapL = [-3.250000e-04 -2.940000e-04 -2.720000e-04 -2.680000e-04 -2.650000e-04 -2.640000e-04 -2.620000e-04 -2.620000e-04]; % 4/20/2017
 AC.Aero.Cm.dflapL = repmat(AC.Aero.Cm.dflapL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cm_dflapR (/rad)
 AC.Aero.Cm.dflapR = AC.Aero.Cm.dflapL; % FIXME - Copy of Left Side
@@ -277,32 +277,32 @@ AC.Aero.Cm.tableSel = 1:size(AC.Aero.Cm.table, AC.Aero.Cm.tableDim);
 
 %% Yaw moment coefficient
 % Cn_zero
-AC.Aero.Cn.zero = 0.0; 
+AC.Aero.Cn.zero = [0 0 0 0 0 0 0 0]; % 4/20/17 
 AC.Aero.Cn.zero = repmat(AC.Aero.Cn.zero, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % Cn_beta (/rad)
-AC.Aero.Cn.beta = 0.0723; % AD 3/30/2011
+AC.Aero.Cn.beta = [0.105333 0.070854 0.062054 0.061087 0.060581 0.060282 0.060091 0.059961]; % 4/20/2017
 AC.Aero.Cn.beta = repmat(AC.Aero.Cn.beta, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cn_pHat (/rad); pHat = b / (2*V) * p
-AC.Aero.Cn.pHat = 0.1180; % AD 3/30/2011
+AC.Aero.Cn.pHat = [-0.107037 -0.041185 -0.011902 -0.007045 -0.004136 -0.002255 -0.000968 -0.000049]; % 4/20/2017
 AC.Aero.Cn.pHat = repmat(AC.Aero.Cn.pHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cn_rHat (/rad); rHat = b / (2*V) * r
-AC.Aero.Cn.rHat = -0.1833; % AD 3/30/2011
+AC.Aero.Cn.rHat = [-0.104692 -0.087533 -0.081097 -0.080170 -0.079638 -0.079302 -0.079078 -0.078919]; % 4/20/2017
 AC.Aero.Cn.rHat = repmat(AC.Aero.Cn.rHat, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 
 % Cn_de (/rad)
-AC.Aero.Cn.delev = 0.0;
+AC.Aero.Cn.delev = [0 0 0 0 0 0 0 0]; % 4/20/2017
 AC.Aero.Cn.delev = repmat(AC.Aero.Cn.delev, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cn_dailL (/rad)
-AC.Aero.Cn.dailL = 0.5 * -0.0574;
+AC.Aero.Cn.dailL = [1.000000e-04 4.200000e-05 1.300000e-05 8.000000e-06 5.000000e-06 3.000000e-06 1.000000e-06 0]; % 4/20/2017
 AC.Aero.Cn.dailL = repmat(AC.Aero.Cn.dailL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cn_dailR (/rad)
 AC.Aero.Cn.dailR = -AC.Aero.Cn.dailL; % FIXME - Copy of Left Side
 % Cn_drud (/rad)
-AC.Aero.Cn.drud = 0.0;
+AC.Aero.Cn.drud = [-1.050000e-03 -1.046000e-03 -1.021000e-03 -1.015000e-03 -1.011000e-03 -1.009000e-03 -1.007000e-03 -1.006000e-03]; % 4/20/2017
 AC.Aero.Cn.drud = repmat(AC.Aero.Cn.drud, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cn_dflapL (/rad)
-AC.Aero.Cn.dflapL = 0.5 * -0.0214;
+AC.Aero.Cn.dflapL = [1.300000e-05 -1.900000e-05 -3.400000e-05 -3.600000e-05 -3.800000e-05 -3.900000e-05 -4.000000e-05 -4.000000e-05]; % 4/20/2017
 AC.Aero.Cn.dflapL = repmat(AC.Aero.Cn.dflapL, length(AC.Aero.alphaBkPts), length(AC.Aero.betaBkPts)); % FIXME - Force Monotonic Increasing, Force Beta Data
 % Cn_dflapR (/rad)
 AC.Aero.Cn.dflapR = -AC.Aero.Cn.dflapL; % FIXME - Copy of Left Side
