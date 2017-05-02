@@ -21,24 +21,24 @@ r2d = 180/pi;
 d2r = pi/180;
 
 
-%% Configure Airframe
+%% Configure Simulation
 % 1 = UltraStick25e, standard outfit
 if ~exist('aircraftType', 'var'), aircraftType = 1; end
 
 % Configure simulation specifically for this airfame
 switch aircraftType
-    case 1 % UltraStick25e, standard outfit
-
-        % Configure variant for model refenence        
-        aircraftVariant = Simulink.Variant('aircraftType == 1');
+    case 1 % UltraStick25e, AVL AeroModel, Standard Actuators and Sensors
+        % Simulation sample time
+        SampleTime = 0.02; % sec
         
         % Aircraft Config
         [AC, Env] = SimConfig('UltraStick25e');
+
+        % Configure variant for model refenence   
+        aeroType = 1;
+        aeroVariant = Simulink.Variant('aeroType == 1');
+        
 end
-
-
-%% Simulation sample time
-SampleTime = 0.02; % sec
 
 
 %% Setup simulation buses
@@ -97,7 +97,7 @@ switch lower(AC.aircraft)
         % Initial Engine Speed [rad/s]
         TrimCondition.EngineSpeedIni = 827;
         
-    case 'minimutt'
+    case 'maewing2'
         % Control surface initial values, rad:
         % elevator, aileron, L1, L4, R1, R4
         TrimCondition.Inputs.Effector = [-.09 0 0 0 0 0]';
