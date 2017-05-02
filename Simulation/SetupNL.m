@@ -29,10 +29,11 @@ if ~exist('aircraftType', 'var'), aircraftType = 1; end
 switch aircraftType
     case 1 % UltraStick25e, AVL AeroModel, Standard Actuators and Sensors
         % Simulation sample time
-        SampleTime = 0.02; % sec
+        SampleTime = 0.02; % secdamp
         
         % Aircraft Config
         [AC, Env] = SimConfig('UltraStick25e');
+%        [AC, Env] = SimConfig('UltraStick25e_Old');
 
         % Configure variant for model refenence   
         aeroType = 1;

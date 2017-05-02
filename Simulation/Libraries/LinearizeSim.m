@@ -70,10 +70,7 @@ switch lower(AC.aircraft)
         Ilon = [2 1];
         longmod = modred(linmodel(Ylon,Ilon),setdiff(1:13,Xlon),'Truncate');
         longmod = xperm(longmod,[3 4 2 1 5 6]); % reorder state
-        fprintf('\n  Longitudinal Model\n------------------------\n');
-        longmod
-        fprintf('\n\nLongitudinal Poles:');
-        damp(longmod)
+
         
         %% GENERATE SHORT PERIOD LINEAR MODEL
         % Short period dynamics
@@ -86,11 +83,8 @@ switch lower(AC.aircraft)
         Xlon = [9 5];
         Ylon = [12 5 9];
         Ilon = 2;
-        spmod = modred(linmodel(Ylon,Ilon),setdiff(1:13,Xlon),'Truncate');
-        fprintf('\n  Short Period Model\n------------------------\n');
-        spmod
-        fprintf('\n\nShort Period Poles:');
-        damp(spmod)
+        spmod = modred(linmodel(Ylon,Ilon), setdiff(1:13,Xlon), 'Truncate');
+
         
         %% GENERATE LATERAL-DIRECTIONAL LINEAR MODEL
         % Lateral-directional dynamics
@@ -105,10 +99,7 @@ switch lower(AC.aircraft)
         Ilat = [4 5 3];
         latmod = modred(linmodel(Ylat,Ilat),setdiff(1:13,Xlat),'Truncate');
         latmod = xperm(latmod,[5 3 4 1 2]); % reorder state
-        fprintf('\n\n  Lateral-Directional Model\n-----------------------------\n');
-        latmod
-        fprintf('\n\nLateral-Directional Poles:');
-        damp(latmod)
+
             
     case 'minimutt'
         
