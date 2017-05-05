@@ -107,9 +107,8 @@ AC.Aero.CL.tableCntrl = cat(AC.Aero.tableDim, ...
 AC.Aero.CL.tableSelStab = 1:size(AC.Aero.CL.tableStab, AC.Aero.tableDim);
 AC.Aero.CL.tableSelCntrl = 1:size(AC.Aero.CL.tableCntrl, AC.Aero.tableDim);
 
-%% Drag coefficient
+%% Drag coefficient (CD = CD_vis + (CL - CL_minD)^2 / (pi*AR*osw) + CD_surf)
 AC.Aero.CD.vis = repmat(0.0434, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CD.ind = repmat(0.08519, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CD.osw = repmat(0.75, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CD.dflapR = repmat(0.1467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CD.dailR = repmat(0.0302, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
@@ -118,11 +117,12 @@ AC.Aero.CD.dflapL = AC.Aero.CD.dailR;
 AC.Aero.CD.delev = repmat(0.0135, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CD.drud = repmat(0.0303, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
-AC.Aero.CD.tot = AC.Aero.CD.vis + AC.Aero.CD.ind; % Fix Total Drag
+AC.Aero.CL.minD = AC.Aero.CL.tot; % This works because this model is a single condition
+
 
 % Table for Simulink
 AC.Aero.CD.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.CD.vis, AC.Aero.CD.ind, AC.Aero.CD.osw);
+    AC.Aero.CD.vis, AC.Aero.CD.osw);
 AC.Aero.CD.tableCntrl = cat(AC.Aero.tableDim, ...
     AC.Aero.CD.delev, AC.Aero.CD.dailL, AC.Aero.CD.dailR, AC.Aero.CD.drud, AC.Aero.CD.dflapL, AC.Aero.CD.dflapR);
 
