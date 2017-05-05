@@ -19,8 +19,8 @@
 % Turn off multiple path warning
 warning('off', 'MATLAB:dispatcher:pathWarning');
 
-% Add paths, excluding those containing 'CVS'
-addpath(genpath(filePath))
+% Add paths, exclude 'git'
+addpath(regexprep(genpath(filePath), 'git', ''))
 
 % Turn on multiple path warning
 warning('on', 'MATLAB:dispatcher:pathWarning');

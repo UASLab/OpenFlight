@@ -32,8 +32,8 @@ switch aircraftType
         SampleTime = 0.02; % secdamp
         
         % Aircraft Config
-        [AC, Env] = SimConfig('UltraStick25e');
-%        [AC, Env] = SimConfig('UltraStick25e_Old');
+%         [AC, Env] = SimConfig('UltraStick25e');
+       [AC, Env] = SimConfig('UltraStick25e_Old');
 
         % Configure variant for model refenence   
         aeroType = 1;
