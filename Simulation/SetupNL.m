@@ -58,8 +58,6 @@ AC_IMU_TYPE2 = Simulink.Variant('AC_IMU == 2');
 AC_GPS_TYPE1 = Simulink.Variant('AC_GPS == 1');
 AC_GPS_TYPE2 = Simulink.Variant('AC_GPS == 2');
 AC_GPS_TYPE3 = Simulink.Variant('AC_GPS == 3');
-AC_PITOT_TYPE1 = Simulink.Variant('AC_PITOT == 1');
-AC_PITOT_TYPE2 = Simulink.Variant('AC_PITOT == 2');
 AC_AIRDATA_TYPE1 = Simulink.Variant('AC_AIRDATA == 1');
 AC_AIRDATA_TYPE2 = Simulink.Variant('AC_AIRDATA == 2');
 AC_AIRDATA_TYPE3 = Simulink.Variant('AC_AIRDATA == 3');
@@ -81,14 +79,6 @@ switch AC.Sim.Sensor.GPS
         AC_GPS = 2;
     case 3
         AC_GPS = 3;
-end
-
-% Pitot Static
-switch AC.Sim.Sensor.Pitot
-    case 1
-        AC_PITOT = 1;
-    case 2
-        AC_PITOT = 2;
 end
 
 % Airdata Sensors
