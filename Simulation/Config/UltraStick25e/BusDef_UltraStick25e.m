@@ -2,17 +2,27 @@
 busNames = {'dthr_pilot','de_pilot','dr_pilot','da_l_pilot','da_r_pilot','df_l_pilot','df_r_pilot','mode'};
 assignin('base', 'PilotCommands', CreateBus(busNames));
 
+%% Initialize Sensors buses
+% IMU bus
+busNames = {'p_rps','q_rps','r_rps','Ax_mpss','Ay_mpss','Az_mpss'};
+assignin('base', 'IMU', CreateBus(busNames));
+
+% GPS bus
+busNames = {'GeodeticLatitude_deg','GeodeticLonggitude_deg','Altitude_m','Xdot_mps','Ydot_mps','Zdot_mps'};
+assignin('base', 'GPS', CreateBus(busNames));
+
+% Airdata Sensors bus
+busNames = {'Vs_mps','AltitudeAboveGroundLevel_m','alpha_rad','beta_rad','Pd_kPa','Ps_kPa'};
+assignin('base', 'AirdataSensors', CreateBus(busNames));
+
+% Magnetic Field bus
+busNames = {'MagneticFieldX_nT', 'MagneticFieldY_nT', 'MagneticFieldZ_nT'};
+assignin('base', 'MagneticField', CreateBus(busNames));
 
 %% Initialize Sensors bus
-busNames = {'phi_rad','theta_rad','psi_rad','p_rps','q_rps','r_rps','Ax_mpss','Ay_mpss','Az_mpss',...
-    'GeodeticLatitude_deg','GeodeticLonggitude_deg','Altitude_m','Xdot_mps','Ydot_mps','Zdot_mps',...
-    'Vs_mps','AltitudeAboveGroundLevel_m','alpha_rad','beta_rad','Pd_kPa','Ps_kPa'};
-
-busDim = repmat({1}, size(busNames));
-busNames{end+1} = 'MagneticField_nT';
-busDim{end+1} = [1,3];
-
-assignin('base', 'Sensors', CreateBus(busNames, [], busDim));
+busNames = {'IMU', 'GPS', 'AirdataSensors', 'MagneticField'};
+busDataType = {'Bus: IMU', 'Bus: GPS', 'Bus: AirdataSensors', 'Bus: MagneticField'};
+assignin('base', 'Sensors', CreateBus(busNames, busDataType));
 
 
 %% Initialize Refs bus

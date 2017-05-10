@@ -15,28 +15,28 @@ if nargin < 2, fileSave = []; end
 
 switch lower(aircraft)
     case 'ultrastick120'
-        % Defice Aircraft Specific Parameters
+        % Define Aircraft Specific Parameters
         AC = ParamDef_UltraStick120;
         
         % Define Aircraft Specific Buses
         BusDef_UltraStick120;
         
     case 'ultrastick25e_old'
-        % Defice Aircraft Specific Parameters
+        % Define Aircraft Specific Parameters
         AC = ParamDef_UltraStick25e_Old;
         
         % Define Aircraft Specific Buses
         BusDef_UltraStick25e;
         
     case 'ultrastick25e'
-        % Defice Aircraft Specific Parameters
+        % Define Aircraft Specific Parameters
         AC = ParamDef_UltraStick25e;
         
         % Define Aircraft Specific Buses
         BusDef_UltraStick25e;
         
     case 'maewing2'
-        % Defice Aircraft Specific Parameters
+        % Define Aircraft Specific Parameters
         AC = ParamDef_mAEWing2;
         
         % Define Aircraft Specific Buses

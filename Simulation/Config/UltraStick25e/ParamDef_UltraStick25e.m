@@ -406,7 +406,7 @@ AC.Prop.Jmp = 0.00012991;  % [kg*m^2] From experimental measurement (not updated
 d2r = pi/180; % Degrees to Radians conversion
 
 % Select Effector Variant Type
-AC.Sim.Effectors = 1;
+AC.Sim.Effectors = 2;
 
 %Elevator
 AC.Actuator.elevator.BW = 8;    % [Hz]
@@ -452,8 +452,7 @@ AC.Actuator.throttle.NegLim = 0; %[nd]
 % Model Variants
 AC.Sim.Sensor.IMU = 2;
 AC.Sim.Sensor.GPS = 3;
-AC.Sim.Sensor.Pitot = 1;
-AC.Sim.Sensor.Airdata = 4;
+AC.Sim.Sensor.Airdata = 3;
 
 % Flag to enable noise
 AC.Sensors.NoiseOn = 1;
