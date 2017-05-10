@@ -52,7 +52,7 @@ linmodel = linearize(simModel, OperatingPoint.op_point, io);
 switch lower(AC.aircraft)
     case {'ultrastick120', 'ultrastick25e'} 
         
-        set(linmodel, 'InputName', {'dThrot'; 'dElev' ; 'dAilL'; 'dAilR'; 'dRud'; 'dFlapL'; 'dFlapR'});
+        set(linmodel, 'InputName', {'dThrot'; 'dElev'; 'dRud'; 'dAilL'; 'dAilR'; 'dFlapL'; 'dFlapR'});
         set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
         NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
         linmodel.StateName(1:length(NewStateNames)) = NewStateNames;

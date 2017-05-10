@@ -58,9 +58,6 @@ AC.Geometry.S = 0.3097; % OLD
 % Wing Aspect Ratio [m^2]
 AC.Geometry.AR = AC.Geometry.b^2 / AC.Geometry.S;
 
-% Control Surfaces
-AC.Aero.surfDesc = {'delev', 'dailL', 'dailR', 'drud', 'dflapL', 'dflapR'}; % Sequence as defined in Effector Subsystem
-
 %%
 % Flow Conditions
 
@@ -73,61 +70,84 @@ AC.Aero.betaBkPts = [-0.174532925199433 -0.0872664625997165 0 0.0872664625997165
 AC.Aero.breakPts = {AC.Aero.velBkPts, AC.Aero.betaBkPts};
 AC.Aero.breakDesc = {'velocity_mps', 'beta_rad'};
 
-% Setup Lookup Tables
-depListStab = {'alpha', 'beta', 'alphaDot', 'betaDot', 'pHat', 'qHat', 'rHat'};
-depListCntrl = AC.Aero.surfDesc;
-depList = [depListStab, depListCntrl]; % Dependency vector
 
-AC.Aero.tableDim = length(AC.Aero.breakPts) + 1; % Dimension of the result of the table lookup
+%% Aero Table Setup
+% Stability Table Fields, Sequence must match Simulink Model
+AC.Aero.stabFields = {'zero', 'alpha', 'beta', 'alphaDot', 'betaDot', 'pHat', 'qHat', 'rHat'};
+AC.Aero.stabDragFields = {'vis', 'osw'};
+
+% Control Surfaces, Sequence must match that defined in Effector Subsystem
+AC.Aero.cntrlFields = {'delev', 'drud', 'dailL', 'dailR', 'dflapL', 'dflapR'};
+
+% Setup Lookup Tables
+depList = [AC.Aero.stabFields{2:end}, AC.Aero.cntrlFields]; % Dependency vector, used to back compute the 'zero' term
+
+% Dimension of the result of the table lookup
+AC.Aero.tableDim = length(AC.Aero.breakPts) + 1;
+
 
 %% Lift coefficient
 AC.Aero.CL.tot = repmat(0.23, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.zero = repmat(0.1086, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.alpha = repmat(4.58, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.beta = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CL.alphaDot = repmat(0 * 1.9724, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CL.alphaDot = repmat(0 * 1.9724, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts)); % Defined, but not used in the Old Sim
 AC.Aero.CL.betaDot = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.pHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.qHat = repmat(6.1639, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.rHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CL.dflapR = repmat(0.7400, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CL.dailR = repmat(0.4751, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CL.dflapR = repmat(0.5 * 0.7400, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CL.dailR = repmat(0.5 * 0.4751, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.dailL = AC.Aero.CL.dailR;
 AC.Aero.CL.dflapL = AC.Aero.CL.dflapR;
 AC.Aero.CL.delev = repmat(0.0983, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CL.drud = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
-% Table for Simulink
-AC.Aero.CL.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.CL.zero, AC.Aero.CL.alpha, AC.Aero.CL.beta, AC.Aero.CL.alphaDot, AC.Aero.CL.betaDot, ...
-    AC.Aero.CL.pHat, AC.Aero.CL.qHat, AC.Aero.CL.rHat);
-AC.Aero.CL.tableCntrl = cat(AC.Aero.tableDim, ...
-    AC.Aero.CL.delev, AC.Aero.CL.dailL, AC.Aero.CL.dailR, AC.Aero.CL.drud, AC.Aero.CL.dflapL, AC.Aero.CL.dflapR);
+% Tables for Simulink
+coef = 'CL';
 
-AC.Aero.CL.tableSelStab = 1:size(AC.Aero.CL.tableStab, AC.Aero.tableDim);
-AC.Aero.CL.tableSelCntrl = 1:size(AC.Aero.CL.tableCntrl, AC.Aero.tableDim);
+% Stability Table
+AC.Aero.(coef).tableStab = AC.Aero.(coef).(AC.Aero.stabFields{1});
+for indxSurf = 2:length(AC.Aero.stabFields)
+    AC.Aero.(coef).tableStab = cat(AC.Aero.tableDim, AC.Aero.(coef).tableStab, AC.Aero.(coef).(AC.Aero.stabFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelStab = 1:size(AC.Aero.(coef).tableStab, AC.Aero.tableDim); % Table select for choosing active fields
+
+% Control Table
+AC.Aero.(coef).tableCntrl = AC.Aero.(coef).(AC.Aero.cntrlFields{1});
+for indxSurf = 2:length(AC.Aero.cntrlFields)
+    AC.Aero.(coef).tableCntrl = cat(AC.Aero.tableDim, AC.Aero.(coef).tableCntrl, AC.Aero.(coef).(AC.Aero.cntrlFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelCntrl = 1:size(AC.Aero.(coef).tableCntrl, AC.Aero.tableDim); % Table select for choosing active fields
 
 %% Drag coefficient (CD = CD_vis + (CL - CL_minD)^2 / (pi*AR*osw) + CD_surf)
 AC.Aero.CD.vis = repmat(0.0434, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CD.osw = repmat(0.75, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CD.dflapR = repmat(0.1467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CD.dailR = repmat(0.0302, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CD.dailL = AC.Aero.CD.dflapR;
-AC.Aero.CD.dflapL = AC.Aero.CD.dailR;
+AC.Aero.CD.dflapR = repmat(0.5 * 0.1467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CD.dailR = repmat(0.5 * 0.0302, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CD.dailL = AC.Aero.CD.dailR;
+AC.Aero.CD.dflapL = AC.Aero.CD.dflapR;
 AC.Aero.CD.delev = repmat(0.0135, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CD.drud = repmat(0.0303, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
 AC.Aero.CL.minD = AC.Aero.CL.tot; % This works because this model is a single condition
 
-
 % Table for Simulink
-AC.Aero.CD.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.CD.vis, AC.Aero.CD.osw);
-AC.Aero.CD.tableCntrl = cat(AC.Aero.tableDim, ...
-    AC.Aero.CD.delev, AC.Aero.CD.dailL, AC.Aero.CD.dailR, AC.Aero.CD.drud, AC.Aero.CD.dflapL, AC.Aero.CD.dflapR);
+coef = 'CD';
 
-AC.Aero.CD.tableSelStab = 1:size(AC.Aero.CD.tableStab, AC.Aero.tableDim);
-AC.Aero.CD.tableSelCntrl = 1:size(AC.Aero.CD.tableCntrl, AC.Aero.tableDim);
+% Stability Table
+AC.Aero.(coef).tableStab = AC.Aero.(coef).(AC.Aero.stabDragFields{1});
+for indxSurf = 2:length(AC.Aero.stabDragFields)
+    AC.Aero.(coef).tableStab = cat(AC.Aero.tableDim, AC.Aero.(coef).tableStab, AC.Aero.(coef).(AC.Aero.stabDragFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelStab = 1:size(AC.Aero.(coef).tableStab, AC.Aero.tableDim); % Table select for choosing active fields
+
+% Control Table
+AC.Aero.(coef).tableCntrl = AC.Aero.(coef).(AC.Aero.cntrlFields{1});
+for indxSurf = 2:length(AC.Aero.cntrlFields)
+    AC.Aero.(coef).tableCntrl = cat(AC.Aero.tableDim, AC.Aero.(coef).tableCntrl, AC.Aero.(coef).(AC.Aero.cntrlFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelCntrl = 1:size(AC.Aero.(coef).tableCntrl, AC.Aero.tableDim); % Table select for choosing active fields
 
 
 %% Side Force coefficient
@@ -139,22 +159,30 @@ AC.Aero.CY.betaDot = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPt
 AC.Aero.CY.pHat = repmat(0.0375, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CY.qHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CY.rHat = repmat(-0.1500, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CY.dflapR = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.CY.dailR = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CY.dflapR = repmat(0.5 * 0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.CY.dailR = repmat(0.5 * 0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CY.dailL = -AC.Aero.CY.dailR;
 AC.Aero.CY.dflapL = -AC.Aero.CY.dflapR;
 AC.Aero.CY.delev = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.CY.drud = repmat(-0.1913, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
 % Table for Simulink
-AC.Aero.CY.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.CY.zero, AC.Aero.CY.alpha, AC.Aero.CY.beta, AC.Aero.CY.alphaDot, AC.Aero.CY.betaDot, ...
-    AC.Aero.CY.pHat, AC.Aero.CY.qHat, AC.Aero.CY.rHat);
-AC.Aero.CY.tableCntrl = cat(AC.Aero.tableDim, ...
-    AC.Aero.CY.delev, AC.Aero.CY.dailL, AC.Aero.CY.dailR, AC.Aero.CY.drud, AC.Aero.CY.dflapL, AC.Aero.CY.dflapR);
+coef = 'CY';
 
-AC.Aero.CY.tableSelStab = 1:size(AC.Aero.CY.tableStab, AC.Aero.tableDim);
-AC.Aero.CY.tableSelCntrl = 1:size(AC.Aero.CY.tableCntrl, AC.Aero.tableDim);
+% Stability Table
+AC.Aero.(coef).tableStab = AC.Aero.(coef).(AC.Aero.stabFields{1});
+for indxSurf = 2:length(AC.Aero.stabFields)
+    AC.Aero.(coef).tableStab = cat(AC.Aero.tableDim, AC.Aero.(coef).tableStab, AC.Aero.(coef).(AC.Aero.stabFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelStab = 1:size(AC.Aero.(coef).tableStab, AC.Aero.tableDim); % Table select for choosing active fields
+
+% Control Table
+AC.Aero.(coef).tableCntrl = AC.Aero.(coef).(AC.Aero.cntrlFields{1});
+for indxSurf = 2:length(AC.Aero.cntrlFields)
+    AC.Aero.(coef).tableCntrl = cat(AC.Aero.tableDim, AC.Aero.(coef).tableCntrl, AC.Aero.(coef).(AC.Aero.cntrlFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelCntrl = 1:size(AC.Aero.(coef).tableCntrl, AC.Aero.tableDim); % Table select for choosing active fields
+
 
 %% Roll moment coefficient
 AC.Aero.Cl.zero = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
@@ -165,22 +193,30 @@ AC.Aero.Cl.betaDot = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPt
 AC.Aero.Cl.pHat = repmat(-0.4496, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cl.qHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cl.rHat = repmat(0.1086, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.Cl.dflapR = repmat(-0.0692, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.Cl.dailR = repmat(-0.1646, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.Cl.dflapR = repmat(0.5 * -0.0692, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.Cl.dailR = repmat(0.5 * -0.1646, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cl.dailL = -AC.Aero.Cl.dailR;
 AC.Aero.Cl.dflapL = -AC.Aero.Cl.dflapR;
 AC.Aero.Cl.delev = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cl.drud = repmat(0.0115, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
 % Table for Simulink
-AC.Aero.Cl.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.Cl.zero, AC.Aero.Cl.alpha, AC.Aero.Cl.beta, AC.Aero.Cl.alphaDot, AC.Aero.Cl.betaDot, ...
-    AC.Aero.Cl.pHat, AC.Aero.Cl.qHat, AC.Aero.Cl.rHat);
-AC.Aero.Cl.tableCntrl = cat(AC.Aero.tableDim, ...
-    AC.Aero.Cl.delev, AC.Aero.Cl.dailL, AC.Aero.Cl.dailR, AC.Aero.Cl.drud, AC.Aero.Cl.dflapL, AC.Aero.Cl.dflapR);
+coef = 'Cl';
 
-AC.Aero.Cl.tableSelStab = 1:size(AC.Aero.Cl.tableStab, AC.Aero.tableDim);
-AC.Aero.Cl.tableSelCntrl = 1:size(AC.Aero.Cl.tableCntrl, AC.Aero.tableDim);
+% Stability Table
+AC.Aero.(coef).tableStab = AC.Aero.(coef).(AC.Aero.stabFields{1});
+for indxSurf = 2:length(AC.Aero.stabFields)
+    AC.Aero.(coef).tableStab = cat(AC.Aero.tableDim, AC.Aero.(coef).tableStab, AC.Aero.(coef).(AC.Aero.stabFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelStab = 1:size(AC.Aero.(coef).tableStab, AC.Aero.tableDim); % Table select for choosing active fields
+
+% Control Table
+AC.Aero.(coef).tableCntrl = AC.Aero.(coef).(AC.Aero.cntrlFields{1});
+for indxSurf = 2:length(AC.Aero.cntrlFields)
+    AC.Aero.(coef).tableCntrl = cat(AC.Aero.tableDim, AC.Aero.(coef).tableCntrl, AC.Aero.(coef).(AC.Aero.cntrlFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelCntrl = 1:size(AC.Aero.(coef).tableCntrl, AC.Aero.tableDim); % Table select for choosing active fields
+
 
 %% Pitch moment coefficient
 AC.Aero.Cm.zero = repmat(-0.0278, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
@@ -191,22 +227,30 @@ AC.Aero.Cm.betaDot = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPt
 AC.Aero.Cm.pHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cm.qHat = repmat(-13.5664, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cm.rHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.Cm.dflapR = repmat(0.0467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.Cm.dailR = repmat(0.0467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.Cm.dflapR = repmat(0.5 * 0.0467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.Cm.dailR = repmat(0.5 * 0.0467, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cm.dailL = AC.Aero.Cm.dailR;
 AC.Aero.Cm.dflapL = AC.Aero.Cm.dflapR;
 AC.Aero.Cm.delev = repmat(-0.8488, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cm.drud = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
 % Table for Simulink
-AC.Aero.Cm.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.Cm.zero, AC.Aero.Cm.alpha, AC.Aero.Cm.beta, AC.Aero.Cm.alphaDot, AC.Aero.Cm.betaDot, ...
-    AC.Aero.Cm.pHat, AC.Aero.Cm.qHat, AC.Aero.Cm.rHat);
-AC.Aero.Cm.tableCntrl = cat(AC.Aero.tableDim, ...
-    AC.Aero.Cm.delev, AC.Aero.Cm.dailL, AC.Aero.Cm.dailR, AC.Aero.Cm.drud, AC.Aero.Cm.dflapL, AC.Aero.Cm.dflapR);
+coef = 'Cm';
 
-AC.Aero.Cm.tableSelStab = 1:size(AC.Aero.Cm.tableStab, AC.Aero.tableDim);
-AC.Aero.Cm.tableSelCntrl = 1:size(AC.Aero.Cm.tableCntrl, AC.Aero.tableDim);
+% Stability Table
+AC.Aero.(coef).tableStab = AC.Aero.(coef).(AC.Aero.stabFields{1});
+for indxSurf = 2:length(AC.Aero.stabFields)
+    AC.Aero.(coef).tableStab = cat(AC.Aero.tableDim, AC.Aero.(coef).tableStab, AC.Aero.(coef).(AC.Aero.stabFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelStab = 1:size(AC.Aero.(coef).tableStab, AC.Aero.tableDim); % Table select for choosing active fields
+
+% Control Table
+AC.Aero.(coef).tableCntrl = AC.Aero.(coef).(AC.Aero.cntrlFields{1});
+for indxSurf = 2:length(AC.Aero.cntrlFields)
+    AC.Aero.(coef).tableCntrl = cat(AC.Aero.tableDim, AC.Aero.(coef).tableCntrl, AC.Aero.(coef).(AC.Aero.cntrlFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelCntrl = 1:size(AC.Aero.(coef).tableCntrl, AC.Aero.tableDim); % Table select for choosing active fields
+
 
 %% Yaw moment coefficient
 AC.Aero.Cn.zero = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
@@ -217,22 +261,29 @@ AC.Aero.Cn.betaDot = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPt
 AC.Aero.Cn.pHat = repmat(0.1180, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cn.qHat = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cn.rHat = repmat(-0.1833, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.Cn.dflapR = repmat(0.0214, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
-AC.Aero.Cn.dailR = repmat(0.0574, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.Cn.dflapR = repmat(0.5 * 0.0214, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
+AC.Aero.Cn.dailR = repmat(0.5 * 0.0574, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cn.dailL = -AC.Aero.Cn.dailR;
 AC.Aero.Cn.dflapL = -AC.Aero.Cn.dflapR;
 AC.Aero.Cn.delev = repmat(0, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 AC.Aero.Cn.drud = repmat(-0.1811, length(AC.Aero.velBkPts), length(AC.Aero.betaBkPts));
 
 % Table for Simulink
-AC.Aero.Cn.tableStab = cat(AC.Aero.tableDim, ...
-    AC.Aero.Cn.zero, AC.Aero.Cn.alpha, AC.Aero.Cn.beta, AC.Aero.Cn.alphaDot, AC.Aero.Cn.betaDot, ...
-    AC.Aero.Cn.pHat, AC.Aero.Cn.qHat, AC.Aero.Cn.rHat);
-AC.Aero.Cn.tableCntrl = cat(AC.Aero.tableDim, ...
-    AC.Aero.Cn.delev, AC.Aero.Cn.dailL, AC.Aero.Cn.dailR, AC.Aero.Cn.drud, AC.Aero.Cn.dflapL, AC.Aero.Cn.dflapR);
+coef = 'Cn';
 
-AC.Aero.Cn.tableSelStab = 1:size(AC.Aero.Cn.tableStab, AC.Aero.tableDim);
-AC.Aero.Cn.tableSelCntrl = 1:size(AC.Aero.Cn.tableCntrl, AC.Aero.tableDim);
+% Stability Table
+AC.Aero.(coef).tableStab = AC.Aero.(coef).(AC.Aero.stabFields{1});
+for indxSurf = 2:length(AC.Aero.stabFields)
+    AC.Aero.(coef).tableStab = cat(AC.Aero.tableDim, AC.Aero.(coef).tableStab, AC.Aero.(coef).(AC.Aero.stabFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelStab = 1:size(AC.Aero.(coef).tableStab, AC.Aero.tableDim); % Table select for choosing active fields
+
+% Control Table
+AC.Aero.(coef).tableCntrl = AC.Aero.(coef).(AC.Aero.cntrlFields{1});
+for indxSurf = 2:length(AC.Aero.cntrlFields)
+    AC.Aero.(coef).tableCntrl = cat(AC.Aero.tableDim, AC.Aero.(coef).tableCntrl, AC.Aero.(coef).(AC.Aero.cntrlFields{indxSurf}));
+end
+AC.Aero.(coef).tableSelCntrl = 1:size(AC.Aero.(coef).tableCntrl, AC.Aero.tableDim); % Table select for choosing active fields
 
 
 %% PROPULSION
@@ -286,6 +337,11 @@ AC.Prop.OmegaSaturation.Lower = 1;
 % Electric motor and propeller combine moment of inertia
 AC.Prop.Jmp = 0.00012991;  % [kg*m^2] From experimental measurement (not updated with Jan 2011 data)
 
+%Throttle
+AC.Prop.throttle.PosLim = 1;  % [nd]
+AC.Prop.throttle.NegLim = 0; %[nd]
+
+
 %% Configure Actuators and Initial Conditions
 d2r = pi/180; % Degrees to Radians conversion
 
@@ -325,10 +381,6 @@ AC.Actuator.r_flap.BW = 8;    % [Hz]
 AC.Actuator.r_flap.RateLim = 150*d2r;   % [rad/s]
 AC.Actuator.r_flap.PosLim = 25*d2r;  % [rad]
 AC.Actuator.r_flap.NegLim = -25*d2r; %[rad]
-
-%Throttle
-AC.Actuator.throttle.PosLim = 1;  % [nd]
-AC.Actuator.throttle.NegLim = 0; %[nd]
 
 
 %% Configure Sensor Error Models

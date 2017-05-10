@@ -92,7 +92,7 @@ end
 % surpression flaps for miniMUTT)
 switch lower(AC.aircraft)
     case {'ultrastick120', 'ultrastick25e'}
-        InputNames = {'throttle', 'elevator', 'rudder', 'aileron', 'l_flap', 'r_flap'};
+        InputNames = {'elevator', 'rudder', 'aileron', 'l_flap', 'r_flap'};
         if ~isfield(target,'l_flap'), target.l_flap=0; end
         if ~isfield(target,'r_flap'), target.r_flap=0; end
     case 'minimutt'
@@ -281,7 +281,7 @@ if isfield(target,'gamma')
 end
 
 if isfield(target,'phidot')||isfield(target,'thetadot')||isfield(target,'psidot')
-    op_spec=addoutputspec(op_spec,'SimNL/Nonlinear UAV Model/6DoF EOM/Calculate DCM & Euler Angles/phidot thetadot psidot',1); % add output spec if eulerdot targets are used
+    op_spec = addoutputspec(op_spec,'SimNL/Nonlinear UAV Model/6DoF EOM/Calculate DCM & Euler Angles/phidot thetadot psidot',1); % add output spec if eulerdot targets are used
     if isfield(target,'phidot')
         op_spec.Outputs(15).Known(1) = 1;
         op_spec.Outputs(15).y(1) = target.phidot;
@@ -315,35 +315,35 @@ end
 %op_spec.inputs(3).Known = [1; 1; 1];
 %op_spec.inputs(3).u = TrimCondition.Inputs.Wind;
 
-% % if a target throttle, set as known and use target value
-% if isfield(target,'throttle')
-%     op_spec.inputs(1).Known = 1;
-%     op_spec.inputs(1).u = target.throttle;
-% else
-%     % else set to unkown and use intial value from setup.m
-%     op_spec.inputs(1).Known = 0;
-%     op_spec.inputs(1).u = TrimCondition.Inputs.Throttle;
-% end
+% if a target motor, set as known and use target value
+if isfield(target,'motor')
+    op_spec.inputs(1).Known = 1;
+    op_spec.inputs(1).u = target.motor;
+else
+    % else set to unkown and use intial value from setup.m
+    op_spec.inputs(1).Known = 0;
+    op_spec.inputs(1).u = TrimCondition.Inputs.Motor;
+end
 
 
 %default is not known and intial guess as specified in setup.m
-op_spec.inputs(1).Known = zeros(length(InputNames),1);
-op_spec.inputs(1).u = TrimCondition.Inputs.Effector;
+op_spec.inputs(2).Known = zeros(length(InputNames),1);
+op_spec.inputs(2).u = TrimCondition.Inputs.Actuator;
 
-% %default actutator position limits
-% op_spec.inputs(1).max = 0.4363*ones(length(InputNames),1); % 25deg default
-% op_spec.inputs(1).min = -0.4363*ones(length(InputNames),1); % -25deg default
+%default actutator position limits
+op_spec.inputs(2).max = 0.4363*ones(length(InputNames),1); % 25deg default
+op_spec.inputs(2).min = -0.4363*ones(length(InputNames),1); % -25deg default
 
 for ii=1:length(InputNames)
     if isfield(target,InputNames{ii}) % if a target, set as known and use target value
-        op_spec.inputs(1).Known(ii) = 1;
-        op_spec.inputs(1).u(ii) = target.(InputNames{ii});
+        op_spec.inputs(2).Known(ii) = 1;
+        op_spec.inputs(2).u(ii) = target.(InputNames{ii});
     end
-%     try
-%         op_spec.inputs(1).max(ii) = AC.Effector.(InputNames{ii}).PosLim;
-%         op_spec.inputs(1).min(ii) = AC.Effector.(InputNames{ii}).NegLim;
-%     catch
-%     end
+    try
+        op_spec.inputs(2).max(ii) = AC.Actuator.(InputNames{ii}).PosLim;
+        op_spec.inputs(2).min(ii) = AC.Actuator.(InputNames{ii}).NegLim;
+    catch
+    end
 end
 
 %% FIND OPERATING POINT (TRIM)
@@ -382,22 +382,12 @@ switch lower(AC.aircraft)
         TrimCondition.DT1AccAllModes = op_point.States(5).x;
 end                          
                           
-                          
-% % Pull throttle value for trim solution
-% TrimCondition.Inputs.Throttle = op_point.Inputs(1).u;
-% 
-% % Pull control surface values for trim solution
-% TrimCondition.Inputs.Effector = op_point.Inputs(2).u;
 
 % Pull throttle value for trim solution
-TrimCondition.Inputs.Throttle = op_point.Inputs(1).u;
-TrimCondition.Inputs.Throttle = TrimCondition.Inputs.Throttle(1) ;
-
+TrimCondition.Inputs.Motor = op_point.Inputs(1).u;
 
 % Pull control surface values for trim solution
-TrimCondition.Inputs.Effector = op_point.Inputs(1).u;
-TrimCondition.Inputs.Effector = TrimCondition.Inputs.Effector(2:6);
-
+TrimCondition.Inputs.Actuator = op_point.Inputs(2).u;
 
 % Handle combined aileron input option
 % if isfield(target,'aileron')

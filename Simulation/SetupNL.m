@@ -32,8 +32,8 @@ switch aircraftType
         SampleTime = 0.02; % secdamp
         
         % Aircraft Config
-%         [AC, Env] = SimConfig('UltraStick25e');
-       [AC, Env] = SimConfig('UltraStick25e_Old');
+        % [AC, Env] = SimConfig('UltraStick25e');
+        [AC, Env] = SimConfig('UltraStick25e_Old');
 
         % Configure variant for model refenence   
         aeroType = 1;
@@ -143,15 +143,15 @@ switch lower(AC.aircraft)
         
     case 'ultrastick25e'
         % Control surface initial values, rad:
-        % throttle, elevator, rudder, aileron, left flap, right flap
-        TrimCondition.Inputs.Effector = [0.559 0.091 0 0 0 0]';
+        % elevator, rudder, aileron, left flap, right flap
+        TrimCondition.Inputs.Actuator = [0.091 0 0 0 0]';
         
         % number of the control surfaces (required to initialize the input
         % port dimension; dynamically relocating it returns an error)
-        AC.nctrls = size(TrimCondition.Inputs.Effector,1);
+        AC.nctrls = size(TrimCondition.Inputs.Actuator,1);
         
         % Throttle initial value, nd
-        TrimCondition.Inputs.Throttle = 0.559;
+        TrimCondition.Inputs.Motor = 0.559;
         
         % Initial velocity vector, m/s: [u v w]
         TrimCondition.VelocitiesIni  = [17 0 0.369]';
