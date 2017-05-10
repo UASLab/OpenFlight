@@ -52,7 +52,7 @@ linmodel = linearize(simModel, OperatingPoint.op_point, io);
 switch lower(AC.aircraft)
     case {'ultrastick120', 'ultrastick25e'} 
         
-        set(linmodel, 'InputName', {'\delta_t';'\delta_e'; '\delta_r' ;'\delta_aL';'\delta_aR';'\delta_fL';'\delta_fR'});
+        set(linmodel, 'InputName', {'dThrot'; 'dElev' ; 'dAilL'; 'dAilR'; 'dRud'; 'dFlapL'; 'dFlapR'});
         set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
         NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
         linmodel.StateName(1:length(NewStateNames)) = NewStateNames;
@@ -68,8 +68,8 @@ switch lower(AC.aircraft)
         Xlon = [7 9 5 2 12 13];
         Ylon = [10 12 5 2 13 7 9];
         Ilon = [2 1];
-        longmod = modred(linmodel(Ylon,Ilon),setdiff(1:13,Xlon),'Truncate');
-        longmod = xperm(longmod,[3 4 2 1 5 6]); % reorder state
+        longmod = modred(linmodel(Ylon, Ilon), setdiff(1:13, Xlon), 'Truncate');
+        longmod = xperm(longmod, [3 4 2 1 5 6]); % reorder state
 
         
         %% GENERATE SHORT PERIOD LINEAR MODEL
@@ -89,23 +89,23 @@ switch lower(AC.aircraft)
         %% GENERATE LATERAL-DIRECTIONAL LINEAR MODEL
         % Lateral-directional dynamics
         % States: v(8) p(4) r(6) phi(1) psi(3)
-        % Inputs: aileron(4) aileron(5) rudder(3)
+        % Inputs: aileron(3) aileron(4) rudder(5)
         % Outputs: beta(11) p(4) r(6) phi(1) psi(3)
         
         % Generate State-space matrices for lateral-directional Model
         % Indices for desired state, outputs, and inputs
         Xlat = [8 4 6 1 3];
         Ylat = [11 4 6 1 3];
-        Ilat = [4 5 3];
-        latmod = modred(linmodel(Ylat,Ilat),setdiff(1:13,Xlat),'Truncate');
+        Ilat = [3 4 5];
+        latmod = modred(linmodel(Ylat, Ilat),setdiff(1:13, Xlat),'Truncate');
         latmod = xperm(latmod,[5 3 4 1 2]); % reorder state
 
             
     case 'minimutt'
         
-        set(linmodel, 'InputName', {'\delta_t';'\delta_L1'; '\delta_L2' ;'\delta_L3';'\delta_L4';'\delta_R1';'\delta_R2';'\delta_R3';'\delta_R4'});
-        set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
-        NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
+        set(linmodel, 'InputName', {'dThrot'; 'dL1'; 'dL2'; 'dL3'; 'dL4'; 'dR1'; 'dR2'; 'dR3'; 'dR4'});
+        set(linmodel, 'OutputName', {'phi'; 'theta'; 'psi'; 'p'; 'q'; 'r'; 'ax'; 'ay'; 'az'; 'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
+        NewStateNames = {'phi'; 'theta'; 'psi'; 'p'; 'q'; 'r'; 'u'; 'v'; 'w'; 'Xe'; 'Ye'; 'Ze'};
         linmodel.StateName(1:length(NewStateNames)) = NewStateNames;
         
         longmod = 'no longitudinal model for mini MUTT';
