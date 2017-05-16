@@ -15,7 +15,13 @@
 % 1 = UltraStick25e, standard outfit
 aircraftType = 1 ;
 
-% Configure simulation specifically for this airfame
+%% Configure Simulation Fidelity
+% 1 = Simplified Open-Source
+% 2 = High-Fidelity, requires Aerospace Blockset
+simulation_type = 1 ;
+
+
+%% Configure simulation specifically for this airfame
 switch aircraftType
     case 1 % UltraStick25e, standard outfit
         % Configure variant for model refenence        
@@ -26,6 +32,11 @@ switch aircraftType
 end
 
 
+% Simulation Fidelity Variants Definition
+sim_fidelity_simple_var = Simulink.Variant('simulation_type == 1') ;
+sim_fidelity_full_var   = Simulink.Variant('simulation_type == 2') ;
+
+
 %% Load airframe configuration and trim condition
 % To change these, use the functions "UAV_config.m" and "trim_UAV.m"
 % load UAV_modelconfig
@@ -33,6 +44,7 @@ end
 
 
 %% Simulation sample time
+SampleTime = 0.02; % sec
 MPCSampleTime = 0.02; % sec
 
 %% Set controller mode

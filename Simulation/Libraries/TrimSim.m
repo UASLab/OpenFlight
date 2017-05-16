@@ -201,9 +201,9 @@ switch lower(AC.aircraft)
         op_spec.States(7).steadystate = ones(size(TrimCondition.LagStatesIni));
         
         % DT1 filter states to obtain control surface velocities
-        op_spec.States(6).Known = zeros(size(TrimCondition.DT1EffectorIni));
-        op_spec.States(6).x = TrimCondition.DT1EffectorIni;
-        op_spec.States(6).steadystate = ones(size(TrimCondition.DT1EffectorIni));
+        op_spec.States(6).Known = zeros(size(TrimCondition.DT1CtrlSurfIni));
+        op_spec.States(6).x = TrimCondition.DT1CtrlSurfIni;
+        op_spec.States(6).steadystate = ones(size(TrimCondition.DT1CtrlSurfIni));
         
         % DT1 filter states to obtain accelerations
         op_spec.States(5).Known = zeros(size(TrimCondition.DT1AccAllModes));
@@ -378,7 +378,7 @@ switch lower(AC.aircraft)
         TrimCondition.FlexIni = op_point.States(8).x;
         TrimCondition.FlexRatesIni = op_point.States(9).x;
         TrimCondition.LagStatesIni = op_point.States(7).x;
-        TrimCondition.DT1EffectorIni = op_point.States(6).x;
+        TrimCondition.DT1CtrlSurfIni = op_point.States(6).x;
         TrimCondition.DT1AccAllModes = op_point.States(5).x;
 end                          
                           

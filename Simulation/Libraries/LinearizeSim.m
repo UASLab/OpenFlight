@@ -52,7 +52,7 @@ linmodel = linearize(simModel, OperatingPoint.op_point, io);
 switch lower(AC.aircraft)
     case {'ultrastick120', 'ultrastick25e'} 
         
-        set(linmodel, 'InputName', {'dThrot'; 'dElev'; 'dRud'; 'dAilL'; 'dAilR'; 'dFlapL'; 'dFlapR'});
+        set(linmodel, 'InputName', {'\delta_t';'\delta_e'; '\delta_r' ;'\delta_aL';'\delta_aR';'\delta_fL';'\delta_fR'});
         set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
         NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
         linmodel.StateName(1:length(NewStateNames)) = NewStateNames;
@@ -103,9 +103,9 @@ switch lower(AC.aircraft)
             
     case 'minimutt'
         
-        set(linmodel, 'InputName', {'dThrot'; 'dL1'; 'dL2'; 'dL3'; 'dL4'; 'dR1'; 'dR2'; 'dR3'; 'dR4'});
-        set(linmodel, 'OutputName', {'phi'; 'theta'; 'psi'; 'p'; 'q'; 'r'; 'ax'; 'ay'; 'az'; 'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
-        NewStateNames = {'phi'; 'theta'; 'psi'; 'p'; 'q'; 'r'; 'u'; 'v'; 'w'; 'Xe'; 'Ye'; 'Ze'};
+        set(linmodel, 'InputName', {'\delta_t';'\delta_L1'; '\delta_L2' ;'\delta_L3';'\delta_L4';'\delta_R1';'\delta_R2';'\delta_R3';'\delta_R4'});
+        set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
+        NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
         linmodel.StateName(1:length(NewStateNames)) = NewStateNames;
         
         longmod = 'no longitudinal model for mini MUTT';

@@ -25,21 +25,31 @@ d2r = pi/180;
 % 1 = UltraStick25e, standard outfit
 if ~exist('aircraftType', 'var'), aircraftType = 1; end
 
+%% Configure Simulation Fidelity
+% 1 = Simplified Open-Source
+% 2 = High-Fidelity, requires Aerospace Blockset
+simulation_type = 1 ;
+
 % Configure simulation specifically for this airfame
 switch aircraftType
     case 1 % UltraStick25e, AVL AeroModel, Standard Actuators and Sensors
         % Simulation sample time
-        SampleTime = 0.02; % secdamp
+        SampleTime = 0.02; % sec
         
         % Aircraft Config
-        % [AC, Env] = SimConfig('UltraStick25e');
-        [AC, Env] = SimConfig('UltraStick25e_Old');
+        [AC, Env] = SimConfig('UltraStick25e');
+        % [AC, Env] = SimConfig('UltraStick25e_AVL');
 
         % Configure variant for model refenence   
         aeroType = 1;
         aeroVariant = Simulink.Variant('aeroType == 1');
         
 end
+
+% Simulation Fidelity Variants Definition
+sim_fidelity_simple_var = Simulink.Variant('simulation_type == 1') ;
+sim_fidelity_full_var   = Simulink.Variant('simulation_type == 2') ;
+    
 
 %% Setup Simulation Variant
 % Configure Effectors for specific simulation
@@ -159,7 +169,7 @@ switch lower(AC.aircraft)
         % Initial Engine Speed [rad/s]
         TrimCondition.EngineSpeedIni = 827;
         
-    case 'maewing2'
+    case 'maewing1'
         % Control surface initial values, rad:
         % elevator, aileron, L1, L4, R1, R4
         TrimCondition.Inputs.Effector = [-.09 0 0 0 0 0]';
@@ -192,7 +202,7 @@ switch lower(AC.aircraft)
         % DT1 filter states to obtain control surface velocities
         % (XXX not required if we have an actuator model, should we
         % consider that?)
-        TrimCondition.DT1EffectorIni = zeros(nflaps,1);
+        TrimCondition.DT1CtrlSurfIni = zeros(nflaps,1);
         % DT1 filter states to obtain accelerations
         TrimCondition.DT1AccAllModes = zeros(nstates+nflaps,1);
 end
