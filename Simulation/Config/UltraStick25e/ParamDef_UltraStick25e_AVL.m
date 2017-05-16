@@ -30,22 +30,22 @@ AC.aircraft = 'UltraStick25e';
 AC.MassP.mass_kg = 1.793; % AVL Model % FIXME - AutoGen
 
 % CG location [x y z], [m]
-AC.Geometry.rCG_S_m = [0.222417132; 0.0; 0.027170888]; % FIXME - AutoGen
+AC.MassP.rCG_S_m = [0.222417132; 0.0; 0.027170888]; % FIXME - AutoGen
 AC.MassP.rCG_SB_m = AC.Geometry.T_S2SB * AC.MassP.rCG_S_m;
 
-AC.MassP.rCGRef_S_m = AC.Geometry.rCG_S_m; % Reference CG location, required for computing inertia when CG location is changed
+AC.MassP.rCGRef_S_m = AC.MassP.rCG_S_m; % Reference CG location, required for computing inertia when CG location is changed
 AC.MassP.rCGRef_SB_m = AC.Geometry.T_S2SB * AC.MassP.rCGRef_S_m;
 
 % Gross moments of inertia [Jx Jy Jz Jxz] [kg*m^2] % FIXME - AutoGen
-AC.Inertia.IxxRef_B_kgm2 = 0.0437912; % AVL Model
-AC.Inertia.IyyRef_B_kgm2 = 0.08381; % AVL Model
-AC.Inertia.IzzRef_B_kgm2 = 0.119344; % AVL Model
-AC.Inertia.IxyRef_B_kgm2 = 0.0;
-AC.Inertia.IxzRef_B_kgm2 = -0.000241577; % AVL Model
-AC.Inertia.IyzRef_B_kgm2 = 0.0;
-AC.Inertia.Matrix = [AC.Inertia.IxxRef_B_kgm2, -AC.Inertia.IxyRef_B_kgm2, -AC.Inertia.IxzRef_B_kgm2;
-    -AC.Inertia.IxyRef_B_kgm2, AC.Inertia.IyyRef_B_kgm2, -AC.Inertia.IyzRef_B_kgm2;
-    -AC.Inertia.IxzRef_B_kgm2, -AC.Inertia.IyzRef_B_kgm2, AC.Inertia.IzzRef_B_kgm2];
+AC.MassP.IxxRef_B_kgm2 = 0.0437912; % AVL Model
+AC.MassP.IyyRef_B_kgm2 = 0.08381; % AVL Model
+AC.MassP.IzzRef_B_kgm2 = 0.119344; % AVL Model
+AC.MassP.IxyRef_B_kgm2 = 0.0;
+AC.MassP.IxzRef_B_kgm2 = -0.000241577; % AVL Model
+AC.MassP.IyzRef_B_kgm2 = 0.0;
+AC.MassP.IRef_B_kgm2 = [AC.MassP.IxxRef_B_kgm2, -AC.MassP.IxyRef_B_kgm2, -AC.MassP.IxzRef_B_kgm2;
+    -AC.MassP.IxyRef_B_kgm2, AC.MassP.IyyRef_B_kgm2, -AC.MassP.IyzRef_B_kgm2;
+    -AC.MassP.IxzRef_B_kgm2, -AC.MassP.IyzRef_B_kgm2, AC.MassP.IzzRef_B_kgm2];
 
 % If the aircraft CG is not at the Reference location, then the inertia should be modified as well
 AC.MassP.rCGRef_B_m = AC.MassP.rCG_SB_m - AC.MassP.rCGRef_SB_m; % CG is origin of B frame, pos vector from CG to Ref frame
