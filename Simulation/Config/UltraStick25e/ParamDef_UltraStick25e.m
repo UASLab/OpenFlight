@@ -17,7 +17,14 @@ function [AC] = ParamDef_UltraStick25e()
 % Aero (Aeodynamic) - Origin at the Aerodynamic Center, aligned with flow [+Downstream, +Right Wing, +Up]
 % Prop (Propulsion) - Origin at the Prop Center, aligned with thrustline [+Fwd (Thrust), +Right Wing, +Down]
 
+
+
+
 AC.Geometry.T_S2SB = [-1, 0, 0; 0, 1, 0; 0, 0, -1];
+
+% Constants
+in2m = 0.0254;
+
 
 %%
 AC.aircraft = 'UltraStick25e';
@@ -409,76 +416,50 @@ AC.Actuator.r_flap.NegLim = -25*d2r; %[rad]
 %% Configure Sensor Error Models
 
 % Model Variants
-AC.Sim.Sensor.IMU = 2;
-AC.Sim.Sensor.GPS = 3;
-AC.Sim.Sensor.Pitot = 1;
-AC.Sim.Sensor.Airdata = 4;
-
-% Flag to enable noise
-AC.Sensors.NoiseOn = 1;
-
-% Gyro Error Model Parameters (meas = scf * (true + noise) + bias)
-AC.Sensors.IMU.p_scf = 1; % rad/s
-AC.Sensors.IMU.q_scf = 1; % rad/s
-AC.Sensors.IMU.r_scf = 1; % rad/s
-AC.Sensors.IMU.p_bias = 0; % rad/s
-AC.Sensors.IMU.q_bias = 0; % rad/s
-AC.Sensors.IMU.r_bias = 0; % rad/s
-AC.Sensors.IMU.p_noise = 0.000001; % rad/s
-AC.Sensors.IMU.q_noise = 0.000001; % rad/s
-AC.Sensors.IMU.r_noise = 0.000001; % rad/s
-
-% Accelerometer Error Model Parameters (meas = scf * (true + noise) + bias)
-AC.Sensors.IMU.ax_scf = 1; % m/s^2
-AC.Sensors.IMU.ay_scf = 1;  % m/s^2
-AC.Sensors.IMU.az_scf = 1;  % m/s^2
-AC.Sensors.IMU.ax_bias = 0; % m/s^2
-AC.Sensors.IMU.ay_bias = 0;  % m/s^2
-AC.Sensors.IMU.az_bias = 0;  % m/s^2
-AC.Sensors.IMU.ax_noise = 0.0008; % m/s^2
-AC.Sensors.IMU.ay_noise = 0.004;  % m/s^2
-AC.Sensors.IMU.az_noise = 0.004;  % m/s^2
-
-% Magnetometer Error Model Parameters (meas = scf * (true + noise) + bias)
-AC.Sensors.IMU.hx_scf = 1;   % nT 
-AC.Sensors.IMU.hy_scf = 1;   % nT
-AC.Sensors.IMU.hz_scf = 1; % nT
-AC.Sensors.IMU.hx_bias = 0;   % nT 
-AC.Sensors.IMU.hy_bias = 0;   % nT
-AC.Sensors.IMU.hz_bias = 0; % nT
-AC.Sensors.IMU.hx_noise = 150;   % nT 
-AC.Sensors.IMU.hy_noise = 150;   % nT
-AC.Sensors.IMU.hz_noise = 80000; % nT
+AC.Sensors.IMU.variant = 1;
+AC.Sensors.GPS.variant = 1;
+AC.Sensors.AirData.variant = 1;
 
 
-% AirData Error Model Parameters (meas = scf * (true + noise) + bias)
-% Dynamic Pressure
-AC.Sensors.AirData.Pd_scf = 1; % Kpa, AMS 5812
-AC.Sensors.AirData.Pd_bias = 0; % Kpa, AMS 5812
-AC.Sensors.AirData.Pd_noise = 0.00000015; % Kpa, AMS 5812
+% Configure Sensors for specific simulation
+assignin('base', 'AC_IMU_TYPE1', Simulink.Variant('AC_IMU == 1'));
+assignin('base', 'AC_IMU_TYPE2', Simulink.Variant('AC_IMU == 2'));
+assignin('base', 'AC_IMU', AC.Sensors.IMU.variant); % IMU
 
-% Static Pressure
-AC.Sensors.AirData.Ps_scf = 1; % Kpa, AMS 5812
-AC.Sensors.AirData.Ps_bias = 0; % Kpa, AMS 5812
-AC.Sensors.AirData.Ps_noise = 0.0000008; % Kpa, AMS 5812
+assignin('base', 'AC_GPS_TYPE1', Simulink.Variant('AC_GPS == 1'));
+assignin('base', 'AC_GPS_TYPE2', Simulink.Variant('AC_GPS == 2'));
+assignin('base', 'AC_GPS', AC.Sensors.GPS.variant); % GPS
 
-% Indicated Airspeed
-AC.Sensors.AirData.ias_scf = 1; % m/s
-AC.Sensors.AirData.ias_bias = 0; % m/s
-AC.Sensors.AirData.ias_noise = 0.001; % m/s
+assignin('base', 'AC_AIRDATA_TYPE1', Simulink.Variant('AC_AIRDATA == 1'));
+assignin('base', 'AC_AIRDATA_TYPE2', Simulink.Variant('AC_AIRDATA == 2'));
+assignin('base', 'AC_AIRDATA', AC.Sensors.AirData.variant); % Airdata
 
-% Baro Altitude
-AC.Sensors.AirData.h_scf = 1; % m
-AC.Sensors.AirData.h_bias = 0; % m
-AC.Sensors.AirData.h_noise = 0.02; % m
 
-% Angle of Attack
-AC.Sensors.AirData.alpha_scf = 1; % rad
-AC.Sensors.AirData.alpha_bias = 0; % rad
-AC.Sensors.AirData.alpha_noise = 0.0000005; % rad
+% IMU Sensor Model
+AC.Sensors.IMU.rIMU_S_m = [9.5; 0.0; 0.0] * in2m; % IMU sensor location
+AC.Sensors.IMU.rIMU_SB_m = AC.Geometry.T_S2SB * AC.Sensors.IMU.rIMU_S_m;
+AC.Sensors.IMU.sIMU_SB_rad = [1.0; 0.0; 1.0] * d2r; % IMU sensor orientation
+AC.Sensors.IMU.type = 'ADIS16405';
+AC.Sensors.IMU = ParamDef_IMU(AC.Sensors.IMU); % IMU Error Model
+AC.Sensors.IMU.errEnable = 1; % Enable the Error Model
+AC.Sensors.IMU.timeSample_s = 1/50; % time Sample, used for Noise Generation only
 
-% Angle of Sideslip
-AC.Sensors.AirData.beta_scf = 1; % rad
-AC.Sensors.AirData.beta_bias = 0; % rad
-AC.Sensors.AirData.beta_noise = 0.0000005; % rad
+% AirData
+AC.Sensors.AirData.rAirData_S_m = [1.0; 14.0; 0.0] * in2m; % Pitot-Static location
+AC.Sensors.AirData.rAirData_SB_m = AC.Geometry.T_S2SB * AC.Sensors.AirData.rAirData_S_m;
+AC.Sensors.AirData.sAirData_SB_rad = [0.0; 0.0; 0.0] * d2r; % Pitot-Static orientation
+AC.Sensors.AirData.type = 'pitot';
+AC.Sensors.AirData.typePs = 'AMS5915-1200-B';
+AC.Sensors.AirData.typePd = 'AMS5915-0020-D-B';
+AC.Sensors.AirData = ParamDef_AirData(AC.Sensors.AirData);
+AC.Sensors.AirData.errEnable = 1;
+AC.Sensors.AirData.timeSample_s = 1/50; % time Sample, used for Noise Generation only
+
+% GPS
+AC.Sensors.GPS.rGPS_S_m = [12; 0.0; 0.5] * in2m; % GPS antenna location
+AC.Sensors.GPS.rGPS_SB_m = AC.Geometry.T_S2SB * AC.Sensors.GPS.rGPS_S_m;
+AC.Sensors.GPS.type = 'UBlox_M8N';
+AC.Sensors.GPS = ParamDef_GPS(AC.Sensors.GPS);
+AC.Sensors.GPS.errEnable = 1; % Enable the Error Model
+AC.Sensors.GPS.timeSample_s = 1/50; % time Sample, used for Noise Generation only
 
