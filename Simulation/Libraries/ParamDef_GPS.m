@@ -7,10 +7,11 @@ GPS.errEnable = 1;
 
 switch lower(GPS.type)
     case 'ublox_m8n' % UBlox M8N (FIXME - Check all values!!)
+        
+        % Create Transfer Functions for the transducer response
         posBand_rps = 20 * hz2rps; % Bandwidth of the GPS Position
         velBand_rps = 20 * hz2rps; % Bandwidth of the GPS Velocity
         
-        % Create Transfer Functions for the transducer response
         GPS.posTF = tf([posBand_rps], [1, posBand_rps]);
         GPS.velTF = tf([velBand_rps], [1, velBand_rps]);
        

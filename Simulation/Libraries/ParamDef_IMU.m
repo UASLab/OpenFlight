@@ -8,11 +8,11 @@ IMU.errEnable = 1;
 
 switch lower(IMU.type)
     case 'adis16405' % Analog Devices ADIS16405
+        % Create Transfer Functions for the transducer response
         gyroBand_rps = 300 * hz2rps; % Bandwidth of the Gyro
         accelBand_rps = 300 * hz2rps; % Bandwidth of the Accel
         magBand_rps = 1540 * hz2rps; % Bandwidth of the Accel
         
-        % Create Transfer Functions for the transducer response
         IMU.gyroTF = tf([gyroBand_rps], [1, gyroBand_rps]);
         IMU.accelTF = tf([accelBand_rps], [1, accelBand_rps]);
         IMU.magTF = tf([magBand_rps], [1, magBand_rps]);

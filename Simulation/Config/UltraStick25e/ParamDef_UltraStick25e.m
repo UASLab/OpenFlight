@@ -416,29 +416,36 @@ AC.Actuator.r_flap.NegLim = -25*d2r; %[rad]
 %% Configure Sensor Error Models
 
 % Model Variants
-AC.Sensors.IMU.variant = 1;
-AC.Sensors.GPS.variant = 1;
-AC.Sensors.AirData.variant = 1;
+AC.Sensors.VarImuSel = 1;
+AC.Sensors.VarGPSSel = 1;
+AC.Sensors.VarAirDataSel = 1;
 
 
 % Configure Sensors for specific simulation
-assignin('base', 'AC_IMU_TYPE1', Simulink.Variant('AC_IMU == 1'));
-assignin('base', 'AC_IMU_TYPE2', Simulink.Variant('AC_IMU == 2'));
-assignin('base', 'AC_IMU', AC.Sensors.IMU.variant); % IMU
+assignin('base', 'VarImu_Pass', Simulink.Variant('VarImuSel == 0')); % Variant 0 - Passthrough
+assignin('base', 'VarImu_Err', Simulink.Variant('VarImuSel == 1')); % Variant 1 - Error Model Only
+assignin('base', 'VarImu_LocErr', Simulink.Variant('VarImuSel == 2')); % Variant 2 - Location + Error Model
+assignin('base', 'VarImu_LocTransErr', Simulink.Variant('VarImuSel == 3')); % Variant 3 - Location + Transducer + Error Model
+assignin('base', 'VarImuSel',AC.Sensors.VarImuSel); % IMU
 
-assignin('base', 'AC_GPS_TYPE1', Simulink.Variant('AC_GPS == 1'));
-assignin('base', 'AC_GPS_TYPE2', Simulink.Variant('AC_GPS == 2'));
-assignin('base', 'AC_GPS', AC.Sensors.GPS.variant); % GPS
+assignin('base', 'VarGps_Pass', Simulink.Variant('VarGpsSel == 0')); % Variant 0 - Passthrough
+assignin('base', 'VarGps_Err', Simulink.Variant('VarGpsSel == 1')); % Variant 1 - Error Model Only
+assignin('base', 'VarGps_LocErr', Simulink.Variant('VarGpsSel == 2')); % Variant 2 - Location + Error Model
+assignin('base', 'VarGps_LocTransErr', Simulink.Variant('VarGpsSel == 3')); % Variant 3 - Location + Transducer + Error Model
+assignin('base', 'VarGpsSel', AC.Sensors.VarGPSSel); % GPS
 
-assignin('base', 'AC_AIRDATA_TYPE1', Simulink.Variant('AC_AIRDATA == 1'));
-assignin('base', 'AC_AIRDATA_TYPE2', Simulink.Variant('AC_AIRDATA == 2'));
-assignin('base', 'AC_AIRDATA', AC.Sensors.AirData.variant); % Airdata
+assignin('base', 'VarAirData_Pass', Simulink.Variant('VarAirDataSel == 0')); % Variant 0 - Passthrough
+assignin('base', 'VarAirData_Err', Simulink.Variant('VarAirDataSel == 1')); % Variant 1 - Error Model Only
+assignin('base', 'VarAirData_LocErr', Simulink.Variant('VarAirDataSel == 2')); % Variant 2 - Location + Error Model
+assignin('base', 'VarAirData_LocTransErr', Simulink.Variant('VarAirDataSel == 3')); % Variant 3 - Location + Transducer + Error Model
+assignin('base', 'VarAirDataSel', AC.Sensors.VarAirDataSel); % AirData
 
 
 % IMU Sensor Model
-AC.Sensors.IMU.rIMU_S_m = [9.5; 0.0; 0.0] * in2m; % IMU sensor location
-AC.Sensors.IMU.rIMU_SB_m = AC.Geometry.T_S2SB * AC.Sensors.IMU.rIMU_S_m;
-AC.Sensors.IMU.sIMU_SB_rad = [1.0; 0.0; 1.0] * d2r; % IMU sensor orientation
+AC.Sensors.IMU.rImu_S_m = [9.5; 0.0; 0.0] * in2m; % IMU sensor location
+AC.Sensors.IMU.rImu_SB_m = AC.Geometry.T_S2SB * AC.Sensors.IMU.rImu_S_m;
+AC.Sensors.IMU.sImu_B_rad = [0.0; 0.0; 0.0] * d2r; % IMU sensor orientation
+AC.Sensors.IMU.T_B2IMU = eye(3); % FIXME - Used defined orientation
 AC.Sensors.IMU.type = 'ADIS16405';
 AC.Sensors.IMU = ParamDef_IMU(AC.Sensors.IMU); % IMU Error Model
 AC.Sensors.IMU.errEnable = 1; % Enable the Error Model
