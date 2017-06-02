@@ -28,13 +28,6 @@ switch lower(aircraft)
         % Define Aircraft Specific Buses
         BusDef_UltraStick25e;
         
-    case 'ultrastick25e_avl'
-        % Defice Aircraft Specific Parameters
-        AC = ParamDef_UltraStick25e_AVL;
-        
-        % Define Aircraft Specific Buses
-        BusDef_UltraStick25e;
-        
     case 'maewing2'
         % Defice Aircraft Specific Parameters
         AC = ParamDef_mAEWing2;

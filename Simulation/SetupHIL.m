@@ -34,5 +34,5 @@ SampleTime = 0.01; % sec
 
 
 %% Open model, build target, and connect.
-UAV_HIL;
-rtwbuild UAV_HIL;
+SimHIL;
+rtwbuild SimHIL;

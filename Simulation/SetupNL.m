@@ -38,7 +38,6 @@ switch aircraftType
         
         % Aircraft Config
         [AC, Env] = SimConfig('UltraStick25e');
-        % [AC, Env] = SimConfig('UltraStick25e_AVL');
 
         % Configure variant for model refenence   
         aeroType = 1;

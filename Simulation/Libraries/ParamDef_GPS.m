@@ -1,19 +1,24 @@
-function [GPS] = ParamDef_GPS(GPS)
+function [GPS] = ParamDef_GPS(type, GPS)
 % Define the GPS Error Model Parameters
 
 hz2rps = 2*pi;
 
 GPS.errEnable = 1;
 
-switch lower(GPS.type)
+switch lower(type)
     case 'ublox_m8n' % UBlox M8N (FIXME - Check all values!!)
         
-        % Create Transfer Functions for the transducer response
-        posBand_rps = 20 * hz2rps; % Bandwidth of the GPS Position
-        velBand_rps = 20 * hz2rps; % Bandwidth of the GPS Velocity
+        % Create Transfer Functions for the response
+        % Keep numerator and denominator seperate for entry into Simulink TF block
+        % GPS Position Transfer Function
+        posBw_rps = 20 * hz2rps; % Bandwidth of the GPS Position
+        GPS.posTF_num = posBw_rps;
+        GPS.posTF = [1, posBw_rps];
         
-        GPS.posTF = tf([posBand_rps], [1, posBand_rps]);
-        GPS.velTF = tf([velBand_rps], [1, velBand_rps]);
+        % GPS Velocity Transfer Function
+        velBw_rps = 20 * hz2rps; % Bandwidth of the GPS Velocity
+        GPS.velTF_num = velBw_rps;
+        GPS.velTF_den = [1, velBw_rps];
        
         % Time delay, measurement to signal
         GPS.timeDelay_s = 0.300;
