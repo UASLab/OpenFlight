@@ -3,9 +3,9 @@ function MassP = ParamDef_UltraStick25e_MassP(MassP, T_S2SB)
 % Load the Reference Mass Properties
 switch lower(MassP.type)
     case {'avl'}
-        MassP = US25e_flight_v1();
+        MassP = US25e_avl_v1();
     case {'flight', 'old'}
-        MassP = US25e_avl_v1(); % Established Aero PID derived from flight data with Thor using Goldy 1.
+        MassP = US25e_flight_v1(MassP.model); % Established Aero PID derived from flight data with Thor using Goldy 1.
     otherwise
         
 end
@@ -44,13 +44,13 @@ end
 % CG location [x y z], [m]
 MassP.rCGRef_S_m = [0.222; 0; 0.046];
 
-% Moments of inertia [kg*m^2]
+% Refernece Moments of Inertia [kg*m^2]
 MassP.IxxRef_B_kgm2 = 0.07151;
 MassP.IyyRef_B_kgm2 = 0.08636;
 MassP.IzzRef_B_kgm2 = 0.15364;
-MassP.IxzRef_B_kgm2 = 0.014;
 
 MassP.IxyRef_B_kgm2 = 0.0;
+MassP.IxzRef_B_kgm2 = 0.014;
 MassP.IyzRef_B_kgm2 = 0.0;
 
 MassP.IRef_B_kgm2 = [MassP.IxxRef_B_kgm2, -MassP.IxyRef_B_kgm2, -MassP.IxzRef_B_kgm2;
@@ -66,13 +66,15 @@ MassP.massRef_kg = 1.793; % AVL Model
 % CG location [x y z], [m]
 MassP.rCGRef_S_m = [0.222417132; 0.0; 0.027170888];
 
-% Gross moments of inertia [Jx Jy Jz Jxz] [kg*m^2]
+% Refernece Moments of Inertia [kg*m^2]
 MassP.IxxRef_B_kgm2 = 0.0437912;
 MassP.IyyRef_B_kgm2 = 0.08381;
 MassP.IzzRef_B_kgm2 = 0.119344;
+
 MassP.IxyRef_B_kgm2 = 0.0;
 MassP.IxzRef_B_kgm2 = -0.000241577;
 MassP.IyzRef_B_kgm2 = 0.0;
+
 MassP.IRef_B_kgm2 = [MassP.IxxRef_B_kgm2, -MassP.IxyRef_B_kgm2, -MassP.IxzRef_B_kgm2;
     -MassP.IxyRef_B_kgm2, MassP.IyyRef_B_kgm2, -MassP.IyzRef_B_kgm2;
     -MassP.IxzRef_B_kgm2, -MassP.IyzRef_B_kgm2, MassP.IzzRef_B_kgm2];

@@ -22,7 +22,6 @@ function [AC] = ParamDef_UltraStick25e()
 % Constants
 in2m = 0.0254;
 
-
 AC.Geometry.T_S2SB = [-1, 0, 0; 0, 1, 0; 0, 0, -1];
 
 
@@ -38,7 +37,7 @@ AC.MassP = ParamDef_UltraStick25e_MassP(AC.MassP, AC.Geometry.T_S2SB);
 
 
 %% Load Aerodynamics
-% AC.Aero.type = 'avl';
+% AC.Aero.type = 'avl_v1';
 AC.Aero.type = 'flight';
 
 AC.Aero = ParamDef_UltraStick25e_Aero(AC.Aero, AC.Geometry.T_S2SB);
