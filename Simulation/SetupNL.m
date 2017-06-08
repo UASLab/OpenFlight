@@ -229,3 +229,5 @@ simModel = 'SimNL';
 %% Linearize about the operating point
 [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, OperatingPoint, AC);
 
+damp(longmod)
+damp(latmod)

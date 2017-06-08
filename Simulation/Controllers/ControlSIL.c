@@ -11,7 +11,7 @@
  * $Id: control_SIL.c 880 2012-08-14 18:38:14Z dorob002 $
  ******************************************************************************/
 
-#define S_FUNCTION_NAME control_SIL
+#define S_FUNCTION_NAME ControlSIL
 #define S_FUNCTION_LEVEL 2
 
 #include "simstruc.h"
