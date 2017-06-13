@@ -1,4 +1,4 @@
-function [IMU] = ParamDef_IMU(type, IMU)
+function [Def, IMU] = ParamDef_IMU(Def, IMU)
 % Define the IMU Model Parameters
 
 hz2rps = 2*pi;
@@ -6,7 +6,8 @@ hz2rps = 2*pi;
 %
 IMU.errEnable = 1;
 
-switch lower(type)
+%% Sensor Models
+switch lower(Def.type)
     case 'adis16405' % Analog Devices ADIS16405
         % Create Transfer Functions for the transducer response
         % Keep numerator and denominator seperate for entry into Simulink TF block
@@ -49,5 +50,12 @@ switch lower(type)
         
     otherwise
         
+end
+
+%% Bus Defintion
+switch Def.VarSel
+    case 1
+        Def.elemNames = {'p_rps', 'q_rps', 'r_rps', 'ax_mpss', 'ay_mpss', 'az_mpss', 'hx_nT', 'hy_nT', 'hz_nT'};
+    otherwise
 end
 

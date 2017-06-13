@@ -1,5 +1,5 @@
-function [TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, fileSave, verbose)
-%[TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, fileSave, verbose)
+function [Trim] = TrimSim(simModel, Trim, Sim, AC, fileSave, verbose)
+%[Trim] = TrimSim(simModel, Trim, AC, fileSave, verbose)
 %
 % Trims the UAV simulation to target conditions.
 % This function can be called from any of the three sim directories.
@@ -9,7 +9,7 @@ function [TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, 
 % Set the trim target as shown below.
 %
 % Inputs:
-%     TrimCondition - Initial aircraft state, with a structure called
+%     Trim         - Initial aircraft state, with a structure called
 %     "target", which has some subset of the following fields:
 %     V_s          - True airspeed (m/s)
 %     alpha        - Angle of attack (rad)
@@ -38,9 +38,7 @@ function [TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, 
 %     verbose  - boolean flag to suppress output; default "true"
 %
 % Outputs:
-%   TrimCondition  - values of state and control surfaces at trim.
-%   OperatingPoint - Simulink OperatingPoint object to use with
-%   linearization
+%   Trim  - values of state and control surfaces at trim.
 %
 % Unspecified variables are free, or defaulted to the values shown above.
 % To force a defaulted variable to be free define it with an empty matrix.
@@ -48,13 +46,13 @@ function [TrimCondition, OperatingPoint] = TrimSim(simModel, TrimCondition, AC, 
 % to be free in searching for a trim condition.
 %
 % Examples:
-% TrimCondition.target = struct('V_s',17,'gamma',0); % straight and level
-% TrimCondition.target = struct('V_s',17,'gamma',5/180*pi); % level climb
-% TrimCondition.target = struct('V_s',17,'gamma',0,...
+% Trim.target = struct('V_s',17,'gamma',0); % straight and level
+% Trim.target = struct('V_s',17,'gamma',5/180*pi); % level climb
+% Trim.target = struct('V_s',17,'gamma',0,...
 %                     'psidot',20/180*pi); % level turn
-% TrimCondition.target = struct('V_s',17,'gamma',5/180*pi,...
+% Trim.target = struct('V_s',17,'gamma',5/180*pi,...
 %                     'psidot',20/180*pi); % climbing turn
-% TrimCondition.target = struct('V_s',17,'gamma',0,...
+% Trim.target = struct('V_s',17,'gamma',0,...
 %                      'beta',5/180*pi); % level steady heading sideslip
 %
 % Based in part on the trimgtm.m script by David Cox, NASA LaRC 
@@ -74,7 +72,7 @@ if isempty(verbose), verbose = 1; end
 
 
 %% Pull out target structure
-target = TrimCondition.target;
+target = Trim.target;
 
 %% Invalid target checking. This section can be expanded greatly.
 if isfield(target,'alpha') && isfield(target,'theta') && isfield(target,'gamma')
@@ -90,7 +88,7 @@ end
 %% define names of control surfaces and set defaults for control surfaces 
 % that are not used normally in trimming (flaps for UltraStick, flutter 
 % surpression flaps for miniMUTT)
-switch lower(AC.aircraft)
+switch lower(Sim.type)
     case {'ultrastick120', 'ultrastick25e'}
         InputNames = {'elevator', 'rudder', 'aileron', 'l_flap', 'r_flap'};
         if ~isfield(target,'l_flap'), target.l_flap=0; end
@@ -153,62 +151,62 @@ op_spec = operspec(simModel);
 % phi, theta, psi -- Euler angles
 % op_spec.States(1).StateName   = '[phi theta psi]';
 op_spec.States(1).Known       = [0 ; 0; 1];
-op_spec.States(1).x           = TrimCondition.AttitudeIni;
+op_spec.States(1).x           = Trim.AttitudeIni;
 op_spec.States(1).steadystate = [1; 1; 1];
 
 % p, q, r -- Angular rates
 % op_spec.States(2).StateName   = '[p q r]';
 op_spec.States(2).Known       = [0; 0; 0];
-op_spec.States(2).x           = TrimCondition.RatesIni;
+op_spec.States(2).x           = Trim.RatesIni;
 op_spec.States(2).steadystate = [1; 1; 1];
 
 % u, v, w -- Body velocities
 % op_spec.States(3).StateName   = '[u v w]';
 op_spec.States(3).Known       = [0; 0; 0];
-op_spec.States(3).x           = TrimCondition.VelocitiesIni;
+op_spec.States(3).x           = Trim.VelocitiesIni;
 op_spec.States(3).steadystate = [1; 1; 1];
 op_spec.States(3).min         = [0 -inf -inf];
 
 % Xe, Ye, Ze -- Inertial position
 %op_spec.States(4).StateName   = '[Xe Ye Ze]';
 op_spec.States(4).Known       = [0; 0; 1];
-op_spec.States(4).x           = TrimCondition.InertialIni;
+op_spec.States(4).x           = Trim.InertialIni;
 op_spec.States(4).steadystate = [0; 0; 0];
 op_spec.States(4).max         = [inf inf 0];
 
-switch lower(AC.aircraft)
+switch lower(Sim.type)
     case {'ultrastick120', 'ultrastick25e'}
         % omega  -- Engine Speed
         %op_spec.States(5).StateName = 'omega_engine';
         op_spec.States(5).Known       = 0;
-        op_spec.States(5).x           = TrimCondition.EngineSpeedIni;
+        op_spec.States(5).x           = Trim.EngineSpeedIni;
         op_spec.States(5).steadystate = 1;
         
     case 'minimutt'
         % structural modes
         % displacements
-        op_spec.States(8).Known = zeros(size(TrimCondition.FlexIni));
-        op_spec.States(8).x = TrimCondition.FlexIni;
-        op_spec.States(8).steadystate = ones(size(TrimCondition.FlexIni));
+        op_spec.States(8).Known = zeros(size(Trim.FlexIni));
+        op_spec.States(8).x = Trim.FlexIni;
+        op_spec.States(8).steadystate = ones(size(Trim.FlexIni));
         %velocities
-        op_spec.States(9).Known = zeros(size(TrimCondition.FlexRatesIni));
-        op_spec.States(9).x = TrimCondition.FlexRatesIni;
-        op_spec.States(9).steadystate = ones(size(TrimCondition.FlexRatesIni));
+        op_spec.States(9).Known = zeros(size(Trim.FlexRatesIni));
+        op_spec.States(9).x = Trim.FlexRatesIni;
+        op_spec.States(9).steadystate = ones(size(Trim.FlexRatesIni));
 
         % Lag states of the unsteady aero
-        op_spec.States(7).Known = zeros(size(TrimCondition.LagStatesIni));
-        op_spec.States(7).x = TrimCondition.LagStatesIni;
-        op_spec.States(7).steadystate = ones(size(TrimCondition.LagStatesIni));
+        op_spec.States(7).Known = zeros(size(Trim.LagStatesIni));
+        op_spec.States(7).x = Trim.LagStatesIni;
+        op_spec.States(7).steadystate = ones(size(Trim.LagStatesIni));
         
         % DT1 filter states to obtain control surface velocities
-        op_spec.States(6).Known = zeros(size(TrimCondition.DT1CtrlSurfIni));
-        op_spec.States(6).x = TrimCondition.DT1CtrlSurfIni;
-        op_spec.States(6).steadystate = ones(size(TrimCondition.DT1CtrlSurfIni));
+        op_spec.States(6).Known = zeros(size(Trim.DT1CtrlSurfIni));
+        op_spec.States(6).x = Trim.DT1CtrlSurfIni;
+        op_spec.States(6).steadystate = ones(size(Trim.DT1CtrlSurfIni));
         
         % DT1 filter states to obtain accelerations
-        op_spec.States(5).Known = zeros(size(TrimCondition.DT1AccAllModes));
-        op_spec.States(5).x = TrimCondition.DT1AccAllModes;
-        op_spec.States(5).steadystate = ones(size(TrimCondition.DT1AccAllModes));
+        op_spec.States(5).Known = zeros(size(Trim.DT1AccAllModes));
+        op_spec.States(5).x = Trim.DT1AccAllModes;
+        op_spec.States(5).steadystate = ones(size(Trim.DT1AccAllModes));
 
 end
 
@@ -313,7 +311,7 @@ end
 
 % set wind input to specified known value
 %op_spec.inputs(3).Known = [1; 1; 1];
-%op_spec.inputs(3).u = TrimCondition.Inputs.Wind;
+%op_spec.inputs(3).u = Trim.Inputs.Wind;
 
 % if a target motor, set as known and use target value
 if isfield(target,'motor')
@@ -322,13 +320,13 @@ if isfield(target,'motor')
 else
     % else set to unkown and use intial value from setup.m
     op_spec.inputs(1).Known = 0;
-    op_spec.inputs(1).u = TrimCondition.Inputs.Motor;
+    op_spec.inputs(1).u = Trim.Inputs.Motor;
 end
 
 
 %default is not known and intial guess as specified in setup.m
 op_spec.inputs(2).Known = zeros(length(InputNames),1);
-op_spec.inputs(2).u = TrimCondition.Inputs.Actuator;
+op_spec.inputs(2).u = Trim.Inputs.Actuator;
 
 %default actutator position limits
 op_spec.inputs(2).max = 0.4363*ones(length(InputNames),1); % 25deg default
@@ -360,57 +358,57 @@ end
 %% SET NONLINEAR SIMULATION TO TRIM CONDITION
 % Pull initial state for trim solution and initialize the nonlinear model
 % to that state.
-TrimCondition.AttitudeIni    = op_point.States(1).x;
-TrimCondition.RatesIni       = op_point.States(2).x;
-TrimCondition.VelocitiesIni  = op_point.States(3).x;
-TrimCondition.InertialIni    = op_point.States(4).x;
-TrimCondition.AccelsIni = [op_report.Outputs(12).y;...
+Trim.AttitudeIni    = op_point.States(1).x;
+Trim.RatesIni       = op_point.States(2).x;
+Trim.VelocitiesIni  = op_point.States(3).x;
+Trim.InertialIni    = op_point.States(4).x;
+Trim.AccelsIni = [op_report.Outputs(12).y;...
                             op_report.Outputs(13).y;...
                             op_report.Outputs(14).y];
-TrimCondition.WindAxesIni = [op_report.Outputs(1).y;...
+Trim.WindAxesIni = [op_report.Outputs(1).y;...
                               op_report.Outputs(3).y;...
                               op_report.Outputs(2).y];                        
 
-switch lower(AC.aircraft)
+switch lower(Sim.type)
     case {'ultrastick120', 'ultrastick25e'}
-        TrimCondition.EngineSpeedIni = op_point.States(5).x;
+        Trim.EngineSpeedIni = op_point.States(5).x;
     case 'minimutt'
-        TrimCondition.FlexIni = op_point.States(8).x;
-        TrimCondition.FlexRatesIni = op_point.States(9).x;
-        TrimCondition.LagStatesIni = op_point.States(7).x;
-        TrimCondition.DT1CtrlSurfIni = op_point.States(6).x;
-        TrimCondition.DT1AccAllModes = op_point.States(5).x;
+        Trim.FlexIni = op_point.States(8).x;
+        Trim.FlexRatesIni = op_point.States(9).x;
+        Trim.LagStatesIni = op_point.States(7).x;
+        Trim.DT1CtrlSurfIni = op_point.States(6).x;
+        Trim.DT1AccAllModes = op_point.States(5).x;
 end                          
                           
 
 % Pull throttle value for trim solution
-TrimCondition.Inputs.Motor = op_point.Inputs(1).u;
+Trim.Inputs.Motor = op_point.Inputs(1).u;
 
 % Pull control surface values for trim solution
-TrimCondition.Inputs.Actuator = op_point.Inputs(2).u;
+Trim.Inputs.Actuator = op_point.Inputs(2).u;
 
 % Handle combined aileron input option
 % if isfield(target,'aileron')
 %     if target.aileron ~= 0 % if aileron is targted to a non-zero condition, use that value
-%         TrimCondition.Inputs.l_aileron = -TrimCondition.Inputs.aileron;
-%         TrimCondition.Inputs.r_aileron = TrimCondition.Inputs.aileron;
+%         Trim.Inputs.l_aileron = -Trim.Inputs.aileron;
+%         Trim.Inputs.r_aileron = Trim.Inputs.aileron;
 %     end
 % else
-%     TrimCondition.Inputs.l_aileron = -TrimCondition.Inputs.aileron;
-%     TrimCondition.Inputs.r_aileron = TrimCondition.Inputs.aileron; 
+%     Trim.Inputs.l_aileron = -Trim.Inputs.aileron;
+%     Trim.Inputs.r_aileron = Trim.Inputs.aileron; 
 % end
 
 % return as-trimmed target structure
-TrimCondition.target = target;
+Trim.target = target;
 
 %% SAVE TO .MAT FILE
-OperatingPoint.op_point  = op_point;
-OperatingPoint.op_report = op_report;
-OperatingPoint.op_spec   = op_spec;
+Trim.op_point  = op_point;
+Trim.op_report = op_report;
+Trim.op_spec   = op_spec;
 
 if ~isempty(fileSave)
     % Save variables to MAT file
-    save(fileSave, 'TrimCondition', 'OperatingPoint');
+    save(fileSave, 'Trim');
     
     % Output a message to the screen
     fprintf('\n Trim conditions saved as:\t %s\n', fileSave);

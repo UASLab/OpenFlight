@@ -1,14 +1,14 @@
-function [AirData] = ParamDef_AirData(type, AirData)
+function [Def, AirData] = ParamDef_AirData(Def, AirData)
 % Define the AirData Model Parameters
 
 hz2rps = 2*pi;
 
 AirData.errEnable = 1;
 
-switch lower(type.sys)
+switch lower(Def.type)
     case {'pitot', 'pitotstatic'} % Simple Pitot-Static
-        [AirData] = ParamDef_Pd(type.Pd, AirData);
-        [AirData] = ParamDef_Ps(type.Ps, AirData);
+        [AirData] = ParamDef_Pd(Def.typePd, AirData);
+        [AirData] = ParamDef_Ps(Def.typePs, AirData);
         
         
         % Create Transfer Functions for the tube response
@@ -20,20 +20,27 @@ switch lower(type.sys)
         AirData.tubeTF_num = [tubeBw_rps^2];
         AirData.tubeTF_den = [1, 2*tubeDamp_nd*tubeBw_rps, tubeBw_rps^2];
         
+        % Define output bus names
+        Def.elemNames = {'Pd_Pa', 'Ps_Pa', 'temp_K'};
+        
     case {'bird'} % NASA Birds
         [AirData] = ParamDef_Bird(AirData);
         
         % Time delay, measurement to signal
         AirData.timeDelay_s = 0.001; % (FIXME - Check all values!!)
+        
+        % Define output bus names
+        Def.elemNames = {'vel_mps', 'alpha_rad', 'beta_rad'};
     otherwise
 end
+end
 
-function [AirData] = ParamDef_Ps(type, AirData)
+function [AirData] = ParamDef_Ps(Def, AirData)
 % Static Pressure Transducer
 
 hz2rps = 2*pi;
 
-switch lower(type)
+switch lower(Def)
     case 'ams5915-1200-b' % (FIXME - Check all values!!)
         
         % Create Transfer Functions for the transducer response
@@ -63,15 +70,17 @@ switch lower(type)
         AirData.tempBias = 0; % K
         AirData.tempSigma = 0.5; % K
         AirData.tempSeed = randi([1, intmax('int16')], 1); % Noise Seed
+        
     otherwise
 end
+end
 
-function [AirData] = ParamDef_Pd(type, AirData)
+function [AirData] = ParamDef_Pd(Def, AirData)
 % Dynamic Pressure Transducer
 
 hz2rps = 2*pi;
 
-switch lower(type)
+switch lower(Def)
     case 'ams5915-0020-d-b' % (FIXME - Check all values!!)
         
         % Create Transfer Functions for the transducer response
@@ -102,6 +111,7 @@ switch lower(type)
         AirData.tempSigma = 0.5; % K
         AirData.tempSeed = randi([1, intmax('int16')], 1); % Noise Seed
     otherwise
+end
 end
 
 function [AirData] = ParamDef_Bird(AirData) % (FIXME - Check all values!!)
@@ -143,4 +153,8 @@ AirData.betaScf = 1;
 AirData.betaBias = 0; % rad
 AirData.betaSigma = 0.0000005; % rad
 AirData.betaSeed = randi([1, intmax('int16')], 1); % Noise Seed
+end
+
+
+
 

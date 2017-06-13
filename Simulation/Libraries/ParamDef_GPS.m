@@ -1,11 +1,11 @@
-function [GPS] = ParamDef_GPS(type, GPS)
+function [Def, GPS] = ParamDef_GPS(Def, GPS)
 % Define the GPS Error Model Parameters
 
 hz2rps = 2*pi;
 
 GPS.errEnable = 1;
 
-switch lower(type)
+switch lower(Def.type)
     case 'ublox_m8n' % UBlox M8N (FIXME - Check all values!!)
         
         % Create Transfer Functions for the response
@@ -38,4 +38,13 @@ switch lower(type)
     otherwise
         
 end
+
+%% Bus Defintion
+switch Def.VarSel
+    case 1
+        Def.elemNames = {'GeodeticLatitude_deg', 'GeodeticLonggitude_deg', 'Altitude_m', 'Xdot_mps', 'Ydot_mps', 'Zdot_mps'};
+    otherwise
+end
+
+
 

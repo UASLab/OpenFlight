@@ -1,11 +1,12 @@
 function MassP = ParamDef_UltraStick25e_MassP(MassP, T_S2SB)
 
+
 % Load the Reference Mass Properties
 switch lower(MassP.type)
     case {'avl'}
-        MassP = US25e_avl_v1();
+        MassP = US25e_avl_v1(MassP);
     case {'flight', 'old'}
-        MassP = US25e_flight_v1(MassP.model); % Established Aero PID derived from flight data with Thor using Goldy 1.
+        MassP = US25e_flight_v1(MassP); % Test derived mass properties
     otherwise
         
 end
@@ -30,9 +31,9 @@ MassP.I_B_kgm2 = ...
 
 end
 
-function MassP = US25e_flight_v1(model)
+function MassP = US25e_flight_v1(MassP)
 % Gross aircraft mass [kg]
-switch lower(model)
+switch lower(MassP.model)
     case 'loki'
         MassP.massRef_kg  = 1.9; % Loki
     case 'thor'
@@ -59,21 +60,22 @@ MassP.IRef_B_kgm2 = [MassP.IxxRef_B_kgm2, -MassP.IxyRef_B_kgm2, -MassP.IxzRef_B_
 end
 
 
-function MassP = US25e_avl_v1()
+function MassP = US25e_avl_v1(MassP)
 % Gross aircraft mass [kg]
 MassP.massRef_kg = 1.793; % AVL Model
+MassP.gravRef_mps2 = 9.81;
 
 % CG location [x y z], [m]
-MassP.rCGRef_S_m = [0.222417132; 0.0; 0.027170888];
+MassP.rCGRef_S_m = [0.2223; 0; 0.02713];
 
 % Refernece Moments of Inertia [kg*m^2]
-MassP.IxxRef_B_kgm2 = 0.0437912;
-MassP.IyyRef_B_kgm2 = 0.08381;
-MassP.IzzRef_B_kgm2 = 0.119344;
+MassP.IxxRef_B_kgm2 = 0.04382;
+MassP.IyyRef_B_kgm2 = 0.08373;
+MassP.IzzRef_B_kgm2 = 0.1193;
 
-MassP.IxyRef_B_kgm2 = 0.0;
-MassP.IxzRef_B_kgm2 = -0.000241577;
-MassP.IyzRef_B_kgm2 = 0.0;
+MassP.IxyRef_B_kgm2 = 0;
+MassP.IxzRef_B_kgm2 = 0.00048;
+MassP.IyzRef_B_kgm2 = 0;
 
 MassP.IRef_B_kgm2 = [MassP.IxxRef_B_kgm2, -MassP.IxyRef_B_kgm2, -MassP.IxzRef_B_kgm2;
     -MassP.IxyRef_B_kgm2, MassP.IyyRef_B_kgm2, -MassP.IyzRef_B_kgm2;

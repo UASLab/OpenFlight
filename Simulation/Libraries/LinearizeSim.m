@@ -1,15 +1,11 @@
-function [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, OperatingPoint, AC)
-% [longmod, spmod, latmod, linmodel = LinearizeSim(simModel, OperatingPoint, AC)
+function [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, Sim)
+% [longmod, spmod, latmod, linmodel = LinearizeSim(simModel, Sim)
 %
 % Linearizes the UAV model about a given operating point.
 % This function will use your workspace variables. 
 % Requires the Control System Toolbox and Simulink Control Design.
 %
 % Inputs:
-%   OperatingPoint - Operating point object of a trim condition
-%   use_uvw        - boolean flag to use u,v,w as linear model outputs 
-%                     instead of V, alpha, beta; defaults to "false"
-%   verbose        - boolean flag to suppress output; default "true"
 %
 % Outputs:
 %   longmod  - longitudinal linear model
@@ -42,14 +38,14 @@ for k = 1:14
 end
 
 % Obtain lineariziation
-linmodel = linearize(simModel, OperatingPoint.op_point, io);
+linmodel = linearize(simModel, Sim.Trim.OperatingPoint.op_point, io);
 
 
 
 
 % Longitudinal and lateral models are only generated for UltraSticks not
 % miniMUTT (miniMUTT does not have a clear decoupling of both motions)
-switch lower(AC.aircraft)
+switch lower(Sim.type)
     case {'ultrastick120', 'ultrastick25e'} 
         
         set(linmodel, 'InputName', {'\delta_t';'\delta_e'; '\delta_r' ;'\delta_aL';'\delta_aR';'\delta_fL';'\delta_fR'});
