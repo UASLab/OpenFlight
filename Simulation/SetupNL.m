@@ -15,22 +15,22 @@
 %
 
 
-%% Set default values and optional arguments
-% Constants
-r2d = 180/pi;
-d2r = pi/180;
-
-
 %% Configure Simulation
 % 1 = UltraStick25e, standard outfit
-if ~exist('aircraftType', 'var'), aircraftType = 1; end
+if ~exist('aircraftType', 'var')
+    aircraftType = 1 ; 
+end
+
 
 %% Configure Simulation Fidelity
 % 1 = Simplified Open-Source
 % 2 = High-Fidelity, requires Aerospace Blockset
-simulation_type = 1 ;
+if ~exist('simulation_type', 'var')
+    simulation_type = 1 ;
+end
 
-% Configure simulation specifically for this airfame
+
+%% Configure simulation specifically for this airfame
 switch aircraftType
     case 1 % UltraStick25e, AVL AeroModel, Standard Actuators and Sensors
         % Simulation sample time
@@ -51,67 +51,6 @@ sim_fidelity_simple_var = Simulink.Variant('simulation_type == 1') ;
 sim_fidelity_full_var   = Simulink.Variant('simulation_type == 2') ;
     
 
-%% Setup Simulation Variant
-% Configure Effectors for specific simulation
-AC_TYPE_SIMPLE = Simulink.Variant('AC_TYPE == 1');
-AC_TYPE_DETAILED = Simulink.Variant('AC_TYPE == 2');
-switch AC.Sim.Effectors
-    case 1
-        AC_TYPE = 1;
-    case 2
-        AC_TYPE = 2;
-end
-
-% Configure Sensors for specific simulation
-AC_IMU_TYPE1 = Simulink.Variant('AC_IMU == 1');
-AC_IMU_TYPE2 = Simulink.Variant('AC_IMU == 2');
-AC_GPS_TYPE1 = Simulink.Variant('AC_GPS == 1');
-AC_GPS_TYPE2 = Simulink.Variant('AC_GPS == 2');
-AC_GPS_TYPE3 = Simulink.Variant('AC_GPS == 3');
-AC_PITOT_TYPE1 = Simulink.Variant('AC_PITOT == 1');
-AC_PITOT_TYPE2 = Simulink.Variant('AC_PITOT == 2');
-AC_AIRDATA_TYPE1 = Simulink.Variant('AC_AIRDATA == 1');
-AC_AIRDATA_TYPE2 = Simulink.Variant('AC_AIRDATA == 2');
-AC_AIRDATA_TYPE3 = Simulink.Variant('AC_AIRDATA == 3');
-AC_AIRDATA_TYPE4 = Simulink.Variant('AC_AIRDATA == 4');
-
-% IMU
-switch AC.Sim.Sensor.IMU
-    case 1
-        AC_IMU = 1;
-    case 2
-        AC_IMU = 2;
-end
-
-% GPS
-switch AC.Sim.Sensor.GPS
-    case 1
-        AC_GPS = 1;
-    case 2
-        AC_GPS = 2;
-    case 3
-        AC_GPS = 3;
-end
-
-% Pitot Static
-switch AC.Sim.Sensor.Pitot
-    case 1
-        AC_PITOT = 1;
-    case 2
-        AC_PITOT = 2;
-end
-
-% Airdata Sensors
-switch AC.Sim.Sensor.Airdata
-    case 1
-        AC_AIRDATA = 1;
-    case 2
-        AC_AIRDATA = 2;
-    case 3
-        AC_AIRDATA = 3;
-    case 4
-        AC_AIRDATA = 4;
-end
 
 %% Setup simulation buses
 GeneralBuses;
@@ -122,6 +61,10 @@ GeneralBuses;
 % coverge, try using different initial conditions. Also note that the trim
 % function will overwrite these initial conditions with the trimmed
 % conditions.
+
+% Constants
+r2d = 180/pi;
+d2r = pi/180;
 
 % Set initial state values
 TrimCondition.InertialIni    = [0, 0, -100]'; % Initial Position in Inertial Frame [Xe Ye Ze], [m]

@@ -1,12 +1,11 @@
 %% setup.m
 % UAV Software-in-the-Loop Simulation setup
 %
-% This script will setup the SIL simulation. Stored aircraft configuration
-% and trim conditions are used.
+% This script will setup the SIL simulation. 
 %
 % University of Minnesota
 % Aerospace Engineering and Mechanics
-% Copyright 2011 Regents of the University of Minnesota.
+% Copyright 2017 Regents of the University of Minnesota.
 % All rights reserved.
 %
 
@@ -15,26 +14,33 @@
 % 1 = UltraStick25e, standard outfit
 aircraftType = 1 ;
 
-aircraftVariant = Simulink.Variant('aircraftType == 1');
-
 
 %% Configure Simulation Fidelity
 % 1 = Simplified Open-Source
 % 2 = High-Fidelity, requires Aerospace Blockset
 simulation_type = 1 ;
 
-sim_fidelity_simple_var = Simulink.Variant('simulation_type == 1') ;
-sim_fidelity_full_var   = Simulink.Variant('simulation_type == 2') ;
 
+%% Set controller mode
+% Use this variable to quickly change what controller is used in the
+% simulation.
+%
+% 1 = baseline controller (C implementation)
+% 2 = baseline controller (Simulink)
+cntrlMode = 2 ;
 
 
 %% Configure Simulation Specifically For This Airfame
 switch aircraftType
     case 1 % UltraStick25e, standard outfit
         
+        % Call base setup file
         SetupNL
 end
 
+% Simulation Fidelity Variants Definition
+sim_fidelity_simple_var = Simulink.Variant('simulation_type == 1') ;
+sim_fidelity_full_var   = Simulink.Variant('simulation_type == 2') ;
 
 
 
@@ -102,23 +108,13 @@ end
 
 
 
-
 %% Simulation sample time
 SampleTime = 0.02; % sec
 MPCSampleTime = 0.02; % sec
 
 
 
-%% Set controller mode
-% Use this variable to quickly change what controller is used in the
-% simulation.
-%
-% 1 = baseline controller (C implementation)
-% 2 = baseline controller (Simulink)
-cntrlMode = 2 ;
-
-
-% Load controller parameters or compile flight code
+%% Load controller parameters or compile flight code
 switch cntrlMode
     case 1 % Baseline controller in C
         % Compile Flight Software:
