@@ -2,8 +2,7 @@
 % Nonlinear Simulation setup
 %
 % This script will setup the nonlinear simulation and call
-% trim and linearization routines. Select the desired aircraft here in this
-% script, via the "UAV_config()" function call.
+% trim and linearization routines.
 %
 % Note: the model is not opened by default. This is not
 % necessary to trim, linearize, and simulate via command line inputs.
@@ -44,6 +43,17 @@ switch aircraftType
         aeroType = 1;
         aeroVariant = Simulink.Variant('aeroType == 1');
         
+end
+
+
+%% Setup simulation fidelity specific parameters
+switch simulation_type
+    case 1 % Simplified Open-Source
+        SimEnvironConst_Temperature_K = 2.875001140067589e+02 ;
+        SimEnvironConst_SpeedOfSound_mps = 3.399101459434841e+02 ;
+        SimEnvironConst_Pressure_kPa = 1.001296472649073e+05 ;
+        SimEnvironConst_Density_kgpm3 = 1.213283987428570 ;
+        SimEnvironConst_Gravity_mps2 = 9.805475067186025 ;   
 end
 
 % Simulation Fidelity Variants Definition
@@ -171,6 +181,3 @@ simModel = 'SimNL';
 
 %% Linearize about the operating point
 [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, OperatingPoint, AC);
-
-damp(longmod)
-damp(latmod)
