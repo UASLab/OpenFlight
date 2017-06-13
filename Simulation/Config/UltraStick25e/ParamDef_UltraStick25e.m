@@ -56,38 +56,22 @@ d2r = pi/180; % Degrees to Radians conversion
 AC.Sim.Effectors = 1;
 
 %Elevator
-AC.Actuator.elevator.BW = 8;    % [Hz]
-AC.Actuator.elevator.RateLim = 150*d2r;   % [rad/s]
-AC.Actuator.elevator.PosLim = 25*d2r;  % [rad]
-AC.Actuator.elevator.NegLim = -25*d2r; %[rad]
-
-%Ailerons
-AC.Actuator.l_aileron.BW = 8;    % [Hz]
-AC.Actuator.l_aileron.RateLim = 150*d2r;   % [rad/s]
-AC.Actuator.l_aileron.PosLim = 25*d2r;  % [rad]
-AC.Actuator.l_aileron.NegLim = -25*d2r; %[rad]
-
-AC.Actuator.r_aileron.BW = 8;    % [Hz]
-AC.Actuator.r_aileron.RateLim = 150*d2r;   % [rad/s]
-AC.Actuator.r_aileron.PosLim = 25*d2r;  % [rad]
-AC.Actuator.r_aileron.NegLim = -25*d2r; %[rad]
-
-%Rudder
-AC.Actuator.rudder.BW = 8;    % [Hz]
-AC.Actuator.rudder.RateLim = 150*d2r;   % [rad/s]
-AC.Actuator.rudder.PosLim = 25*d2r;  % [rad]
-AC.Actuator.rudder.NegLim = -25*d2r; %[rad]
-
-%Flaps
-AC.Actuator.l_flap.BW = 8;    % [Hz]
-AC.Actuator.l_flap.RateLim = 150*d2r;   % [rad/s]
-AC.Actuator.l_flap.PosLim = 25*d2r;  % [rad]
-AC.Actuator.l_flap.NegLim = -25*d2r; %[rad]
-
-AC.Actuator.r_flap.BW = 8;    % [Hz]
-AC.Actuator.r_flap.RateLim = 150*d2r;   % [rad/s]
-AC.Actuator.r_flap.PosLim = 25*d2r;  % [rad]
-AC.Actuator.r_flap.NegLim = -25*d2r; %[rad]
+surfList = {'elev','ailL','ailR','rud','flapL','flapR'};
+for indxSurf = 1:length(surfList)
+    surf = surfList{indxSurf};
+    
+    AC.Act.(surf).servoBW_rps = 8 * 2*pi;
+    AC.Act.(surf).servoDamp_nd = 8 * 2*pi;
+    AC.Act.(surf).servoRateLim_rps = 150 * d2r;
+    AC.Act.(surf).servoLimPos_rad = 25 * d2r;
+    AC.Act.(surf).servoLimNeg_rad = -25 * d2r;
+    AC.Act.(surf).servoFreeplay_rad = 0.5 * d2r;
+    
+    AC.Act.(surf).linkGain_nd = 1.0;
+    AC.Act.(surf).linkLimPos_rad = 25 * d2r;
+    AC.Act.(surf).linkLimNeg_rad = -25 * d2r;
+    AC.Act.(surf).linkFreeplay_rad = 0.5 * d2r;
+end
 
 %% Configure Sensor Error Models
 

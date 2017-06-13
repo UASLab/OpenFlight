@@ -25,14 +25,14 @@ switch lower(type)
         
         % GPS Error Model Parameters (meas = scf * true + bias + noise)        
         GPS.posScf = diag([1.0, 1.0, 1.0]); 
-        GPS.posBias = 0.0 * ones(length(GPS.posScf)); % deg
+        GPS.posBias = 0.0 * ones(length(GPS.posScf), 1); % deg
         GPS.posSigma = [0.000001; 0.000001; 1]; % deg
         GPS.posSeed = randi([1, intmax('int16')], size(GPS.posBias)); % Noise Seed
         
         % GPS Velocity Error Model Parameters (meas = scf * true + bias + noise)
         GPS.velScf = diag([1.0, 1.0, 1.0]);
-        GPS.velBias =  0.0 * ones(length(GPS.velScf)); % m/s
-        GPS.velSigma = 0.1 * ones(length(GPS.velScf)); % m/s
+        GPS.velBias =  0.0 * ones(length(GPS.velScf), 1); % m/s
+        GPS.velSigma = 0.1 * ones(length(GPS.velScf), 1); % m/s
         GPS.velSeed = randi([1, intmax('int16')], size(GPS.velBias)); % Noise Seed
         
     otherwise
