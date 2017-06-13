@@ -10,7 +10,7 @@
 % 
 % University of Minnesota 
 % Aerospace Engineering and Mechanics 
-% Copyright 2011 Regents of the University of Minnesota. 
+% Copyright 2017 Regents of the University of Minnesota. 
 % All rights reserved.
 %
 
