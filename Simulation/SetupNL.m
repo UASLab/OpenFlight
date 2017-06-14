@@ -28,16 +28,6 @@ Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Thor';
 % Sim.Aero.type = 'AVL'; % Use the reference model defined by the AVL model
 Sim.Aero.type = 'Flight'; % Use aero Model as derived from flight data, use with Thor mass properties
 
-% Subsystem Variant Selections
-Sim.Eom.VarSel = 1; % Equation of Motion Selection
-Sim.MassP.VarSel = 1; % Select Mass Property Model Variant
-Sim.Aero.VarSel = 1; % Select Aero Model Variant
-Sim.Prop.VarSel = 1; % Select Propulsion Model Variant, Variant uses polynomial fitted data
-Sim.Surf.VarSel = 1; % Select Effector Variant Type
-Sim.Sens.IMU.VarSel = 1; % Select IMU Model Variants
-Sim.Sens.GPS.VarSel = 1; % Select GPS Model Variants
-Sim.Sens.AirData.VarSel = 1; % Select AirData Model Variants
-
 % Aircraft Config
 % Define Aircraft Specific Parameters
 AC = [];
@@ -46,6 +36,34 @@ AC = [];
 % Define Environment Parameters
 Env = [];
 [~, Env] = ParamDef_Env(Sim, Env);
+
+
+
+% Core System Variant Selections
+VarEomSel = 1; % Equation of Motion Selection
+VarMassPSel = 1; % Select Mass Property Model Variant
+VarAeroSel = 1; % Select Aero Model Variant
+
+
+% Configurable Subsystems Selections
+Sim.SensSim = 'Eff_UltraStick25e';
+Sim.Sens.BlockChoiceList = {[Sim.SensSim '/Sensor_IMU'], 'IMU_Err'; ...
+    [Sim.SensSim '/Sensor_GPS'], 'GPS_Err'; ...
+    [Sim.SensSim '/Sensor_Pitot'], 'Pitot_Err'};
+
+Sim.EffSim = 'Effectors_UltraStick25e';
+Sim.Eff.BlockChoiceList = [];
+for indxSurf = 1:length(Sim.Surf.surfList)
+    Sim.Eff.BlockChoiceList{indxSurf, 1} = [Sim.EffSim '/' Sim.Surf.surfList{indxSurf}];
+    Sim.Eff.BlockChoiceList{indxSurf, 2} = 'act_NL1';
+end
+
+% get_param([Sim.SensSim '/Sensor_IMU'], 'MemberBlocks');
+% get_param([Sim.SensSim '/Sensor_IMU'], 'BlockChoice');
+% set_param([Sim.SensSim '/Sensor_IMU'], 'BlockChoice', 'IMU_Err');
+% indxBlock = 1;
+% set_param(Sim.Sens.BlockChoiceList{indxBlock,1}, 'BlockChoice', Sim.Sens.BlockChoiceList{indxBlock,2});
+
 
 
 %% Define the Simulation Variants and apply selections

@@ -11,14 +11,14 @@ switch lower(Def.type)
         % Create Transfer Functions for the response
         % Keep numerator and denominator seperate for entry into Simulink TF block
         % GPS Position Transfer Function
-        posBw_rps = 20 * hz2rps; % Bandwidth of the GPS Position
-        GPS.posTF_num = posBw_rps;
-        GPS.posTF = [1, posBw_rps];
+        GPS.posBw_rps = 20 * hz2rps; % Bandwidth of the GPS Position
+        GPS.posTF_num = GPS.posBw_rps;
+        GPS.posTF = [1, GPS.posBw_rps];
         
         % GPS Velocity Transfer Function
-        velBw_rps = 20 * hz2rps; % Bandwidth of the GPS Velocity
-        GPS.velTF_num = velBw_rps;
-        GPS.velTF_den = [1, velBw_rps];
+        GPS.velBw_rps = 20 * hz2rps; % Bandwidth of the GPS Velocity
+        GPS.velTF_num = GPS.velBw_rps;
+        GPS.velTF_den = [1, GPS.velBw_rps];
        
         % Time delay, measurement to signal
         GPS.timeDelay_s = 0.300;
@@ -40,11 +40,7 @@ switch lower(Def.type)
 end
 
 %% Bus Defintion
-switch Def.VarSel
-    case 1
-        Def.elemNames = {'GeodeticLatitude_deg', 'GeodeticLonggitude_deg', 'Altitude_m', 'Xdot_mps', 'Ydot_mps', 'Zdot_mps'};
-    otherwise
-end
-
+Def.elemNames = {'lat_GPS_deg', 'long_GPS_deg', 'alt_GPS_m', 'vX_GPS_mps', 'vY_GPS_mps', 'vZ_GPS_mps'};
+Def.BusGPS = CreateBus(Def.elemNames);
 
 

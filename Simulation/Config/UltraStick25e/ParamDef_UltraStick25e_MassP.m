@@ -1,12 +1,12 @@
-function MassP = ParamDef_UltraStick25e_MassP(MassP, T_S2SB)
+function MassP = ParamDef_UltraStick25e_MassP(Def, T_S2SB)
 
 
 % Load the Reference Mass Properties
-switch lower(MassP.type)
+switch lower(Def.type)
     case {'avl'}
-        MassP = US25e_avl_v1(MassP);
+        MassP = US25e_avl_v1(Def);
     case {'flight', 'old'}
-        MassP = US25e_flight_v1(MassP); % Test derived mass properties
+        MassP = US25e_flight_v1(Def); % Test derived mass properties
     otherwise
         
 end

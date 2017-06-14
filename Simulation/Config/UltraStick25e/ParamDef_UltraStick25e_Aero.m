@@ -5,9 +5,9 @@ function Aero = ParamDef_UltraStick25e_Aero(Def, T_S2SB)
 
 switch lower(Def.type)
     case {'avl', 'avl_v1'}
-        Aero = US25e_AVL_v1(Def);
+        Aero = US25e_AVL_v1();
     case {'flight', 'old'}
-        Aero = US25e_flight_v1(Def); % Established Aero PID derived from flight data with Thor using Goldy 1.
+        Aero = US25e_flight_v1(); % Established Aero PID derived from flight data with Thor using Goldy 1.
     otherwise
         
 end
@@ -17,7 +17,7 @@ Aero.rAero_SB_m = T_S2SB * Aero.rAero_S_m;
 
 end
 
-function Aero = US25e_flight_v1(Def)
+function Aero = US25e_flight_v1()
 %% Geometric Parameters
 % Aerodynamic center is Origin of the Aero Frame (force application point)
 Aero.rAero_S_m = [0.2175; 0; 0.046];
@@ -163,7 +163,7 @@ coefList = {'CL', 'CY', 'Cl', 'Cm', 'Cn'};
 end
 
 
-function Aero = US25e_AVL_v1(Def)
+function Aero = US25e_AVL_v1()
 % First Version of the AVL US25e model. No body has been implimented. Viscous Drag is not included in the AVL model.
 
 % Geometric

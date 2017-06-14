@@ -1,5 +1,5 @@
 
-%% Initialize RigidStates bus
+%% Initialize BusEom
 % Accels
 busNames = {'Ax_mpss','Ay_mpss','Az_mpss'};
 assignin('base', 'Accels', CreateBus(busNames));
@@ -29,14 +29,14 @@ busNames = {'udot_mpss','vdot_mpss','wdot_mpss'};
 assignin('base', 'A_b', CreateBus(busNames));
 
 
-% RigidStates Bus
+% BusEom
 busNames = {'Accels', 'EulerDot', 'Euler', 'V_b', 'AngVel', 'AngAccel', 'A_b', 'DCM'};
 busDataType = {'Bus: Accels', 'Bus: EulerDot', 'Bus: Euler', 'Bus: V_b', 'Bus: AngVel', 'Bus: AngAccel', 'Bus: A_b', 'double'};
 busDim = {1, 1, 1, 1, 1, 1, 1, [3,3]};
-assignin('base', 'RigidStates', CreateBus(busNames, busDataType, busDim));
+assignin('base', 'BusEom', CreateBus(busNames, busDataType, busDim));
 
 
-%% Initialize AuxVar bus
+%% Initialize BusAux bus
 % V_e
 busNames = {'Xdot_mps','Ydot_mps','Zdot_mps'};
 assignin('base', 'V_e', CreateBus(busNames));
@@ -65,13 +65,13 @@ busNames = {'alphadot_rps', 'betadot_rps'};
 assignin('base', 'AlphaBetaDot', CreateBus(busNames));
 
 
-% AuxVar Bus
+% BusAux Bus
 busNames =    {'V_e',      'X_e',      'Nav',      'InertialAccel',      'WindAxesParams',      'AlphaBetaDot',      'MachNumber', 'qBar_Pa'};
 busDataType = {'Bus: V_e', 'Bus: X_e', 'Bus: Nav', 'Bus: InertialAccel', 'Bus: WindAxesParams', 'Bus: AlphaBetaDot', 'double',     'double'};
-assignin('base', 'AuxVar', CreateBus(busNames, busDataType));
+assignin('base', 'BusAux', CreateBus(busNames, busDataType));
 
 
-%% Initialize EnvData bus
+%% Initialize BusNav bus
 % WindGust
 busNames = {'ug_mps','vg_mps','wg_mps'};
 assignin('base', 'WindGust', CreateBus(busNames));
@@ -83,18 +83,18 @@ assignin('base', 'WindAngVel', CreateBus(busNames));
 clear elems
 
 
-% EnvData
+% BusNav
 busNames = {'Temperature_K', 'SpeedOfSound_mps', 'Pressure_kPa', 'Density_kgpm3', 'Gravity_mpss', 'MageneticField_nT', 'SteadyWind_mps', 'WindGust', 'WindAngVel'};
 busDataType = {'double', 'double', 'double', 'double', 'double', 'double', 'double', 'Bus: WindGust', 'Bus: WindAngVel'};
 busDim = {1, 1, 1, 1, [1,3], [1,3], [1,3], 1, 1};
-assignin('base', 'EnvData', CreateBus(busNames, busDataType, busDim));
+assignin('base', 'BusNav', CreateBus(busNames, busDataType, busDim));
 
 
 %% Initialize States bus
 % States
-busNames = {'EnvData', 'AuxVar', 'RigidStates'};
-busDataType = {'Bus: EnvData', 'Bus: AuxVar', 'Bus: RigidStates'};
-assignin('base', 'States', CreateBus(busNames, busDataType, busDim));
+busNames = {'BusNav', 'BusAux', 'BusEom'};
+busDataType = {'Bus: BusNav', 'Bus: BusAux', 'Bus: BusEom'};
+assignin('base', 'BusStates', CreateBus(busNames, busDataType, busDim));
 
 
 %% Cleanup

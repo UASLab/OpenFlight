@@ -37,13 +37,13 @@ end
 
 %% Limits, populate with generic values as placeholder
 % Power limits
-Prop.powerPosLim_w = Inf;
-Prop.powerNegLim_w = 0;
+Prop.powerLimPos_w = Inf;
+Prop.powerLimNeg_w = 0;
 
 % Rotation rate limits
-Prop.omegaPosLim_rps = Inf;
-Prop.omegaNegLim_rps = 1; % FIXIT - should be -Inf, need to add divide by zero protection to block diagrams
+Prop.omegaLimPos_rps = Inf;
+Prop.omegaLimNeg_rps = 1; % FIXIT - should be -Inf, need to add divide by zero protection to block diagrams
 
 % Throttle command limits
-Prop.throtPosLim_nd = 1;  % [nd]
-Prop.throtNegLim_nd = 0; % [nd]
+Prop.throtLimPos_nd = 1;  % [nd]
+Prop.throtLimNeg_nd = 0; % [nd]

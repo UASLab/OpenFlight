@@ -12,11 +12,23 @@ switch lower(Def.servoType)
         Surf.servoBw_rps = 8.0 * hz2rps; % FIXIT - Guess
         Surf.servoDamp_nd = 1.0; % FIXIT - Guess
         Surf.servoRateLim_rps = 150 * d2r; % FIXIT - Guess
-        Surf.servoPosLim_rad = 90 * d2r; % FIXIT - Guess
-        Surf.servoNegLim_rad = -90 * d2r; % FIXIT - Guess
+        Surf.servoLimPos_rad = 90 * d2r; % FIXIT - Guess
+        Surf.servoLimNeg_rad = -90 * d2r; % FIXIT - Guess
         
         Surf.servoTimeDelay_s = 1 * 1/50; % FIXIT - Guess
         Surf.servoFreeplay_rad = 0.5 * d2r; % FIXIT - Guess
+        
+    case lower({'Futaba_BLS471SV', 'BLS471SV'}) % Futaba BLS471SV
+        % These are the Test Results using SBUS input
+        
+        Surf.servoBw_rps = 30 * hz2rps; % Servo Bandwidth @ 5 deg amplitude
+        Surf.servoDamp_nd = 0.8; % FIXIT - Guess
+        Surf.servoRateLim_rps = 1200 * d2r;
+        Surf.servoLimPos_rad = 90 * d2r;
+        Surf.servoLimNeg_rad = -90 * d2r;
+        
+        Surf.servoTimeDelay_s = 0.007;
+        Surf.servoFreeplay_rad = 0.2 * d2r;
         
     otherwise
         
@@ -24,7 +36,6 @@ end
 
 %% Linkage Model Parameters
 % Add parameters for the linkage, these are aircraft specific and hence populated with generic values
-Surf.linkPosLim_rad = Surf.servoPosLim_rad;
-Surf.linkNegLim_rad = -Surf.servoNegLim_rad;
+Surf.linkGain_nd = 1.0;
 Surf.linkFreeplay_rad = 0.0;
 

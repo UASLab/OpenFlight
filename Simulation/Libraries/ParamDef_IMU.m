@@ -12,19 +12,19 @@ switch lower(Def.type)
         % Create Transfer Functions for the transducer response
         % Keep numerator and denominator seperate for entry into Simulink TF block
         % Gyro Transfer Function
-        gyroBw_rps = 300 * hz2rps;
-        IMU.gyroTF_num = gyroBw_rps;
-        IMU.gyroTF_den = [1, gyroBw_rps];
+        IMU.gyroBw_rps = 300 * hz2rps;
+        IMU.gyroTF_num = IMU.gyroBw_rps;
+        IMU.gyroTF_den = [1, IMU.gyroBw_rps];
         
         % Accel Transfer Function
-        accelBw_rps = 300 * hz2rps;
-        IMU.accelTF_num = accelBw_rps;
-        IMU.accelTF_den = [1, accelBw_rps];
+        IMU.accelBw_rps = 300 * hz2rps;
+        IMU.accelTF_num = IMU.accelBw_rps;
+        IMU.accelTF_den = [1, IMU.accelBw_rps];
         
         % Mag Transfer Function
-        magBw_rps = 1540 * hz2rps;
-        IMU.magTF_num = magBw_rps;
-        IMU.magTF_den = [1, magBw_rps];
+        IMU.magBw_rps = 1540 * hz2rps;
+        IMU.magTF_num = IMU.magBw_rps;
+        IMU.magTF_den = [1, IMU.magBw_rps];
         
         % Time delay, measurement to signal
         IMU.timeDelay_s = 1/1000;
@@ -53,9 +53,6 @@ switch lower(Def.type)
 end
 
 %% Bus Defintion
-switch Def.VarSel
-    case 1
-        Def.elemNames = {'p_rps', 'q_rps', 'r_rps', 'ax_mpss', 'ay_mpss', 'az_mpss', 'hx_nT', 'hy_nT', 'hz_nT'};
-    otherwise
-end
+Def.elemNames = {'wX_IMU_rps', 'wY_IMU_rps', 'wZ_IMU_rps', 'aX_IMU_mps2', 'aY_IMU_mps2', 'aZ_IMU_mps2', 'hX_IMU_nT', 'hY_IMU_nT', 'hZ_IMU_nT'};
+Def.BusIMU = CreateBus(Def.elemNames);
 

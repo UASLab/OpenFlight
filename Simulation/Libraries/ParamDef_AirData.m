@@ -14,14 +14,14 @@ switch lower(Def.type)
         % Create Transfer Functions for the tube response
         AirData.tubeLength_m = 0.5; % FIXME - Aircraft Specific
         AirData.vSound_mps = 340; % FIXME - Environment Driven
-        tubeBw_rps = AirData.vSound_mps / (4*AirData.tubeLength_m) * hz2rps; % Bandwidth
-        tubeDamp_nd = 0.3; % Worst-case for resonable lengths
+        AirData.tubeBw_rps = AirData.vSound_mps / (4*AirData.tubeLength_m) * hz2rps; % Bandwidth
+        AirData.tubeDamp_nd = 0.3; % Worst-case for resonable lengths
         
-        AirData.tubeTF_num = [tubeBw_rps^2];
-        AirData.tubeTF_den = [1, 2*tubeDamp_nd*tubeBw_rps, tubeBw_rps^2];
+        AirData.tubeTF_num = [AirData.tubeBw_rps^2];
+        AirData.tubeTF_den = [1, 2*AirData.tubeDamp_nd*AirData.tubeBw_rps, AirData.tubeBw_rps^2];
         
         % Define output bus names
-        Def.elemNames = {'Pd_Pa', 'Ps_Pa', 'temp_K'};
+        Def.elemNames = {'presDyn_AD_Pa', 'presStatic_AD_Pa', 'temp_K'};
         
     case {'bird'} % NASA Birds
         [AirData] = ParamDef_Bird(AirData);
@@ -30,9 +30,13 @@ switch lower(Def.type)
         AirData.timeDelay_s = 0.001; % (FIXME - Check all values!!)
         
         % Define output bus names
-        Def.elemNames = {'vel_mps', 'alpha_rad', 'beta_rad'};
+        Def.elemNames = {'velTot_AD_mps', 'alpha_AD_rad', 'beta_AD_rad'};
     otherwise
 end
+
+%% Bus Definition
+Def.BusAirData = CreateBus(Def.elemNames);
+
 end
 
 function [AirData] = ParamDef_Ps(Def, AirData)
@@ -46,12 +50,12 @@ switch lower(Def)
         % Create Transfer Functions for the transducer response
         % Keep numerator and denominator seperate for entry into Simulink TF block
         % Static Pressure Transfer Function
-        PsBw_rps = (0.35 / 0.001) * hz2rps; % Bandwidth, Rise time is 0.5-1.0 ms
-        AirData.PsTF_num = PsBw_rps;
-        AirData.PsTF_den = [1, PsBw_rps];
+        AirData.PsBw_rps = (0.35 / 0.001) * hz2rps; % Bandwidth, Rise time is 0.5-1.0 ms
+        AirData.PsTF_num = AirData.PsBw_rps;
+        AirData.PsTF_den = [1, AirData.PsBw_rps];
         
         % Temperature Transfer Function
-        tempBw_rps = PsBw_rps; % Bandwidth
+        AirData.tempBw_rps = AirData.PsBw_rps; % Bandwidth
         AirData.tempTF_num = AirData.PsTF_num;
         AirData.tempTF_den = AirData.PsTF_den;
         
@@ -86,12 +90,12 @@ switch lower(Def)
         % Create Transfer Functions for the transducer response
         % Keep numerator and denominator seperate for entry into Simulink TF block
         % Dynamic Pressure Transfer Function
-        PdBw_rps = (0.35 / 0.001) * hz2rps; % Bandwidth, Rise time is 0.5-1.0 ms
-        AirData.PdTF_num = PdBw_rps;
-        AirData.PdTF_den = [1, PdBw_rps];
+        AirData.PdBw_rps = (0.35 / 0.001) * hz2rps; % Bandwidth, Rise time is 0.5-1.0 ms
+        AirData.PdTF_num = AirData.PdBw_rps;
+        AirData.PdTF_den = [1, AirData.PdBw_rps];
         
         % Temperature Transfer Function
-        tempBw_rps = PdBw_rps; % Bandwidth
+        AirData.tempBw_rps = AirData.PdBw_rps; % Bandwidth
         AirData.tempTF_num = AirData.PdTF_num;
         AirData.tempTF_den = AirData.PdTF_den;
         
@@ -122,19 +126,19 @@ hz2rps = 2*pi;
 % Create Transfer Functions for the transducer response
 % Keep numerator and denominator seperate for entry into Simulink TF block
 % Anemometer Transfer Function
-velBw_rps = 20 * hz2rps; % Bandwidth
-AirData.velTF_num = velBw_rps;
-AirData.velTF_den = [1, velBw_rps];
+AirData.velBw_rps = 20 * hz2rps; % Bandwidth
+AirData.velTF_num = AirData.velBw_rps;
+AirData.velTF_den = [1, AirData.velBw_rps];
 
 % Alpha Vane Transfer Function
-alphaBw_rps = 10 * hz2rps; % Bandwidth
-AirData.alphaTF_num = alphaBw_rps;
-AirData.alphaTF_den = [1, alphaBw_rps];
+AirData.alphaBw_rps = 10 * hz2rps; % Bandwidth
+AirData.alphaTF_num = AirData.alphaBw_rps;
+AirData.alphaTF_den = [1, AirData.alphaBw_rps];
 
 % Beta Vane Transfer Function
-betaBw_rps = 10 * hz2rps; % Bandwidth
-AirData.betaTF_num = betaBw_rps;
-AirData.betaTF_den = [1, betaBw_rps];
+AirData.betaBw_rps = 10 * hz2rps; % Bandwidth
+AirData.betaTF_num = AirData.betaBw_rps;
+AirData.betaTF_den = [1, AirData.betaBw_rps];
 
 % Anemometer Error Model
 AirData.velScf = 1;
