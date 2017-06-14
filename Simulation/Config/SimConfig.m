@@ -63,8 +63,9 @@ Env.Winds.SteadyWindOn=0;
 Env.Winds.WindSpeed = 0;
 Env.Winds.WindDir = 0;
 
-% Date
-Env.DecimalYear = decyear(now);
+% Date, removing Aerospace Blockset dependency here.
+nowout = datestr(now,'yyyymmdd') ;
+Env.DecimalYear = str2num((nowout(1:4))) + (str2num((nowout(5:6)))-1)/12 + str2num((nowout(7:8)))/30/12 ;
 Env.Date = datestr(now);
 
 % Ground Altitude-for advanced simulation, import terrain data lookup here
