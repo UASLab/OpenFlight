@@ -10,7 +10,7 @@
 % 
 % University of Minnesota 
 % Aerospace Engineering and Mechanics 
-% Copyright 2011 Regents of the University of Minnesota. 
+% Copyright 2017 Regents of the University of Minnesota. 
 % All rights reserved.
 %
 
@@ -20,8 +20,12 @@
 d2r = pi/180;
 
 
-%% Configure Simulation
+%% Configure Aircraft
 Sim.model = 'UltraStick25e';
+
+% Simulation sample time
+Sim.timeSample_s = 0.02; % sec
+
 % Sim.MassP.type = 'AVL'; % Use the reference model defined by the AVL model
 Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Thor';
 
@@ -31,27 +35,20 @@ Sim.Aero.type = 'Flight'; % Use aero Model as derived from flight data, use with
 % Aircraft Config
 % Define Aircraft Specific Parameters
 AC = [];
-[Sim, AC] = ParamDef_UltraStick25e(Sim, AC);
+[Sim, AC] = Config_UltraStick25e(Sim, AC);
 
-% Define Environment Parameters
-Env = [];
-[~, Env] = ParamDef_Env(Sim, Env);
-
-
-
-% Core System Variant Selections
-VarEomSel = 1; % Equation of Motion Selection
-VarMassPSel = 1; % Select Mass Property Model Variant
-VarAeroSel = 1; % Select Aero Model Variant
-
+% Core Sub-System Variant Selections
+Sim.MassP.VarSel = 1; % Select Mass Property Model Variant
+Sim.Aero.VarSel = 1; % Select Aero Model Variant
+Sim.Prop.VarSel = 1; % Select Prop Model Variant
 
 % Configurable Subsystems Selections
-Sim.SensSim = 'Eff_UltraStick25e';
+Sim.SensSim = 'Sensors_UltraStick25e';
 Sim.Sens.BlockChoiceList = {[Sim.SensSim '/Sensor_IMU'], 'IMU_Err'; ...
     [Sim.SensSim '/Sensor_GPS'], 'GPS_Err'; ...
     [Sim.SensSim '/Sensor_Pitot'], 'Pitot_Err'};
 
-Sim.EffSim = 'Effectors_UltraStick25e';
+Sim.EffSim = 'SubSys_UltraStick25e';
 Sim.Eff.BlockChoiceList = [];
 for indxSurf = 1:length(Sim.Surf.surfList)
     Sim.Eff.BlockChoiceList{indxSurf, 1} = [Sim.EffSim '/' Sim.Surf.surfList{indxSurf}];
@@ -66,8 +63,19 @@ end
 
 
 
-%% Define the Simulation Variants and apply selections
-[Sim] = SimConfig(Sim);
+%% Define the Core Simulation Parameters, Variants, and Buses
+% Define Environment Parameters
+Env = [];
+
+% Configure the Simulation (Apply Variants and Define Buses)
+Sim.Atmos.VarSel = 1; % Atmospheric Model Selection
+Sim.Terr.VarSel = 1; % Terrain Model Selection
+Sim.Grav.VarSel = 1; % Gravity Model Selection
+Sim.Mag.VarSel = 1; % Magnetic Model Selection
+
+Sim.Eom.VarSel = 1; % Equation of Motion Selection
+
+[Sim, Env] = Config_Core(Sim, Env);
 
 
 %% Set aircraft initial conditions 
@@ -76,109 +84,87 @@ end
 % function will overwrite these initial conditions with the trimmed
 % conditions.
 
-% Set initial state values
-Sim.Trim.InertialIni    = [0, 0, -100]'; % Initial Position in Inertial Frame [Xe Ye Ze], [m]
-Sim.Trim.LLIni          = [44.7258357, -93.07501316]'; % Initial Latitude/Longitude of Aircraft [Lat Long], [deg]
-Sim.Trim.AttitudeIni    = [0, 0.0217, 155*d2r]'; % Initial Euler orientation [roll, pitch, yaw], [rad], can't use 0 heading, causes large entry in C matrix for psi 
-Sim.Trim.RatesIni       = [0, 0, 0]'; % Initial Body Frame rotation rates [p q r], [rad/s]
+% Set Initializatons
+Sim.Trim.Init.wInit_BL_B_rps = [0; 0; 0]; % Initial Body Frame rotation rates [p; q; r]
+Sim.Trim.Init.sInit_BL_rad   = [0; 4 * d2r; 45 * d2r]; % Initial Euler orientation [bank; attitude; heading]; avoid 0 heading, causes large entry in C matrix for psi 
 
-% Steady state wind values, m/s
-Sim.Trim.Inputs.Wind     = [0, 0, 0]';
+Env.Terr.altGrd_m = 287.0; % Ground Elevation at Jensen Field
+Sim.Trim.Init.altAgl_m = 100.0; % Initial Altitude in AGL
+Sim.Trim.Init.rInit_BE_D_ddm = [44.72701; -93.077205; Env.Terr.altGrd_m + Sim.Trim.Init.altAgl_m]; % Initial Position of Aircraft [Lat; Long; Alt]
 
-switch lower(AC.aircraft)
+switch lower(Sim.model)
     case 'ultrastick120'
-        % Control surface initial values, rad:
-        % elevator, rudder, aileron, left flap, right flap
-        Sim.Trim.Inputs.Effector = [0.091 0 0 0 0]';
+        % Initial Velocity of Aircraft
+        Sim.Trim.Init.vInit_BA_B_mps = [23; 0; 0];
+
+        % Throttle initial values
+        Sim.Trim.MotorNames = {'throttle_nd'};
+        Sim.Trim.In.Motor = struct('Known', 0, 'u', 0.60);
         
-        % number of the control surfaces (required to initialize the input
-        % port dimension; dynamically relocating it returns an error)
-        AC.nctrls = size(Sim.Trim.Inputs.Effector,1);
+        % Control surface initial values
+        Sim.Trim.SurfNames = {'elev_rad', 'rud_rad', 'ail_rad', 'flapL_rad', 'flapR_rad'}; % elev, rud, (ailL + ailR), flapL, flapR
+        Sim.Trim.In.Surf = struct('Known', [0; 0; 0; 1; 1], 'u', [0; 0; 0; 0; 0]);
         
-        % Throttle initial value, nd
-        Sim.Trim.Inputs.Throttle = 0.559;
-        
-        % Initial velocity vector, m/s: [u v w]
-        Sim.Trim.VelocitiesIni  = [23 0 0.369]';
-        
-        % Initial Engine Speed [rad/s]
-        Sim.Trim.EngineSpeedIni = 827;
-        
+        % Initial Motor Speed [rad/s]
+        Sim.Trim.Init.omegaInit_rps = 800;
+                
     case 'ultrastick25e'
-        % Control surface initial values, rad:
-        % elevator, rudder, aileron, left flap, right flap
-        Sim.Trim.Inputs.Actuator = [0.091 0 0 0 0]';
+        % Initial Velocity of Aircraft
+        Sim.Trim.Init.vInit_BA_B_mps = [17; 0; 0];
         
-        % number of the control surfaces (required to initialize the input
-        % port dimension; dynamically relocating it returns an error)
-        AC.nctrls = size(Sim.Trim.Inputs.Actuator,1);
+        % Throttle initial values
+        Sim.Trim.MotorNames = {'throttle_nd'};
+        Sim.Trim.In.Motor = struct('Known', 0, 'u', 0.60, 'Min', 0, 'Max', 1.0);
         
-        % Throttle initial value, nd
-        Sim.Trim.Inputs.Motor = 0.559;
+        % Control surface initial values
+        Sim.Trim.SurfNames = {'elev_rad', 'rud_rad', 'ail_rad', 'flapL_rad', 'flapR_rad'}; % elev, rud, (ailL + ailR), flapL, flapR
+        Sim.Trim.In.Surf = struct('Known', [0; 0; 0; 1; 1], 'u', [0; 0; 0; 0; 0]*d2r, 'Min', [-30; -30; -30; -30; -30]*d2r, 'Max', [30; 30; 30; 30; 30]*d2r);
         
-        % Initial velocity vector, m/s: [u v w]
-        Sim.Trim.VelocitiesIni  = [17 0 0.369]';
+        % Initial Motor Speed [rad/s]
+        Sim.Trim.Init.omegaInit_rps = 800;
         
-        % Initial Engine Speed [rad/s]
-        Sim.Trim.EngineSpeedIni = 827;
-        
-    case 'maewing1'
-        % Control surface initial values, rad:
-        % elevator, aileron, L1, L4, R1, R4
-        Sim.Trim.Inputs.Effector = [-.09 0 0 0 0 0]';
-        AC.nctrls = size(Sim.Trim.Inputs.Effector,1);
-        
-        % Throttle initial value, nd
-        Sim.Trim.Inputs.Throttle = 0.559;
-        
-        % Initial velocity vector, m/s: [u v w]
-        Sim.Trim.VelocitiesIni  = [23.6 0 0.369]';
-        
-        % Initial flexible state values:
-        
-        % Get dimensions of the structural and aerodynamics model
-        nstates = size(AC.Aero.RFA.A0,1); %overall number of states
-        nrigidstates = 6; %number of rigid body states
-        nflexstates = nstates-nrigidstates; %number of flexible states
-        nflaps = size(AC.Aero.RFA.A0,2)-nstates; %number of control surfaces
-        nlagstates = size(AC.Aero.RFA.Alag,1); %number of lag states
-        
-        % Initial values of structural model
-        % Displacements in modal coordinates
-        Sim.Trim.FlexIni = zeros(nflexstates,1);
-        % Velocities in modal coordinates
-        Sim.Trim.FlexRatesIni = zeros(nflexstates,1);
-        
-        % Inital values of the unsteady aerodynamics
-        % Lag states
-        Sim.Trim.LagStatesIni = zeros(nlagstates,1);
-        % DT1 filter states to obtain control surface velocities
-        % (XXX not required if we have an actuator model, should we
-        % consider that?)
-        Sim.Trim.DT1CtrlSurfIni = zeros(nflaps,1);
-        % DT1 filter states to obtain accelerations
-        Sim.Trim.DT1AccAllModes = zeros(nstates+nflaps,1);
 end
 
 
 %% Trim aircraft to a specific flight condition
-% Set the trim targets here. See trim_UAV for complete list of target
-% variables. Sideslip angle (beta), flight path angle (gamma) and flap
-% setting default to zero. If a fixed control input setting is desired,
-% specify as a target.
+% Define the Output specifications - Steady-Level
+Sim.Trim.Out.vTrue_mps = struct('Known', 1, 'y', Sim.Trim.Init.vInit_BA_B_mps(1));
+Sim.Trim.Out.alpha_rad = struct('Known', 0, 'y', Sim.Trim.Init.sInit_BL_rad(2), 'Min', -10 * d2r, 'Max', 20 * d2r);
+Sim.Trim.Out.beta_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
+Sim.Trim.Out.gamma_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
 
-% straight and level, (m/s, rad)
-Sim.Trim.target = struct('V_s', Sim.Trim.VelocitiesIni(1), 'gamma', 0 * d2r, 'h', 100);
-% Sim.Trim.target = struct('V_s', Sim.Trim.VelocitiesIni(1), 'gamma', 5 * d2r); % level climb, (m/s, rad)
-% Sim.Trim.target = struct('V_s', Sim.Trim.VelocitiesIni(1), 'gamma', 0 * d2r, 'psidot', 20 * d2r); % level turn, (m/s, rad, rad/sec)
-% Sim.Trim.target = struct('V_s', Sim.Trim.VelocitiesIni(1), 'gamma', 5 * d2r, 'psidot',20 * d2r); % climbing turn, (m/s, rad, rad/sec)
-% Sim.Trim.target = struct('V_s', Sim.Trim.VelocitiesIni(1), 'gamma', 0 * d2r, 'beta', 5 * d2r); % level steady heading sideslip, (m/s, rad, rad)
+Sim.Trim.Out.phi_rad = struct('Known', 1, 'y', Sim.Trim.Init.sInit_BL_rad(1), 'Min', -90 * d2r, 'Max', 90 * d2r);
+Sim.Trim.Out.theta_rad = struct('Known', 0, 'y', Sim.Trim.Init.sInit_BL_rad(2), 'Min', -10 * d2r, 'Max', 20 * d2r);
+Sim.Trim.Out.psi_rad = struct('Known', 0, 'y', Sim.Trim.Init.sInit_BL_rad(3), 'Min', Sim.Trim.Init.sInit_BL_rad(3) - 15 * d2r, 'Max', Sim.Trim.Init.sInit_BL_rad(3) + 15 * d2r);
+
+Sim.Trim.Out.p_rps = struct('Known', 0, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
+Sim.Trim.Out.q_rps = Sim.Trim.Out.p_rps;
+Sim.Trim.Out.r_rps = Sim.Trim.Out.p_rps;
+
+Sim.Trim.Out.altAgl_m = struct('Known', 0, 'y', Sim.Trim.Init.altAgl_m);
+
+% Define State conditions, generally these are guesses
+Sim.Trim.State.wState_BI_B_rps = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [0; 0; 0]);
+Sim.Trim.State.quatState = struct('Known', [0; 0; 0; 0], 'steadystate', [1; 1; 1; 1]);
+Sim.Trim.State.vState_BI_B_mps = struct('Known', [0; 0; 0], 'steadystate', [0; 0; 0], 'x', Sim.Trim.Init.vInit_BA_B_mps);
+Sim.Trim.State.rState_BI_E_m = struct('Known', [0; 0; 0], 'steadystate', [0; 0; 0], 'x', [0; 0; 0]);
+
+Sim.Trim.State.omegaState_rps = struct('Known', zeros(size(Sim.Trim.Init.omegaInit_rps)), 'steadystate', ones(size(Sim.Trim.Init.omegaInit_rps)), 'x', Sim.Trim.Init.omegaInit_rps);
 
 % Find the trim solution
 simModel = 'SimNL';
-[Sim.Trim] = TrimSim(simModel, Sim.Trim, Sim, AC);
+verbose = 1;
+[Sim] = TrimSim(simModel, Sim, verbose);
 
+%%
+if 0
+    % Save variables to MAT file
+    save(fileSave, 'Sim', 'AC');
+    
+    % Output a message to the screen
+    fprintf('\n Simulation Configuration saved as:\t %s\n', fileSave);
+end
 
 %% Linearize about the operating point
-[longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, Sim);
+[linmodel] = LinearizeSim(simModel, Sim);
 

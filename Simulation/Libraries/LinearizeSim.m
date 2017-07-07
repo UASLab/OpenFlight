@@ -1,4 +1,4 @@
-function [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, Sim)
+function [linmodel] = LinearizeSim(simModel, Sim)
 % [longmod, spmod, latmod, linmodel = LinearizeSim(simModel, Sim)
 %
 % Linearizes the UAV model about a given operating point.
@@ -16,7 +16,7 @@ function [longmod, spmod, latmod, linmodel] = LinearizeSim(simModel, Sim)
 %
 % University of Minnesota 
 % Aerospace Engineering and Mechanics 
-% Copyright 2011 Regents of the University of Minnesota. 
+% Copyright 2017 Regents of the University of Minnesota. 
 % All rights reserved.
 %
 
@@ -28,30 +28,40 @@ end
 
 %% LINEARIZE
 
-% Set inputs
-io(1) = linio('SimNL/Trim and Linearization Help/Motor State Bus', 1, 'in');
-io(end+1) = linio('SimNL/Trim and Linearization Help/Actuator State Bus', 1, 'in');
+% Set Inputs
+% Model is setup with input pertubations on the desired system inputs
+Sim.Trim.io = getlinio(simModel);
+% inList = get(Sim.Trim.opSpec.Inputs, 'Block');
+% numIn = length(Sim.Trim.io);
+% 
+% for indxIn = 1:numIn 
+%     Sim.Trim.io(indxIn) = linio(inList{indxIn}, indxIn, 'in');
+% end
 
-% Set outputs
-for k = 1:14 
-    io(end+1)  = linio('SimNL/Aircraft States', k, 'out');
-end
+% Set Outputs
+outList = get(Sim.Trim.opSpec.Outputs, 'Block');
+% numOut = length(outList);
+% 
+% for indxOut = 1:numOut 
+%     Sim.Trim.io(numIn + indxOut)  = linio(outList{indxOut}, indxOut, 'out');
+% end
 
-% Obtain lineariziation
-linmodel = linearize(simModel, Sim.Trim.OperatingPoint.op_point, io);
+type = get(Sim.Trim.io, 'Type');
+
+%% Obtain lineariziation
+linOpt = linearizeOptions;
+linmodel = linearize(simModel, Sim.Trim.opPoint, Sim.Trim.io, linOpt);
 
 
 
+%% Fix I/O and State Names
+% inListSig = [Sim.Trim.MotorNames, Sim.Trim.SurfNames];
+% set(linmodel, 'InputName', inListSig);
 
-% Longitudinal and lateral models are only generated for UltraSticks not
-% miniMUTT (miniMUTT does not have a clear decoupling of both motions)
-switch lower(Sim.type)
-    case {'ultrastick120', 'ultrastick25e'} 
-        
-        set(linmodel, 'InputName', {'\delta_t';'\delta_e'; '\delta_r' ;'\delta_aL';'\delta_aR';'\delta_fL';'\delta_fR'});
-        set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
-        NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
-        linmodel.StateName(1:length(NewStateNames)) = NewStateNames;
+
+outListSig = strrep(outList, [simModel '/'], '');
+set(linmodel, 'OutputName', outListSig);
+
         
         %% GENERATE LONGITUDINAL LINEAR MODEL
         % Longitudinal dynamics
@@ -61,11 +71,11 @@ switch lower(Sim.type)
         
         % Generate State-space matrices for Longitudinal Model
         % Indices for desired state, outputs, and inputs
-        Xlon = [7 9 5 2 12 13];
-        Ylon = [10 12 5 2 13 7 9];
-        Ilon = [2 1];
-        longmod = modred(linmodel(Ylon, Ilon), setdiff(1:13, Xlon), 'Truncate');
-        longmod = xperm(longmod, [3 4 2 1 5 6]); % reorder state
+%         Xlon = [7 9 5 2 12 13];
+%         Ylon = [10 12 5 2 13 7 9];
+%         Ilon = [2 1];
+%         longmod = modred(linmodel(Ylon, Ilon), setdiff(1:13, Xlon), 'Truncate');
+%         longmod = xperm(longmod, [3 4 2 1 5 6]); % reorder state
 
         
         %% GENERATE SHORT PERIOD LINEAR MODEL
@@ -76,10 +86,10 @@ switch lower(Sim.type)
         
         % Generate State-space matrices for Longitudinal Model
         % Indices for desired state, outputs, and inputs
-        Xlon = [9 5];
-        Ylon = [12 5 9];
-        Ilon = 2;
-        spmod = modred(linmodel(Ylon,Ilon), setdiff(1:13,Xlon), 'Truncate');
+%         Xlon = [9 5];
+%         Ylon = [12 5 9];
+%         Ilon = 2;
+%         spmod = modred(linmodel(Ylon,Ilon), setdiff(1:13,Xlon), 'Truncate');
 
         
         %% GENERATE LATERAL-DIRECTIONAL LINEAR MODEL
@@ -90,24 +100,13 @@ switch lower(Sim.type)
         
         % Generate State-space matrices for lateral-directional Model
         % Indices for desired state, outputs, and inputs
-        Xlat = [8 4 6 1 3];
-        Ylat = [11 4 6 1 3];
-        Ilat = [3 4 5];
-        latmod = modred(linmodel(Ylat, Ilat),setdiff(1:13, Xlat),'Truncate');
-        latmod = xperm(latmod,[5 3 4 1 2]); % reorder state
+%         Xlat = [8 4 6 1 3];
+%         Ylat = [11 4 6 1 3];
+%         Ilat = [3 4 5];
+%         latmod = modred(linmodel(Ylat, Ilat),setdiff(1:13, Xlat),'Truncate');
+%         latmod = xperm(latmod,[5 3 4 1 2]); % reorder state
 
-            
-    case 'minimutt'
-        
-        set(linmodel, 'InputName', {'\delta_t';'\delta_L1'; '\delta_L2' ;'\delta_L3';'\delta_L4';'\delta_R1';'\delta_R2';'\delta_R3';'\delta_R4'});
-        set(linmodel, 'OutputName',{'phi'; 'theta';'psi';'p';'q';'r';'ax';'ay';'az';'V'; 'beta'; 'alpha'; 'h'; 'gamma'});
-        NewStateNames = {'phi';'theta';'psi';'p';'q';'r';'u';'v';'w';'Xe';'Ye';'Ze'};
-        linmodel.StateName(1:length(NewStateNames)) = NewStateNames;
-        
-        longmod = 'no longitudinal model for mini MUTT';
-        latmod = 'no lateral model for mini MUTT';
-        spmod = 'no short period model for mini MUTT';
-end
+
 
 %% Cleanup
 if ~isLoaded
