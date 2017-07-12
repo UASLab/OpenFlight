@@ -1,4 +1,4 @@
-function [Sim, Prop] = ParamDef_Prop(Sim, Prop)
+function [Sim, Prop] = Config_Prop(Sim, Prop)
 
 % Constants
 in2m = 0.0254;
@@ -15,8 +15,8 @@ switch lower(Sim.propType)
         % Coefficient of Thrust, polynomial coefficients, advance ratio input
         Prop.CT = [-0.4314 1.08 -0.896 0.1089 0.0604 ];
         
-        % Coefficient of Torque, polynomial coefficients, advance ratio input
-        Prop.CQ = [0.5054 -0.5304 0.0412 0.01664 0.0223];
+        % Coefficient of Power, polynomial coefficients, advance ratio input
+        Prop.CP = [0.5054 -0.5304 0.0412 0.01664 0.0223];
         
         % Electric motor and propeller combine moment of inertia
         Prop.Jmp_kgm2 = 0.00012991;  % experimental measurement (not updated with Jan 2011 data)

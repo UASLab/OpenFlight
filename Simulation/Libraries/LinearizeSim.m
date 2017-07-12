@@ -1,8 +1,8 @@
-function [linmodel] = LinearizeSim(simModel, Sim)
+function [sysModel, sys] = LinearizeSim(simModel, Sim)
 % [longmod, spmod, latmod, linmodel = LinearizeSim(simModel, Sim)
 %
 % Linearizes the UAV model about a given operating point.
-% This function will use your workspace variables. 
+% This function will use your workspace variables.
 % Requires the Control System Toolbox and Simulink Control Design.
 %
 % Inputs:
@@ -14,9 +14,9 @@ function [linmodel] = LinearizeSim(simModel, Sim)
 %   linmodel - full linear model
 %
 %
-% University of Minnesota 
-% Aerospace Engineering and Mechanics 
-% Copyright 2017 Regents of the University of Minnesota. 
+% University of Minnesota
+% Aerospace Engineering and Mechanics
+% Copyright 2017 Regents of the University of Minnesota.
 % All rights reserved.
 %
 
@@ -26,89 +26,106 @@ if ~isLoaded
     load_system(simModel) % load model into system memory without opening diagram
 end
 
-%% LINEARIZE
+%% Linearize
 
-% Set Inputs
-% Model is setup with input pertubations on the desired system inputs
+% Get the System I/O
+% Model is setup with input pertubations on the desired system inputs, openloop breaks on the outputs
 Sim.Trim.io = getlinio(simModel);
-% inList = get(Sim.Trim.opSpec.Inputs, 'Block');
-% numIn = length(Sim.Trim.io);
-% 
-% for indxIn = 1:numIn 
-%     Sim.Trim.io(indxIn) = linio(inList{indxIn}, indxIn, 'in');
-% end
 
-% Set Outputs
-outList = get(Sim.Trim.opSpec.Outputs, 'Block');
-% numOut = length(outList);
-% 
-% for indxOut = 1:numOut 
-%     Sim.Trim.io(numIn + indxOut)  = linio(outList{indxOut}, indxOut, 'out');
-% end
-
-type = get(Sim.Trim.io, 'Type');
 
 %% Obtain lineariziation
 linOpt = linearizeOptions;
-linmodel = linearize(simModel, Sim.Trim.opPoint, Sim.Trim.io, linOpt);
+linOpt.UseBusSignalLabels = 'on';
+linOpt.StoreOffsets = true;
 
+sysModel = linearize(simModel, Sim.Trim.opPoint, Sim.Trim.io, linOpt);
 
 
 %% Fix I/O and State Names
+% Fix Input Names
 % inListSig = [Sim.Trim.MotorNames, Sim.Trim.SurfNames];
 % set(linmodel, 'InputName', inListSig);
 
-
+% Fix Output Names of the linear model
+outList = get(Sim.Trim.opSpec.Outputs, 'Block');
 outListSig = strrep(outList, [simModel '/'], '');
-set(linmodel, 'OutputName', outListSig);
+set(sysModel, 'OutputName', outListSig);
 
-        
-        %% GENERATE LONGITUDINAL LINEAR MODEL
-        % Longitudinal dynamics
-        % States: u(7)  w(9)  q(5) theta(2) Ze(12) omega(13)
-        % Inputs: elevator(2) throttle(1)
-        % Outputs: Vs(10) alpha(12) q(5) theta(2) h (13) ax(7) az(9)
-        
-        % Generate State-space matrices for Longitudinal Model
-        % Indices for desired state, outputs, and inputs
-%         Xlon = [7 9 5 2 12 13];
-%         Ylon = [10 12 5 2 13 7 9];
-%         Ilon = [2 1];
-%         longmod = modred(linmodel(Ylon, Ilon), setdiff(1:13, Xlon), 'Truncate');
-%         longmod = xperm(longmod, [3 4 2 1 5 6]); % reorder state
+% Fix State Names
+% Rotation Rates
+indxW = strcmp(sysModel.StateName, 'wState_BI_B_rps');
+if sum(indxW) == 3, sysModel.StateName(indxW) = {'p_rps', 'q_rps', 'r_rps'}; end
 
-        
-        %% GENERATE SHORT PERIOD LINEAR MODEL
-        % Short period dynamics
-        % States:   w(9)  q(5)
-        % Inputs: elevator(2)
-        % Outputs:  alpha(12) q(5) az(9)
-        
-        % Generate State-space matrices for Longitudinal Model
-        % Indices for desired state, outputs, and inputs
-%         Xlon = [9 5];
-%         Ylon = [12 5 9];
-%         Ilon = 2;
-%         spmod = modred(linmodel(Ylon,Ilon), setdiff(1:13,Xlon), 'Truncate');
+% Quaterions
+indxQuat = strcmp(sysModel.StateName, 'quatState');
+if sum(indxQuat) == 4, sysModel.StateName(indxQuat) = {'quatState1', 'quatState2', 'quatState3', 'quatState4'}; end
 
-        
-        %% GENERATE LATERAL-DIRECTIONAL LINEAR MODEL
-        % Lateral-directional dynamics
-        % States: v(8) p(4) r(6) phi(1) psi(3)
-        % Inputs: aileron(3) aileron(4) rudder(5)
-        % Outputs: beta(11) p(4) r(6) phi(1) psi(3)
-        
-        % Generate State-space matrices for lateral-directional Model
-        % Indices for desired state, outputs, and inputs
-%         Xlat = [8 4 6 1 3];
-%         Ylat = [11 4 6 1 3];
-%         Ilat = [3 4 5];
-%         latmod = modred(linmodel(Ylat, Ilat),setdiff(1:13, Xlat),'Truncate');
-%         latmod = xperm(latmod,[5 3 4 1 2]); % reorder state
+% Velocity
+indxV = strcmp(sysModel.StateName, 'vState_BI_B_mps');
+if sum(indxV) == 3, sysModel.StateName(indxV) = {'vX_B_mps', 'vY_B_mps', 'vZ_B_mps'}; end
+
+% Position
+indxR = strcmp(sysModel.StateName, 'rState_BI_L_m');
+if sum(indxR) == 3, sysModel.StateName(indxR) = {'rX_L_m', 'rY_L_m', 'rZ_L_m'}; end
 
 
+if nargout > 1
+    %% Complete Model
+    sys.sysModel = sysModel;
+    
+    
+    %% Longitudinal Linear Model
+    inNames = {'elev_rad', 'throttle_nd'};
+    outNames = {'vTrue_mps', 'alpha_rad', 'q_rps', 'theta_rad', 'altAgl_m', 'aX_mps2', 'aZ_mps2'};
+    stateNames = {'vX_B_mps', 'vZ_B_mps', 'q_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4', 'omegaState_rps'};
+    
+    sysLong = ModelReduce(sysModel, inNames, outNames, stateNames);
+    sys.sysLong = sysLong;
+    
+    %% Short-Period Linear Model
+    inNames = {'elev_rad'};
+    outNames = {'alpha_rad', 'q_rps', 'aZ_mps2'};
+    stateNames = {'q_rps', 'vZ_B_mps'};
+    
+    sysSP = ModelReduce(sysModel, inNames, outNames, stateNames);
+    sys.sysSP = sysSP;
+    
+    
+    %% Lateral-Directional Linear Model
+    inNames = {'ailL_rad', 'ailR_rad', 'rud_rad'};
+    outNames = {'beta_rad', 'p_rps', 'r_rps', 'phi_rad', 'psi_rad'};
+    stateNames = {'vY_B_mps', 'p_rps', 'r_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4'};
+    
+    sysLat = ModelReduce(sysModel, inNames, outNames, stateNames);
+    sys.sysLat = sysLat;
+    
+end
 
 %% Cleanup
 if ~isLoaded
     bdclose(simModel) % clear model from system memory if we had to load it
+end
+
+end
+
+
+%% Model Reduction via Named I/O
+function outSys = ModelReduce(inSys, inNames, outNames, stateNames)
+for indx = 1:length(inNames)
+    indxIn(indx) = find(strcmp(inSys.InputName, inNames{indx}));
+end
+
+for indx = 1:length(outNames)
+    indxOut(indx) = find(strcmp(inSys.OutputName, outNames{indx}));
+end
+
+for indx = 1:length(stateNames)
+    indxState(indx) = find(strcmp(inSys.StateName, stateNames{indx}));
+end
+
+stateNum = 1:length(inSys.StateName);
+
+% Reduce Model, Truncation
+outSys = modred(inSys(indxOut, indxIn), setdiff(stateNum, indxState), 'Truncate');
+
 end

@@ -9,26 +9,26 @@ d2r = pi/180;
 switch lower(Sim.servoType)
     case lower({'Hitec_HS-225BB', '225BB'}) % HiTec HS-225BB
         
-        Surf.servoBw_rps = 8.0 * hz2rps; % FIXIT - Guess
-        Surf.servoDamp_nd = 1.0; % FIXIT - Guess
-        Surf.servoRateLim_rps = 150 * d2r; % FIXIT - Guess
-        Surf.servoLimPos_rad = 90 * d2r; % FIXIT - Guess
-        Surf.servoLimNeg_rad = -90 * d2r; % FIXIT - Guess
+        Surf.servoBw_rps = 5.94211 * hz2rps; % Tested 11June2017, -3dB with 5 deg amplitude
+        Surf.servoDamp_nd = 0.8; % FIXIT - Guess
+        Surf.servoRateLim_rps = 560 * d2r; % Tested 11June2017
+        Surf.servoLimPos_rad = 90 * d2r; % Guess
+        Surf.servoLimNeg_rad = -90 * d2r; % Guess
         
-        Surf.servoTimeDelay_s = 1 * 1/50; % FIXIT - Guess
-        Surf.servoFreeplay_rad = 0.5 * d2r; % FIXIT - Guess
+        Surf.servoTimeDelay_s = 41.6667 / 1000; % Tested 11June2017
+        Surf.servoFreeplay_rad = 0.960596 * d2r; % Tested 11June2017
         
     case lower({'Futaba_BLS471SV', 'BLS471SV'}) % Futaba BLS471SV
-        % These are the Test Results using SBUS input
+        % Tested using PMW Input @ 500 Hz update rate, 7.4 Volt, Stock Settings
         
-        Surf.servoBw_rps = 30 * hz2rps; % Servo Bandwidth @ 5 deg amplitude
+        Surf.servoBw_rps = 25.8 * hz2rps; % Servo Bandwidth, Tested -3dB with 5 deg amplitude
         Surf.servoDamp_nd = 0.8; % FIXIT - Guess
-        Surf.servoRateLim_rps = 1200 * d2r;
-        Surf.servoLimPos_rad = 90 * d2r;
-        Surf.servoLimNeg_rad = -90 * d2r;
+        Surf.servoRateLim_rps = 880 * d2r; % Tested
+        Surf.servoLimPos_rad = 90 * d2r; % Guess
+        Surf.servoLimNeg_rad = -90 * d2r; % Guess
         
-        Surf.servoTimeDelay_s = 0.007;
-        Surf.servoFreeplay_rad = 0.2 * d2r;
+        Surf.servoTimeDelay_s = 10.85 / 1000; % Tested
+        Surf.servoFreeplay_rad = 0.329 * d2r; % Tested
         
     otherwise
         

@@ -26,6 +26,7 @@ if isempty(verbose), verbose = 0; end
 trimIn = Sim.Trim.In;
 trimOut = Sim.Trim.Out;
 trimState = Sim.Trim.State;
+trimInit = Sim.Trim.Init;
 
 
 %% Load model into memory
@@ -147,15 +148,22 @@ end
 
 
 %% FIND OPERATING POINT (TRIM)
-optDef = optimset('MaxFunEvals', 1e+04);
-opt = findopOptions('OptimizerType', 'graddescent_elim', 'OptimizationOptions', optDef, 'DisplayReport', 'off');  
+% set_param(simModel, 'AlgebraicLoopSolver', 'LineSearch');
+% set_param(simModel, 'AlgebraicLoopSolver', 'TrustRegion');
+
+opt = findopOptions('OptimizerType', 'graddescent_elim', 'DisplayReport', 'off');  
 
 if verbose
     opt.OptimizationOptions.Display = 'iter'; 
     opt.DisplayReport = 'on';
 end
 
-% set_param(simModel, 'AlgebraicLoopSolver', 'LineSearch');
+opt.OptimizationOptions.Algorithm = 'interior-point';
+opt.OptimizationOptions.MaxFunEvals = 1e4;
+opt.OptimizationOptions.MaxIter = 1e4;
+opt.OptimizationOptions.Jacobian = 'on';
+opt.OptimizationOptions.ScaleProblem = 'true';
+
 [opPoint, opReport] = findop(simModel, opSpec, opt);
 
 %
@@ -164,54 +172,33 @@ Sim.Trim.opPoint  = opPoint;
 Sim.Trim.opReport = opReport;
 
 %% Generate Initial Conditions
+stateList = get(opPoint.States, 'StateName');
 
-stateList = get(Sim.Trim.opPoint.States, 'StateName');
-
-% Field names of the Target variables
-trimStateNames = fieldnames(trimState);
-
-numTrimState = length(trimStateNames);
-for indxState = 1:numTrimState
+numSimState = length(stateList);
+for indxState = 1:numSimState
     % Current target signal name
-    trimStateName = trimStateNames{indxState};
+    simStateName = stateList{indxState};
     
-    % Corresponding index of the Output Signal
-    indxStateFind = find(strcmp(stateList, trimStateName));
-    
-    if ~isempty(indxStateFind) % Set State Conditions
-        if isfield(trimState.(trimStateName), 'Known')
-            opSpec.States(indxStateFind).Known = trimState.(trimStateName).Known;
-        end
-        if isfield(trimState.(trimStateName), 'steadystate')
-            opSpec.States(indxStateFind).steadystate = trimState.(trimStateName).steadystate;
-        end
-        if isfield(trimState.(trimStateName), 'x')
-            opSpec.States(indxStateFind).x = trimState.(trimStateName).x;
-        end
-        if isfield(trimState.(trimStateName), 'Min')
-            opSpec.States(indxStateFind).Min = trimState.(trimStateName).Min;
-        end
-        if isfield(trimState.(trimStateName), 'Max')
-            opSpec.States(indxStateFind).Max = trimState.(trimStateName).Max;
-        end
-        
-    else % Target not found in the States
-        error(['Target not defined: State = ' trimStateName]);
-    end
+    % Copy States to Init Structure
+    trimInit.(simStateName) = opPoint.States(indxState).x;
 end
 
+Sim.Trim.Init = trimInit;
 
+%% Generate Initial Conditions
+inList = strrep(get(opPoint.Inputs, 'Block'), [simModel '/'], '');
 
+numSimIn = length(inList);
+for indxIn = 1:numSimIn
+    % Current target signal name
+    simInName = inList{indxIn};
+    
+    % Copy States to Init Structure
+    trimInit.(simInName) = opPoint.Inputs(indxIn).u;
+end
 
+Sim.Trim.Init = trimInit;
 
-Sim.Trim.Init.wInit_BL_B_rps = [0; 0; 0]; % Initial Body Frame rotation rates [p; q; r]
-Sim.Trim.Init.sInit_BL_rad   = [0; 4 * d2r; 45 * d2r]; % Initial Euler orientation [bank; attitude; heading]; avoid 0 heading, causes large entry in C matrix for psi 
-
-Sim.Trim.Init.vInit_BA_B_mps = [17; 0; 0];
-Sim.Trim.Init.rInit_BE_D_ddm = [44.72701; -93.077205; Env.Terr.altGrd_m + Sim.Trim.Init.altAgl_m]; % Initial Position of Aircraft [Lat; Long; Alt]
-
-
-Sim.Trim.Init.omegaInit_rps = 800;
 
 %% Cleanup
 if ~isLoaded
