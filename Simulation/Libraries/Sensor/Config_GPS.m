@@ -1,46 +1,71 @@
-function [Sim, GPS] = Config_GPS(Sim, GPS)
-% Define the GPS Error Model Parameters
+function [GPS] = Config_GPS(GPS)
+% Configures the GPS Model
+%
+%Usage:  [GPS] = Config_GPS(GPS);
+%
+%Inputs:
+% GPS       - Simulation Configuration Structure []
+%
+%Outputs:
+% GPS       - Simulation Configuration Structure
+%
+%Notes:
+% 
+%
+% University of Minnesota 
+% Aerospace Engineering and Mechanics 
+% Copyright 2017 Regents of the University of Minnesota. 
+% All rights reserved.
 
-hz2rps = 2*pi;
 
-GPS.errEnable = 1;
+%% Check I/O Arguments
+narginchk(0, 1);
+if nargin < 1, GPS = []; end
 
-switch lower(Sim.type)
-    case 'ublox_m8n' % UBlox M8N (FIXME - Check all values!!)
+nargoutchk(0, 1);
+
+%% Default Values and Constants
+if isempty(GPS), GPS = []; end
+
+% Set Default for VarSel
+if ~isfield(GPS, 'VarSel'), GPS.VarSel = []; end
+if isempty(GPS.VarSel),  GPS.VarSel = 1; end
+
+
+%% Define all the variants
+assignin('base', 'VarGPS_Pass', Simulink.Variant('VarGPSSel == 0')); % Variant 0 - Passthrough
+assignin('base', 'VarGPS_Err', Simulink.Variant('VarGPSSel == 1')); % Variant 1 - Scale, Bias, Noise
+assignin('base', 'VarGPS_LocErr', Simulink.Variant('VarGPSSel == 2')); % Variant 2 - Location Correction + Scale, Bias, Noise
+assignin('base', 'VarGPS_LocTransErr', Simulink.Variant('VarGPSSel == 3')); % Variant 3 - Location Correction + Transducer Model + Scale, Bias, Noise
+
+
+%% Select the Variant
+switch GPS.VarSel
+    case {1, 'Pass'}
+        GPS.VarSel = 1;
         
-        % Create Transfer Functions for the response
-        % Keep numerator and denominator seperate for entry into Simulink TF block
-        % GPS Position Transfer Function
-        GPS.posBw_rps = 20 * hz2rps; % Bandwidth of the GPS Position
-        GPS.posTF_num = GPS.posBw_rps;
-        GPS.posTF = [1, GPS.posBw_rps];
+    case {2, 'Err'}
+        GPS.VarSel = 2;
         
-        % GPS Velocity Transfer Function
-        GPS.velBw_rps = 20 * hz2rps; % Bandwidth of the GPS Velocity
-        GPS.velTF_num = GPS.velBw_rps;
-        GPS.velTF_den = [1, GPS.velBw_rps];
-       
-        % Time delay, measurement to signal
-        GPS.timeDelay_s = 0.300;
+    case {2, 'LocErr'}
+        GPS.VarSel = 2;
         
-        % GPS Error Model Parameters (meas = scf * true + bias + noise)        
-        GPS.posScf = diag([1.0, 1.0, 1.0]); 
-        GPS.posBias = 0.0 * ones(length(GPS.posScf), 1); % deg
-        GPS.posSigma = [0.000001; 0.000001; 1]; % deg
-        GPS.posSeed = randi([1, intmax('int16')], size(GPS.posBias)); % Noise Seed
-        
-        % GPS Velocity Error Model Parameters (meas = scf * true + bias + noise)
-        GPS.velScf = diag([1.0, 1.0, 1.0]);
-        GPS.velBias =  0.0 * ones(length(GPS.velScf), 1); % m/s
-        GPS.velSigma = 0.1 * ones(length(GPS.velScf), 1); % m/s
-        GPS.velSeed = randi([1, intmax('int16')], size(GPS.velBias)); % Noise Seed
+    case {3, 'LocTransErr'}
+        GPS.VarSel = 3;
         
     otherwise
-        
+        error()
 end
 
-%% Bus Defintion
-Sim.elemNames = {'lat_GPS_deg', 'long_GPS_deg', 'alt_GPS_m', 'vX_GPS_mps', 'vY_GPS_mps', 'vZ_GPS_mps'};
-Sim.BusGPS = CreateBus(Sim.elemNames);
+% Assign the Variant Select to the base Workspace
+assignin('base', 'VarGPSSel', GPS.VarSel);
 
+
+%% Model Bus
+% Define the bus
+busNames = {'lat_GPS_deg', 'long_GPS_deg', 'alt_GPS_m', 'vX_GPS_mps', 'vY_GPS_mps', 'vZ_GPS_mps'};
+GPS.BusGPS = CreateBus(busNames);
+
+% Assign the bus to the base Workspace
+assignin('base', 'BusGPS', GPS.BusGPS);
 

@@ -36,6 +36,7 @@ Sim.Trim.io = getlinio(simModel);
 %% Obtain lineariziation
 linOpt = linearizeOptions;
 linOpt.UseBusSignalLabels = 'on';
+linOpt.BlockReduction = 'off';
 linOpt.StoreOffsets = true;
 
 sysModel = linearize(simModel, Sim.Trim.opPoint, Sim.Trim.io, linOpt);
@@ -43,13 +44,29 @@ sysModel = linearize(simModel, Sim.Trim.opPoint, Sim.Trim.io, linOpt);
 
 %% Fix I/O and State Names
 % Fix Input Names
-% inListSig = [Sim.Trim.MotorNames, Sim.Trim.SurfNames];
-% set(linmodel, 'InputName', inListSig);
+% Fix Input Names of the linear model
+inList = get(Sim.Trim.opSpec.inputs, 'Block');
+
+% Remove the input signal path
+numIn = length(inList);
+for indxIn = 1:numIn
+    [~, inList{indxIn}] = fileparts(inList{indxIn});
+end
+
+% Write the signal names to the SS model
+set(sysModel, 'InputName', inList);
 
 % Fix Output Names of the linear model
 outList = get(Sim.Trim.opSpec.Outputs, 'Block');
-outListSig = strrep(outList, [simModel '/'], '');
-set(sysModel, 'OutputName', outListSig);
+
+% Remove the output signal path
+numOut = length(outList);
+for indxOut = 1:numOut
+    [~, outList{indxOut}] = fileparts(outList{indxOut});
+end
+
+% Write the signal names to the SS model
+set(sysModel, 'OutputName', outList);
 
 % Fix State Names
 % Rotation Rates
@@ -60,13 +77,17 @@ if sum(indxW) == 3, sysModel.StateName(indxW) = {'p_rps', 'q_rps', 'r_rps'}; end
 indxQuat = strcmp(sysModel.StateName, 'quatState');
 if sum(indxQuat) == 4, sysModel.StateName(indxQuat) = {'quatState1', 'quatState2', 'quatState3', 'quatState4'}; end
 
+% Euler Angles
+indxQuat = strcmp(sysModel.StateName, 'sState_BL_rad');
+if sum(indxQuat) == 3, sysModel.StateName(indxQuat) = {'phi_rad', 'theta_rad', 'psi_rad'}; end
+
 % Velocity
 indxV = strcmp(sysModel.StateName, 'vState_BI_B_mps');
-if sum(indxV) == 3, sysModel.StateName(indxV) = {'vX_B_mps', 'vY_B_mps', 'vZ_B_mps'}; end
+if sum(indxV) == 3, sysModel.StateName(indxV) = {'vX_mps', 'vY_mps', 'vZ_mps'}; end
 
 % Position
 indxR = strcmp(sysModel.StateName, 'rState_BI_L_m');
-if sum(indxR) == 3, sysModel.StateName(indxR) = {'rX_L_m', 'rY_L_m', 'rZ_L_m'}; end
+if sum(indxR) == 3, sysModel.StateName(indxR) = {'rN_m', 'rE_m', 'rD_m'}; end
 
 
 if nargout > 1
@@ -77,7 +98,7 @@ if nargout > 1
     %% Longitudinal Linear Model
     inNames = {'elev_rad', 'throttle_nd'};
     outNames = {'vTrue_mps', 'alpha_rad', 'q_rps', 'theta_rad', 'altAgl_m', 'aX_mps2', 'aZ_mps2'};
-    stateNames = {'vX_B_mps', 'vZ_B_mps', 'q_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4', 'omegaState_rps'};
+    stateNames = {'vX_mps', 'vZ_mps', 'q_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4', 'omegaState_rps', 'elevStateDef', 'elevStateRate'};
     
     sysLong = ModelReduce(sysModel, inNames, outNames, stateNames);
     sys.sysLong = sysLong;
@@ -85,7 +106,7 @@ if nargout > 1
     %% Short-Period Linear Model
     inNames = {'elev_rad'};
     outNames = {'alpha_rad', 'q_rps', 'aZ_mps2'};
-    stateNames = {'q_rps', 'vZ_B_mps'};
+    stateNames = {'q_rps', 'vZ_mps', 'elevStateDef', 'elevStateRate'};
     
     sysSP = ModelReduce(sysModel, inNames, outNames, stateNames);
     sys.sysSP = sysSP;
@@ -94,7 +115,7 @@ if nargout > 1
     %% Lateral-Directional Linear Model
     inNames = {'ailL_rad', 'ailR_rad', 'rud_rad'};
     outNames = {'beta_rad', 'p_rps', 'r_rps', 'phi_rad', 'psi_rad'};
-    stateNames = {'vY_B_mps', 'p_rps', 'r_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4'};
+    stateNames = {'vY_mps', 'p_rps', 'r_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4', 'ailLStateDef', 'ailLStateRate', 'ailRStateDef', 'ailRStateRate', 'rudStateDefl', 'rudStateRate'};
     
     sysLat = ModelReduce(sysModel, inNames, outNames, stateNames);
     sys.sysLat = sysLat;
@@ -112,15 +133,18 @@ end
 %% Model Reduction via Named I/O
 function outSys = ModelReduce(inSys, inNames, outNames, stateNames)
 for indx = 1:length(inNames)
-    indxIn(indx) = find(strcmp(inSys.InputName, inNames{indx}));
+    indxInTemp = find(strcmp(inSys.InputName, inNames{indx}));
+    if indxInTemp > 0, indxIn(indx) = indxInTemp; end
 end
 
 for indx = 1:length(outNames)
-    indxOut(indx) = find(strcmp(inSys.OutputName, outNames{indx}));
+    indxOutTemp = find(strcmp(inSys.OutputName, outNames{indx}));
+    if indxOutTemp > 0, indxOut(indx) = indxOutTemp; end
 end
 
 for indx = 1:length(stateNames)
-    indxState(indx) = find(strcmp(inSys.StateName, stateNames{indx}));
+    indxStateTemp = find(strcmp(inSys.StateName, stateNames{indx}));
+    if indxStateTemp > 0, indxState(indx) = indxStateTemp; end
 end
 
 stateNum = 1:length(inSys.StateName);

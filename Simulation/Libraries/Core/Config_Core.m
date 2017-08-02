@@ -31,99 +31,65 @@ if isempty(Sim), Sim = []; end
 if isempty(Env), Env = []; end
 
 
-%
-
-%% Configure Simulation System Variations
-% Simulation sample time
-Sim.SampleTime = 0.02; % sec
-
-
 %% Subsystem Model Setup
-% Simulation Aerodynamic Variants Definition
-assignin('base', 'VarAero_Gen', Simulink.Variant('VarAeroSel == 1')); % Variant 1 - Generic, Table Look-ups with V, alpha, beta input
-assignin('base', 'VarAero_120', Simulink.Variant('VarAeroSel == 2')); % Variant 2 - UltraStick120 Table Look-ups
-assignin('base', 'VarAeroSel', Sim.Aero.VarSel);
-
-% Aerodynamic Model Bus
-busNames = {'fAero_B_N', 'mAero_B_Nm'};
-busDim = {[3, 1], [3, 1]};
-assignin('base', 'BusAero', CreateBus(busNames, [], busDim));
-
-
-% Simulation Propulsion Variants Definition
-assignin('base', 'VarProp_Lin1_1', Simulink.Variant('VarPropSel == 1')); % Variant 1 - Simple 1st order response, based on polynomial based coefficients
-assignin('base', 'VarPropSel', Sim.Prop.VarSel);
-
-% Propulsion Model Bus
-busNames = {'fProp_B_N', 'mProp_B_Nm'};
-busDim = {[3, 1], [3, 1]};
-assignin('base', 'BusProp', CreateBus(busNames, [], busDim));
-
-
 % External Forces Bus
 busNames = {'fExt_B_N', 'mExt_B_Nm'};
 busDim = {[3, 1], [3, 1]};
-assignin('base', 'BusExtForce', CreateBus(busNames, [], busDim));
+
+Sim.BusExtForce = CreateBus(busNames, [], busDim);
+
+assignin('base', 'BusExtForce', Sim.BusExtForce);
 
 
-% Mass Properties Bus
-busNames = {'mass_kg', 'massDot_kgps', 'rCG_SB_m', 'rCG_B_m', 'I_B_kgm2', 'IDot_B_kgm2ps'};
-busDim = {1, 1, [3, 1], [3, 1], [3, 3], [3, 3]};
-assignin('base', 'BusMassP', CreateBus(busNames, [], busDim));
+%% Equations of Motion
+[Sim.Eom] = Config_Eom(Sim.Eom);
 
 
-%% Core-EOM Setup
-% Simulation EOM Variants Definition
-assignin('base', 'VarEom_Simp', Simulink.Variant('VarEomSel == 1')); % Variant 1 - Simplified Open-Source
-assignin('base', 'VarEom_Adv', Simulink.Variant('VarEomSel == 2')); % Variant 2 - High-Fidelity, requires Aerospace Blockset
-assignin('base', 'VarEom_LocalLevel', Simulink.Variant('VarEomSel == 3')); % Variant 3 - Local-Level with Quaterions
-assignin('base', 'VarEomSel', Sim.Eom.VarSel);
-
-% Equation of Motion Bus
-switch Sim.Eom.VarSel
-    case 3
-        busNames = {'rCG_SB_m', 'wDot_BL_B_rps2', 'w_BL_B_rps', 's_BL_rad', 'a_BI_B_mps2', 'aExt_BI_B_mps2', 'v_BE_B_mps', 'v_BE_L_mps', 'r_BE_E_m', 'r_BE_D_ddm', 'r_BE_L_m', 'T_L2B', 'T_E2L', 'T_I2E'};
-        busDim = {[3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 3], [3, 3], [3, 3]};
-    otherwise
-        busNames = {'rCG_SB_m', 'wDot_BL_B_rps2', 'w_BL_B_rps', 's_BL_rad', 'a_BI_B_mps2', 'aExt_BI_B_mps2', 'v_BE_B_mps', 'v_BE_L_mps', 'r_BE_E_m', 'r_BE_D_ddm', 'r_BE_L_m', 'T_L2B', 'T_E2L', 'T_I2E'};
-        busDim = {[3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 1], [3, 3], [3, 3], [3, 3]};
-end
-assignin('base', 'BusEom', CreateBus(busNames, [], busDim));
-
-
-%% Core-Auxiliary Equation Setup
-% Flow Conditions Bus
-busNames = {'mach_nd', 'qBar_Pa', 'vTrue_mps', 'alpha_rad', 'beta_rad', 'flank_rad', 'vDotTrue_mps2', 'alphaDot_rps', 'betaDot_rps', 'flankDot_rps'};
-assignin('base', 'BusFlow', CreateBus(busNames));
-
-% Navigation
-% Load the EGM-96 Data
-load('egm96');
-Sim.Nav.lat_deg = Lat;
-Sim.Nav.lon_deg = Lon;
-Sim.Nav.altErr_m = Alterr;
-Sim.Nav.wgs84Corr = -0.53;
-
-% Navigation Equations Bus
-busNames = {'altMsl_m', 'altAgl_m', 'vGrnd_mps', 'gamma_rad', 'course_rad'};
-assignin('base', 'BusNav', CreateBus(busNames));
-
+%% Auxiliary Equations
+[Sim.Flow] = Config_Flow(Sim.Flow);
+[Sim.Nav] = Config_Nav(Sim.Nav);
 
 % Auxiliary Bus
 busNames =    {'BusFlow', 'BusNav'};
 busDataType = {'Bus: BusFlow', 'Bus: BusNav'};
-assignin('base', 'BusAux', CreateBus(busNames, busDataType));
+
+Sim.BusAux = CreateBus(busNames, busDataType);
+
+assignin('base', 'BusAux', Sim.BusAux);
 
 
-%% Setup BusEnv
-% Environment Configuration
-[Sim, Env] = Config_Env(Sim, Env);
+%% Environment Models
+% Earth Parameters
+Env.Earth.radiusEquator_m = 6378137.0; % Earth Radius around Equator per WGS84
+Env.Earth.radiusPolar_m = 6356752.3; % Earth Radius around Polar per WGS84
+
+% Set Defaults
+if ~isfield(Env, 'Atmos'), Env.Atmos = []; end
+if ~isfield(Env, 'Terr'), Env.Terr = []; end
+if ~isfield(Env, 'Grav'), Env.Grav = []; end
+if ~isfield(Env, 'Mag'), Env.Mag = []; end
+
+% Sub-system Models
+[Sim.Atmos, Env.Atmos] = Config_Atmos(Sim.Atmos, Env.Atmos); % Atmosphere Model
+[Sim.Terr, Env.Terr] = Config_Terr(Sim.Terr, Env.Terr); % Terrain Model
+[Sim.Grav, Env.Grav] = Config_Grav(Sim.Grav, Env.Grav); % Gravity Model
+[Sim.Mag, Env.Mag] = Config_Mag(Sim.Mag, Env.Mag); % Magnetic Model
+
+% Environment Bus
+busNames = {'BusAtmos', 'BusTerr', 'BusGrav', 'BusMag'};
+busDataType = {'Bus: BusAtmos', 'Bus: BusTerr', 'Bus: BusGrav', 'Bus: BusMag'};
+
+Sim.BusEnv = CreateBus(busNames, busDataType);
+
+assignin('base', 'BusEnv', Sim.BusEnv);
 
 
 %% Setup BusCore
 busNames = {'BusEom', 'BusAux', 'BusEnv'};
 busDataType = {'Bus: BusEom', 'Bus: BusAux', 'Bus: BusEnv'};
-assignin('base', 'BusCore', CreateBus(busNames, busDataType));
+
+Sim.BusCore = CreateBus(busNames, busDataType);
+assignin('base', 'BusCore', Sim.BusCore);
 
 
 

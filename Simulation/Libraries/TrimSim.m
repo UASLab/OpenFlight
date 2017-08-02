@@ -9,6 +9,10 @@ function [Sim] = TrimSim(simModel, Sim, verbose)
 %
 % Outputs:
 %   Sim
+%
+% Notes:
+% The Sim structure contains I/O and State conditions in a similar style as opspec() expects.
+% Unrecognized states are set to be "free", ie. the steadystate condition is set to 0.
 
 %
 % University of Minnesota 
@@ -41,7 +45,13 @@ opSpec = operspec(simModel);
 
 
 %% STATE SPECIFICATIONS
+% List of State names
 stateList = get(opSpec.States, 'StateName');
+
+% Set steadystate to zero
+for indxState = 1:length(stateList)
+    opSpec.States(indxState).SteadyState = 0 * opSpec.States(indxState).SteadyState;
+end
 
 % Field names of the Target variables
 trimStateNames = fieldnames(trimState);
@@ -79,35 +89,35 @@ end
 
 %% OUTPUT SPECIFICATIONS
 % Create a cell array of Output Names from the opSpec
-outList = strrep(get(opSpec.Outputs, 'Block'), [simModel '/'], '');
+simOutList = strrep(get(opSpec.Outputs, 'Block'), [simModel '/'], '');
 
 % Field names of the Target variables
-trimOutNames = fieldnames(trimOut);
+targOutList = fieldnames(trimOut);
 
-numTrimOut = length(trimOutNames);
-for indxOut = 1:numTrimOut
+numTargOut = length(targOutList);
+for indxOut = 1:numTargOut
     % Current target signal name
-    trimOutName = trimOutNames{indxOut};
+    targOutName = targOutList{indxOut};
     
     % Corresponding index of the Output Signal
-    indxOutFind = find(strcmp(outList, trimOutName));
+    indxOutFind = find(strcmp(simOutList, targOutName));
     
     if ~isempty(indxOutFind) % Set Output Conditions
-        if isfield(trimOut.(trimOutName), 'Known')
-            opSpec.Outputs(indxOutFind).Known = trimOut.(trimOutName).Known;
+        if isfield(trimOut.(targOutName), 'Known')
+            opSpec.Outputs(indxOutFind).Known = trimOut.(targOutName).Known;
         end
-        if isfield(trimOut.(trimOutName), 'y')
-            opSpec.Outputs(indxOutFind).y = trimOut.(trimOutName).y;
+        if isfield(trimOut.(targOutName), 'y')
+            opSpec.Outputs(indxOutFind).y = trimOut.(targOutName).y;
         end
-        if isfield(trimOut.(trimOutName), 'Min')
-            opSpec.Outputs(indxOutFind).Min = trimOut.(trimOutName).Min;
+        if isfield(trimOut.(targOutName), 'Min')
+            opSpec.Outputs(indxOutFind).Min = trimOut.(targOutName).Min;
         end
-        if isfield(trimOut.(trimOutName), 'Max')
-            opSpec.Outputs(indxOutFind).Max = trimOut.(trimOutName).Max;
+        if isfield(trimOut.(targOutName), 'Max')
+            opSpec.Outputs(indxOutFind).Max = trimOut.(targOutName).Max;
         end
         
     else % Target not found in the Output signals
-        error(['Target not defined: Output = ' trimOutName]);
+        error(['Target not defined: Output = ' targOutName]);
     end
 end
 
@@ -151,7 +161,7 @@ end
 % set_param(simModel, 'AlgebraicLoopSolver', 'LineSearch');
 % set_param(simModel, 'AlgebraicLoopSolver', 'TrustRegion');
 
-opt = findopOptions('OptimizerType', 'graddescent_elim', 'DisplayReport', 'off');  
+opt = findopOptions('OptimizerType', 'graddescent_elim', 'DisplayReport', 'off');
 
 if verbose
     opt.OptimizationOptions.Display = 'iter'; 
@@ -159,8 +169,8 @@ if verbose
 end
 
 opt.OptimizationOptions.Algorithm = 'interior-point';
-opt.OptimizationOptions.MaxFunEvals = 1e4;
-opt.OptimizationOptions.MaxIter = 1e4;
+% opt.OptimizationOptions.MaxFunEvals = 1e4;
+% opt.OptimizationOptions.MaxIter = 1e4;
 opt.OptimizationOptions.Jacobian = 'on';
 opt.OptimizationOptions.ScaleProblem = 'true';
 
@@ -185,7 +195,7 @@ end
 
 Sim.Trim.Init = trimInit;
 
-%% Generate Initial Conditions
+%% Generate Input Conditions
 inList = strrep(get(opPoint.Inputs, 'Block'), [simModel '/'], '');
 
 numSimIn = length(inList);
@@ -194,10 +204,10 @@ for indxIn = 1:numSimIn
     simInName = inList{indxIn};
     
     % Copy States to Init Structure
-    trimInit.(simInName) = opPoint.Inputs(indxIn).u;
+    trimIn.(simInName) = opPoint.Inputs(indxIn).u;
 end
 
-Sim.Trim.Init = trimInit;
+Sim.Trim.In = trimIn;
 
 
 %% Cleanup

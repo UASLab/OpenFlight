@@ -1,58 +1,71 @@
-function [Sim, IMU] = Config_IMU(Sim, IMU)
-% Define the IMU Model Parameters
-
-hz2rps = 2*pi;
-
+function [IMU] = Config_IMU(IMU)
+% Configures the IMU Model
 %
-IMU.errEnable = 1;
+%Usage:  [IMU] = Config_IMU(IMU);
+%
+%Inputs:
+% IMU       - Simulation Configuration Structure []
+%
+%Outputs:
+% IMU       - Simulation Configuration Structure
+%
+%Notes:
+% 
+%
+% University of Minnesota 
+% Aerospace Engineering and Mechanics 
+% Copyright 2017 Regents of the University of Minnesota. 
+% All rights reserved.
 
-%% Sensor Models
-switch lower(Sim.type)
-    case 'adis16405' % Analog Devices ADIS16405
-        % Create Transfer Functions for the transducer response
-        % Keep numerator and denominator seperate for entry into Simulink TF block
-        % Gyro Transfer Function
-        IMU.gyroBw_rps = 300 * hz2rps;
-        IMU.gyroTF_num = IMU.gyroBw_rps;
-        IMU.gyroTF_den = [1, IMU.gyroBw_rps];
+
+%% Check I/O Arguments
+narginchk(0, 1);
+if nargin < 1, IMU = []; end
+
+nargoutchk(0, 1);
+
+%% Default Values and Constants
+if isempty(IMU), IMU = []; end
+
+% Set Default for VarSel
+if ~isfield(IMU, 'VarSel'), IMU.VarSel = []; end
+if isempty(IMU.VarSel),  IMU.VarSel = 1; end
+
+
+%% Define all the variants
+assignin('base', 'VarIMU_Pass', Simulink.Variant('VarIMUSel == 0')); % Variant 0 - Passthrough
+assignin('base', 'VarIMU_Err', Simulink.Variant('VarIMUSel == 1')); % Variant 1 - Scale, Bias, Noise
+assignin('base', 'VarIMU_LocErr', Simulink.Variant('VarIMUSel == 2')); % Variant 2 - Location Correction + Scale, Bias, Noise
+assignin('base', 'VarIMU_LocTransErr', Simulink.Variant('VarIMUSel == 3')); % Variant 3 - Location Correction + Transducer Model + Scale, Bias, Noise
+
+
+%% Select the Variant
+switch IMU.VarSel
+    case {1, 'Pass'}
+        IMU.VarSel = 1;
         
-        % Accel Transfer Function
-        IMU.accelBw_rps = 300 * hz2rps;
-        IMU.accelTF_num = IMU.accelBw_rps;
-        IMU.accelTF_den = [1, IMU.accelBw_rps];
+    case {2, 'Err'}
+        IMU.VarSel = 2;
         
-        % Mag Transfer Function
-        IMU.magBw_rps = 1540 * hz2rps;
-        IMU.magTF_num = IMU.magBw_rps;
-        IMU.magTF_den = [1, IMU.magBw_rps];
+    case {2, 'LocErr'}
+        IMU.VarSel = 2;
         
-        % Time delay, measurement to signal
-        IMU.timeDelay_s = 1/1000;
-        
-        % Gyro Error Model Parameters (meas = scf * (true + G * accelTrue) + bias + noise)
-        IMU.gyroScf = diag([1.0, 1.0, 1.0]);
-        IMU.gyroG = diag([0.0, 0.0, 0.0]); % rad/s / m/s^2
-        IMU.gyroBias = 0.0 * ones(length(IMU.gyroScf), 1); % rad/s
-        IMU.gyroSigma = 0.000001 * ones(length(IMU.gyroScf), 1); % rad/s
-        IMU.gyroSeed = randi([1, intmax('int16')], size(IMU.gyroBias)); % Noise Seed
-        
-        % Accelerometer Error Model Parameters (meas = scf * true + bias + noise)
-        IMU.accelScf = diag([1.0, 1.0, 1.0]);
-        IMU.accelBias = 0.0 * ones(length(IMU.accelScf), 1); % m/s^2
-        IMU.accelSigma = [0.0008; 0.004; 0.004]; % m/s^2
-        IMU.accelSeed = randi([1, intmax('int16')], size(IMU.accelBias)); % Noise Seed
-                
-        % Magnetometer Error Model Parameters (meas = scf * true + bias + noise)
-        IMU.magScf = diag([1.0, 1.0, 1.0]);
-        IMU.magBias = 0.0 * ones(length(IMU.accelScf), 1); % nT
-        IMU.magSigma = [150; 150; 80000]; % nT
-        IMU.magSeed = randi([1, intmax('int16')], size(IMU.magBias)); % Noise Seed
+    case {3, 'LocTransErr'}
+        IMU.VarSel = 3;
         
     otherwise
-        
+        error()
 end
 
-%% Bus Defintion
-Sim.elemNames = {'wX_IMU_rps', 'wY_IMU_rps', 'wZ_IMU_rps', 'aX_IMU_mps2', 'aY_IMU_mps2', 'aZ_IMU_mps2', 'hX_IMU_nT', 'hY_IMU_nT', 'hZ_IMU_nT'};
-Sim.BusIMU = CreateBus(Sim.elemNames);
+% Assign the Variant Select to the base Workspace
+assignin('base', 'VarIMUSel', IMU.VarSel);
+
+
+%% Model Bus
+% Define the bus
+busNames = {'wX_IMU_rps', 'wY_IMU_rps', 'wZ_IMU_rps', 'aX_IMU_mps2', 'aY_IMU_mps2', 'aZ_IMU_mps2', 'hX_IMU_nT', 'hY_IMU_nT', 'hZ_IMU_nT'};
+IMU.BusIMU = CreateBus(busNames);
+
+% Assign the bus to the base Workspace
+assignin('base', 'BusIMU', IMU.BusIMU);
 

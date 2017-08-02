@@ -1,101 +1,46 @@
 function [Sim, Env] = Config_Env(Sim, Env)
-%% Atmospheric
+% Configures the Atmospheric Environment
+%
+%Usage:  [Sim] = Config_Env(Sim);
+%
+%Inputs:
+% Sim       - Simulation Configuration Structure []
+%
+%Outputs:
+% Sim       - Simulation Configuration Structure
+%
+%Notes:
+% 
 
-Env.Atmos.windOn = 0;
-Env.Atmos.turbOn = 0;
-Env.Atmos.gustOn = 0;
+% University of Minnesota 
+% Aerospace Engineering and Mechanics 
+% Copyright 2017 Regents of the University of Minnesota. 
+% All rights reserved.
 
-% Horizontal Wind Model
-Env.Atmos.windVel_L_mps = [2; 2; 0]; % Wind velocity; North, East, Down
 
-switch Sim.Atmos.VarSel
-    case 1 % Simple Atmos Model; constants, no turbulence/gust
-        % Atmostphere Properties
-        Env.Atmos.dens_kgpm3 = 1.225;
-        Env.Atmos.temp_K = 293.15;
-        Env.Atmos.presStatic_Pa = 101300;
-        Env.Atmos.vSound_mps = sqrt(1.400 * Env.Atmos.presStatic_Pa / Env.Atmos.dens_kgpm3);
-
-        % Turbulence Model
-        Env.Atmos.turbVelMag_B_mps = [0; 0; 0]; % Turbulence magnitude; u, v, w
-        Env.Atmos.turbRotMag_B_rps = [0; 0; 0]; % Turbulence magnitude; p, q, r
-        
-        % Gust Model
-        Env.Atmos.gustVelMag_B_mps = [0; 0; 0]; % Gust amplitude
-        
-    case 2 % Aeroblockset Models
-        % Atmostphere Properties
-        % (empty)
-        
-        % Dryden Wind Turbulence Model
-        Env.Atmos.windVelMag_mps = norm(Env.Atmos.windVel_L_mps, 2); % Wind Speed at Reference Altitude (6 m)
-        Env.Atmos.windVelDir_deg = atan2d(Env.Atmos.windVel_L_mps(1), Env.Atmos.windVel_L_mps(2)); % Wind Direction
-        Env.Atmos.turbSpan_m = 1; % Turbulence length reference, FIXIT - Check definition
-        Env.Atmos.turbTimeSample_s = Sim.timeSample_s; % Turbulence Time Sample
-        Env.Atmos.turbSeed = randi([1, intmax('int16')], 4, 1); % Turbulence Seed
-        
-        % Gust Model
-        Env.Atmos.gustTimeStart_s = 0; % Gust Start time
-        Env.Atmos.gustLen_m = [1; 1; 1]; % Gust Length
-        Env.Atmos.gustVelMag_B_mps = [0; 0; 0]; % Gust amplitude
-    otherwise
-%         error(['Atmosphere Model Selection not defined: Sim.Atmos.VarSel = ' num2str(Sim.Atmos.VarSel)])
+%% Check I/O Arguments
+narginchk(0, 2);
+if nargin < 2, Env = [];
+    if nargin < 1, Sim = []; end
 end
 
-% Atmospheric Model Bus
-busNames = {'temp_K', 'vSound_mps', 'presStatic_Pa', 'dens_kgpm3', 'vWind_mps', 'vGust_mps', 'wGust_rps'};
-busDim = {1, 1, 1, 1, [3, 1], [3, 1], [3, 1]};
-assignin('base', 'BusAtmos', CreateBus(busNames, [], busDim));
+nargoutchk(0, 2);
+
+%% Default Values and Constants
+if isempty(Sim), Sim = []; end
+if isempty(Env), Env = []; end
 
 
-%% Terrain
-switch Sim.Terr.VarSel
-    case 1 % Simple Terrain Model; constant
-        Env.Terr.altGrd_m = 0; % Ground Altitude in Geodetic
-    otherwise
-%         error(['Terrain Model Selection not defined: Sim.Terr.VarSel = ' num2str(Sim.Terr.VarSel)])
-end
+%% Environment Models
+% Earth Parameters - FIXIT - Move to Aux??
+Env.Earth.radiusEquator_m = 6378137.0; % Earth Radius around Equator per WGS84
+Env.Earth.radiusPolar_m = 6356752.3; % Earth Radius around Polar per WGS84
 
-% Terrain Model Bus
-busNames = {'altGrnd_m'};
-assignin('base', 'BusTerr', CreateBus(busNames));
-
-
-%% Gravity
-switch Sim.Grav.VarSel
-    case 1 % Simple Gravity Model; constant
-        Env.Grav.aGrav_L_mps2 = [-0.3293; -3.9e-4; 9.80736]; % Gravity Field at Rosemount, MN
-    case 2 % Aeroblockset Models
-        % (empty)
-    otherwise
-%         error(['Gravity Model Selection not defined: Sim.Grav.VarSel = ' num2str(Sim.Grav.VarSel)])
-end
-
-% Gravity Model Bus
-busNames = {'aGrav_L_mps2'};
-busDim = {3};
-assignin('base', 'BusGrav', CreateBus(busNames, [], busDim));
-
-
-%% Magnetic Model
-switch Sim.Mag.VarSel
-    case 1 % Simple Magnetic Model; constant
-        Env.Mag.h_L_nT = [17.7; -0.0772; 51.6]; % Magnetic Field at Rosemount, MN
-        
-    case 2 % Aeroblockset Models
-        nowout = datestr(now, 'yyyymmdd') ;
-
-        % Env.Date.year = decyear(now);
-        Env.Date.year = str2num((nowout(1:4))) + (str2num((nowout(5:6)))-1)/12 + str2num((nowout(7:8)))/30/12 ;
-        Env.Date.date = datestr(now);
-    otherwise
-%         error(['Magnet Model Selection not defined: Sim.Mag.VarSel = ' num2str(Sim.Mag.VarSel)])
-end
-
-% Magnetic Model Bus
-busNames = {'h_L_nT'};
-busDim = {3};
-assignin('base', 'BusMag', CreateBus(busNames, [], busDim));
+% Sub-system Models
+[Sim.Atmos, Env.Atmos] = Config_Atmos(Sim.Atmos, Env.Atmos); % Atmosphere Model
+[Sim.Terr, Env.Terr] = Config_Terr(Sim.Terr, Env.Terr); % Terrain Model
+[Sim.Grav, Env.Grav] = Config_Grav(Sim.Grav, Env.Grav); % Gravity Model
+[Sim.Mag, Env.Mag] = Config_Mag(Sim.Mag, Env.Mag); % Magnetic Model
 
 
 %% Environment Bus
@@ -103,10 +48,5 @@ assignin('base', 'BusMag', CreateBus(busNames, [], busDim));
 busNames = {'BusAtmos', 'BusTerr', 'BusGrav', 'BusMag'};
 busDataType = {'Bus: BusAtmos', 'Bus: BusTerr', 'Bus: BusGrav', 'Bus: BusMag'};
 assignin('base', 'BusEnv', CreateBus(busNames, busDataType));
-
-
-%% Earth
-Env.Earth.radiusEquator_m = 6378137.0; % Earth Radius around Equator per WGS84
-Env.Earth.radiusPolar_m = 6356752.3; % Earth Radius around Polar per WGS84
 
 
