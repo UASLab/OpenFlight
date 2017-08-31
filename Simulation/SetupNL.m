@@ -1,4 +1,4 @@
-%% setupNL.m
+%% SetupNL.m
 % Nonlinear Simulation setup
 
 % 
@@ -146,8 +146,17 @@ Sim.Trim.Init.ailRStateDefl_rad = Sim.Trim.State.ailRStateDefl_rad.x;
 Sim.Trim.Init.flapLStateDefl_rad = Sim.Trim.State.flapLStateDefl_rad.x;
 Sim.Trim.Init.flapRStateDefl_rad = Sim.Trim.State.flapRStateDefl_rad.x;
 
+% Initialize Core Bus
+Sim.Trim.Init.alphaState_rad = Sim.Trim.Out.alpha_rad.y; % FIXIT
+Sim.Trim.Init.betaState_rad = Sim.Trim.Out.beta_rad.y; % FIXIT
+
+Sim.Trim.Init.alphaDotState_rps = 0; % FIXIT
+Sim.Trim.Init.betaDotState_rps = 0; % FIXIT
+
+Sim.Trim.Init.vTrueState_mps = Sim.Trim.Out.vTrue_mps.y; % FIXIT
+
 %% Find the trim solution
-simModel = 'SimNL';
+simModel = 'SimNL_Subsystems';
 verbose = 1;
 
 [Sim] = TrimSim(simModel, Sim, verbose);
