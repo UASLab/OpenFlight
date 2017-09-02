@@ -124,36 +124,43 @@ end
 % Sim.Trim.Out.vTrue_mps = struct('Known', 1, 'y', 17);
 Sim.Trim.Out.alpha_rad = struct('Known', 0, 'y', 4 * d2r, 'Min', -10 * d2r, 'Max', 20 * d2r);
 Sim.Trim.Out.beta_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
-Sim.Trim.Out.gamma_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
 
 Sim.Trim.Out.phi_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -90 * d2r, 'Max', 90 * d2r);
 Sim.Trim.Out.theta_rad = struct('Known', 0, 'y', 4 * d2r, 'Min', -10 * d2r, 'Max', 20 * d2r);
 Sim.Trim.Out.psi_rad = struct('Known', 1, 'y', 155 * d2r, 'Min', (155 - 15) * d2r, 'Max', (155 + 15) * d2r);
 
-Sim.Trim.Out.p_rps = struct('Known', 1, 'y', 0 * d2r, 'Min', -1 * d2r, 'Max', 1 * d2r);
+Sim.Trim.Out.p_rps = struct('Known', 0, 'y', 0 * d2r, 'Min', -1 * d2r, 'Max', 1 * d2r);
 Sim.Trim.Out.q_rps = Sim.Trim.Out.p_rps;
 Sim.Trim.Out.r_rps = Sim.Trim.Out.p_rps;
 
 Sim.Trim.Out.altAgl_m = struct('Known', 1, 'y', Sim.Trim.Init.altAgl_m);
+Sim.Trim.Out.gamma_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
 
 % Define State conditions, generally these are initial guesses
 Sim.Trim.State.wState_BI_B_rps = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [0; 0; 0]);
 Sim.Trim.State.quatState = struct('Known', [0; 0; 0; 0], 'steadystate', [1; 1; 1; 1], 'x', [0.01; 0; 0; 0.01]);
+% Sim.Trim.State.sState_BL_rad = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [Sim.Trim.Out.phi_rad.y; Sim.Trim.Out.theta_rad.y; Sim.Trim.Out.psi_rad.y]);
 Sim.Trim.State.vState_BI_B_mps = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [Sim.Trim.Out.vTrue_mps.y; 0; 0]);
 Sim.Trim.State.rState_BI_L_m = struct('Known', [1; 1; 1], 'steadystate', [0; 0; 1], 'x', [0; 0; 0]);
 
 Sim.Trim.State.omegaState_rps = struct('Known', 0, 'steadystate', 1, 'x', Sim.Trim.Init.omegaState_rps);
 
 % Transfer the Initial State Guesses to the Init Structure, these will be overwritten by TrimSim
-Sim.Trim.Init.Surf = Sim.Trim.In.Surf.u;
-Sim.Trim.Init.Motor = Sim.Trim.In.Motor.u;
-
+% Initialize Equations of Motion
 Sim.Trim.Init.wState_BI_B_rps = Sim.Trim.State.wState_BI_B_rps.x;
 Sim.Trim.Init.quatState = Sim.Trim.State.quatState.x;
+% Sim.Trim.Init.sState_BL_rad = Sim.Trim.State.sState_BL_rad.x;
 Sim.Trim.Init.vState_BI_B_mps = Sim.Trim.State.vState_BI_B_mps.x;
 Sim.Trim.Init.rState_BI_L_m = Sim.Trim.State.rState_BI_L_m.x;
 
+% Initialize Motors
 Sim.Trim.Init.omegaState_rps = Sim.Trim.State.omegaState_rps.x;
+
+% Initialize Surfaces
+Sim.Trim.Init.Surf = 0 * Sim.Trim.In.Surf.u;
+% Sim.Trim.Init.Surf = Sim.Trim.In.Surf.u;
+Sim.Trim.Init.Motor = 0 * Sim.Trim.In.Motor.u;
+% Sim.Trim.Init.Motor = Sim.Trim.In.Motor.u;
 
 
 %% Find the trim solution
@@ -161,6 +168,10 @@ simModel = 'SimNL';
 verbose = 1;
 
 [Sim] = TrimSim(simModel, Sim, verbose);
+
+% Initialize Inputs
+Sim.Trim.Init.Surf = Sim.Trim.In.Surf;
+Sim.Trim.Init.Motor = Sim.Trim.In.Motor;
 
 %%
 if 0
