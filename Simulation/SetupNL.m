@@ -76,90 +76,102 @@ Env.Terr.altGrd_m = 287.0; % Ground Elevation at Jensen Field
 Sim.Trim.Init.altAgl_m = 100.0; % Initial Altitude in AGL
 Sim.Trim.Init.rInit_BE_D_ddm = [44.72701; -93.077205; Env.Terr.altGrd_m + Sim.Trim.Init.altAgl_m]; % Initial Position of Aircraft [Lat; Long; Alt]
 
-
 % Initial Velocity of Aircraft
-Sim.Trim.Out.vTrue_mps = struct('Known', 1, 'y', 17);
+Sim.Trim.Targ.Out.vTrue_mps = struct('y', 17, 'Known', 1);
 
-% Throttle initial values
+% Surface and Motor names
 Sim.Trim.MotorNames = {'throttle_nd'};
-Sim.Trim.In.throttle_nd = struct('Known', 0, 'u', 0.6, 'Min', 0.0, 'Max', 1.0);
-Sim.Trim.State.omegaState_rps = struct('Known', 0, 'steadystate', 1, 'x', 800);
-
-
-% Control Surface initial values
 Sim.Trim.SurfNames = Sim.Surf.elemNames;
-Sim.Trim.In.elev_rad = struct('Known', 0, 'u', 0, 'Min', -25*d2r, 'Max', 25*d2r);
-Sim.Trim.In.rud_rad = struct('Known', 0, 'u', 0, 'Min', -25*d2r, 'Max', 25*d2r);
-Sim.Trim.In.ailL_rad = struct('Known', 1, 'u', 0, 'Min', -25*d2r, 'Max', 25*d2r);
-Sim.Trim.In.ailR_rad = struct('Known', 1, 'u', 0, 'Min', -25*d2r, 'Max', 25*d2r);
-Sim.Trim.In.flapL_rad = struct('Known', 1, 'u', 0, 'Min', -25*d2r, 'Max', 25*d2r);
-Sim.Trim.In.flapR_rad = struct('Known', 1, 'u', 0, 'Min', -25*d2r, 'Max', 25*d2r);
 
-% Control Surface State Guesses
-Sim.Trim.State.elevStateDefl_rad = struct('Known', 0, 'steadystate', 1, 'x', 0);
-Sim.Trim.State.rudStateDefl_rad = struct('Known', 0, 'steadystate', 1, 'x', 0);
-Sim.Trim.State.ailLStateDefl_rad = struct('Known', 1, 'steadystate', 1, 'x', 0);
-Sim.Trim.State.ailRStateDefl_rad = struct('Known', 1, 'steadystate', 1, 'x', 0);
-Sim.Trim.State.flapLStateDefl_rad = struct('Known', 1, 'steadystate', 1, 'x', 0);
-Sim.Trim.State.flapRStateDefl_rad = struct('Known', 1, 'steadystate', 1, 'x', 0);
+% Effector Input values, Initial Guesses
+Sim.Trim.Targ.In.throttle_nd = struct('u', 0.55, 'Known', 0, 'Min', 0.0, 'Max', 1.0);
+
+Sim.Trim.Targ.In.elev_rad = struct('u', 0, 'Known', 0, 'Min', -25*d2r, 'Max', 25*d2r);
+Sim.Trim.Targ.In.rud_rad = struct('u', 0, 'Known', 0, 'Min', -25*d2r, 'Max', 25*d2r);
+Sim.Trim.Targ.In.ailL_rad = struct('u', 0, 'Known', 1, 'Min', -25*d2r, 'Max', 25*d2r);
+Sim.Trim.Targ.In.ailR_rad = struct('u', 0, 'Known', 1, 'Min', -25*d2r, 'Max', 25*d2r);
+Sim.Trim.Targ.In.flapL_rad = struct('u', 0, 'Known', 1, 'Min', -25*d2r, 'Max', 25*d2r);
+Sim.Trim.Targ.In.flapR_rad = struct('u', 0, 'Known', 1, 'Min', -25*d2r, 'Max', 25*d2r);
+
+% Effector State guesses
+Sim.Trim.Targ.State.omegaState_rps = struct('x', 800, 'Known', 0, 'steadystate', 1);
+
+Sim.Trim.Targ.State.elevStateDefl_rad = struct('x', 0, 'Known', 0, 'steadystate', 1);
+Sim.Trim.Targ.State.rudStateDefl_rad = struct('x', 0, 'Known', 0, 'steadystate', 1);
+Sim.Trim.Targ.State.ailLStateDefl_rad = struct('x', 0, 'Known', 1, 'steadystate', 1);
+Sim.Trim.Targ.State.ailRStateDefl_rad = struct('x', 0, 'Known', 1, 'steadystate', 1);
+Sim.Trim.Targ.State.flapLStateDefl_rad = struct('x', 0, 'Known', 1, 'steadystate', 1);
+Sim.Trim.Targ.State.flapRStateDefl_rad = struct('x', 0, 'Known', 1, 'steadystate', 1);
 
 % Trim aircraft to a specific flight condition
 % Define the Output specifications - Steady-Level
-Sim.Trim.Out.alpha_rad = struct('Known', 0, 'y', 4 * d2r, 'Min', -10 * d2r, 'Max', 20 * d2r);
-Sim.Trim.Out.beta_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
+Sim.Trim.Targ.Out.alpha_rad = struct('y', 4 * d2r, 'Known', 0, 'Min', -10 * d2r, 'Max', 20 * d2r);
+Sim.Trim.Targ.Out.beta_rad = struct('y', 0 * d2r, 'Known', 1, 'Min', -10 * d2r, 'Max', 10 * d2r);
 
-Sim.Trim.Out.phi_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -90 * d2r, 'Max', 90 * d2r);
-Sim.Trim.Out.theta_rad = struct('Known', 0, 'y', 4 * d2r, 'Min', -10 * d2r, 'Max', 20 * d2r);
-Sim.Trim.Out.psi_rad = struct('Known', 1, 'y', 155 * d2r, 'Min', (155 - 15) * d2r, 'Max', (155 + 15) * d2r);
+Sim.Trim.Targ.Out.phi_rad = struct('y', 0 * d2r, 'Known', 1, 'Min', -90 * d2r, 'Max', 90 * d2r);
+Sim.Trim.Targ.Out.theta_rad = struct('y', 4 * d2r, 'Known', 0, 'Min', -10 * d2r, 'Max', 20 * d2r);
+Sim.Trim.Targ.Out.psi_rad = struct('y', 155 * d2r, 'Known', 1, 'Min', (155 - 15) * d2r, 'Max', (155 + 15) * d2r);
 
-Sim.Trim.Out.p_rps = struct('Known', 0, 'y', 0 * d2r, 'Min', -1 * d2r, 'Max', 1 * d2r);
-Sim.Trim.Out.q_rps = Sim.Trim.Out.p_rps;
-Sim.Trim.Out.r_rps = Sim.Trim.Out.p_rps;
+Sim.Trim.Targ.Out.p_rps = struct('y', 0 * d2r, 'Known', 1, 'Min', -1 * d2r, 'Max', 1 * d2r);
+Sim.Trim.Targ.Out.q_rps = Sim.Trim.Targ.Out.p_rps;
+Sim.Trim.Targ.Out.r_rps = Sim.Trim.Targ.Out.p_rps;
 
-Sim.Trim.Out.altAgl_m = struct('Known', 1, 'y', Sim.Trim.Init.altAgl_m);
-Sim.Trim.Out.gamma_rad = struct('Known', 1, 'y', 0 * d2r, 'Min', -10 * d2r, 'Max', 10 * d2r);
+Sim.Trim.Targ.Out.altAgl_m = struct('y', Sim.Trim.Init.altAgl_m, 'Known', 0, 'Min', Sim.Trim.Init.altAgl_m - 10, 'Max', Sim.Trim.Init.altAgl_m + 10);
+Sim.Trim.Targ.Out.gamma_rad = struct('y', 0 * d2r, 'Known', 1, 'Min', -10 * d2r, 'Max', 10 * d2r);
 
 % Define State conditions, generally these are initial guesses
-Sim.Trim.State.wState_BI_B_rps = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [0; 0; 0]);
-Sim.Trim.State.quatState = struct('Known', [0; 0; 0; 0], 'steadystate', [1; 1; 1; 1], 'x', [1; 0; 0; 1]);
-% Sim.Trim.State.sState_BL_rad = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [Sim.Trim.Out.phi_rad.y; Sim.Trim.Out.theta_rad.y; Sim.Trim.Out.psi_rad.y]);
-Sim.Trim.State.vState_BI_B_mps = struct('Known', [0; 0; 0], 'steadystate', [1; 1; 1], 'x', [Sim.Trim.Out.vTrue_mps.y; 0; 0]);
-Sim.Trim.State.rState_BI_L_m = struct('Known', [1; 1; 1], 'steadystate', [0; 0; 1], 'x', [0; 0; 0]);
+Sim.Trim.Targ.State.wState_BI_B_rps = struct('x', [0; 0; 0], 'Known', [1; 1; 1], 'steadystate', [1; 1; 1]);
+Sim.Trim.Targ.State.quatState_BL_nd = struct('x', [0.25; 0; 0; 1], 'Known', [0; 0; 0; 0], 'steadystate', [1; 1; 1; 1]);
+% Sim.Trim.Targ.State.sState_BL_rad = struct('x', [Sim.Trim.Targ.Out.phi_rad.y; Sim.Trim.Targ.Out.theta_rad.y; Sim.Trim.Targ.Out.psi_rad.y], 'Known', [0; 0; 0], 'steadystate', [1; 1; 1]);
+Sim.Trim.Targ.State.vState_BI_B_mps = struct('x', [Sim.Trim.Targ.Out.vTrue_mps.y; 0; 0], 'Known', [0; 0; 0], 'steadystate', [1; 1; 1]);
+Sim.Trim.Targ.State.rState_BI_L_m = struct('x', [0; 0; 0], 'Known', [1; 1; 1], 'steadystate', [0; 0; 1]);
 
 
-% Transfer the Initial State Guesses to the Init Structure, these will be overwritten by TrimSim
+% Transfer the Initial State Guesses to the Init Structure, these will be overwritten by TrimSim, but these are the mechanism the Sim actually uses
 % Initialize Equations of Motion
-Sim.Trim.Init.wState_BI_B_rps = Sim.Trim.State.wState_BI_B_rps.x;
-Sim.Trim.Init.quatState = Sim.Trim.State.quatState.x;
-% Sim.Trim.Init.sState_BL_rad = Sim.Trim.State.sState_BL_rad.x;
-Sim.Trim.Init.vState_BI_B_mps = Sim.Trim.State.vState_BI_B_mps.x;
-Sim.Trim.Init.rState_BI_L_m = Sim.Trim.State.rState_BI_L_m.x;
+Sim.Trim.Init.wState_BI_B_rps = Sim.Trim.Targ.State.wState_BI_B_rps.x;
+Sim.Trim.Init.quatState_BL_nd = Sim.Trim.Targ.State.quatState_BL_nd.x;
+% Sim.Trim.Init.sState_BL_rad = Sim.Trim.Targ.State.sState_BL_rad.x;
+Sim.Trim.Init.vState_BI_B_mps = Sim.Trim.Targ.State.vState_BI_B_mps.x;
+Sim.Trim.Init.rState_BI_L_m = Sim.Trim.Targ.State.rState_BI_L_m.x;
 
 % Initialize Motors
-Sim.Trim.Init.omegaState_rps = Sim.Trim.State.omegaState_rps.x;
+Sim.Trim.Init.throttleState_nd = 0 * Sim.Trim.Targ.In.throttle_nd.u;
+Sim.Trim.Init.omegaState_rps = Sim.Trim.Targ.State.omegaState_rps.x;
 
 % Initialize Surfaces
-Sim.Trim.Init.elevStateDefl_rad = Sim.Trim.State.elevStateDefl_rad.x;
-Sim.Trim.Init.rudStateDefl_rad = Sim.Trim.State.rudStateDefl_rad.x;
-Sim.Trim.Init.ailLStateDefl_rad = Sim.Trim.State.ailLStateDefl_rad.x;
-Sim.Trim.Init.ailRStateDefl_rad = Sim.Trim.State.ailRStateDefl_rad.x;
-Sim.Trim.Init.flapLStateDefl_rad = Sim.Trim.State.flapLStateDefl_rad.x;
-Sim.Trim.Init.flapRStateDefl_rad = Sim.Trim.State.flapRStateDefl_rad.x;
+Sim.Trim.Init.elevStateDefl_rad = Sim.Trim.Targ.State.elevStateDefl_rad.x;
+Sim.Trim.Init.rudStateDefl_rad = Sim.Trim.Targ.State.rudStateDefl_rad.x;
+Sim.Trim.Init.ailLStateDefl_rad = Sim.Trim.Targ.State.ailLStateDefl_rad.x;
+Sim.Trim.Init.ailRStateDefl_rad = Sim.Trim.Targ.State.ailRStateDefl_rad.x;
+Sim.Trim.Init.flapLStateDefl_rad = Sim.Trim.Targ.State.flapLStateDefl_rad.x;
+Sim.Trim.Init.flapRStateDefl_rad = Sim.Trim.Targ.State.flapRStateDefl_rad.x;
 
-% Initialize Core Bus
-Sim.Trim.Init.alphaState_rad = Sim.Trim.Out.alpha_rad.y; % FIXIT
-Sim.Trim.Init.betaState_rad = Sim.Trim.Out.beta_rad.y; % FIXIT
+% Initialize Core Bus, required due to using Memory delays to resolve algebraic loops
+Sim.Trim.Init.alphaState_rad = Sim.Trim.Targ.Out.alpha_rad.y; % FIXIT
+Sim.Trim.Init.betaState_rad = Sim.Trim.Targ.Out.beta_rad.y; % FIXIT
 
 Sim.Trim.Init.alphaDotState_rps = 0; % FIXIT
 Sim.Trim.Init.betaDotState_rps = 0; % FIXIT
 
-Sim.Trim.Init.vTrueState_mps = Sim.Trim.Out.vTrue_mps.y; % FIXIT
+Sim.Trim.Init.vTrueState_mps = Sim.Trim.Targ.Out.vTrue_mps.y; % FIXIT
 
 %% Find the trim solution
 simModel = 'SimNL_Subsystems';
+% simModel = 'SimNL';
 verbose = 1;
 
-[Sim] = TrimSim(simModel, Sim, verbose);
+% Clear the values of the Simulation Inputs, The trim algorithm will solve for these
+Sim.Trim.In.throttle_nd = 0 * Sim.Trim.Targ.In.throttle_nd.u;
+Sim.Trim.In.elev_rad = 0 * Sim.Trim.Targ.In.elev_rad.u;
+Sim.Trim.In.rud_rad = 0 * Sim.Trim.Targ.In.rud_rad.u;
+Sim.Trim.In.ailL_rad = 0 * Sim.Trim.Targ.In.ailL_rad.u;
+Sim.Trim.In.ailR_rad = 0 * Sim.Trim.Targ.In.ailR_rad.u;
+Sim.Trim.In.flapL_rad = 0 * Sim.Trim.Targ.In.flapL_rad.u;
+Sim.Trim.In.flapR_rad = 0 * Sim.Trim.Targ.In.flapR_rad.u;
+
+% Run the Trim algorithm
+[Sim.Trim] = TrimSim(simModel, Sim.Trim, verbose);
 
 %%
 if 0
@@ -201,7 +213,6 @@ paramNameValStruct.SimulationMode    = 'normal';
 paramNameValStruct.AbsTol            = '1e-5';
 paramNameValStruct.LoadExternalInput = 'on';
 paramNameValStruct.ExternalInput     = 'simIn';
-paramNameValStruct.StateSaveName     = 'simState';
 paramNameValStruct.SaveState         = 'on';
 paramNameValStruct.StateSaveName     = 'simState';
 paramNameValStruct.SaveOutput        = 'on';
@@ -215,12 +226,14 @@ paramNameValStruct.CaptureErrors     = 'on';
 simRun = sim(simModel, paramNameValStruct);
 simOutData = simRun.get('simOut');
 
-%
+%%
 % Plot
 figure;
 subplot(2,1,1);
-plot(t_s, u(indxInSig, :), t_s, y(:, indxOutSig));
+plot(t_s, simIn(:, indxInSig+1), t_s, y(:, indxOutSig)); grid on;
+title('Linear Model Response'); legend({inSigName, outSigName}, 'Interpreter', 'none');
 subplot(2,1,2);
-plot(t_s, simIn(:, indxInSig+1)); hold on; plot(simOutData.getElement(indxOutSig).Values)
+plot(t_s, simIn(:, indxInSig+1)); hold on; plot(simOutData.getElement(indxOutSig).Values); grid on;
+title('Non-Linear Model Response'); legend({inSigName, simOutData.getElement(indxOutSig).PropagatedName}, 'Interpreter', 'none');
 
 

@@ -1,14 +1,14 @@
-function [Sim] = TrimSim(simModel, Sim, verbose)
+function [Trim] = TrimSim(simModel, Trim, verbose)
 %
 % Trims the UAV simulation to specified conditions.
 %
 % Inputs:
 %   simModel - Simulink model
-%   Sim
+%   Trim
 %   verbose  - boolean flag to suppress output; default "true"
 %
 % Outputs:
-%   Sim
+%   Trim
 %
 % Notes:
 % The Sim structure contains I/O and State conditions in a similar style as opspec() expects.
@@ -27,10 +27,10 @@ if isempty(verbose), verbose = 0; end
 
 
 %% Pull out target structures
-trimIn = Sim.Trim.In;
-trimOut = Sim.Trim.Out;
-trimState = Sim.Trim.State;
-trimInit = Sim.Trim.Init;
+trimTargIn = Trim.Targ.In;
+trimTargOut = Trim.Targ.Out;
+trimTargState = Trim.Targ.State;
+trimInit = Trim.Init;
 
 
 %% Load model into memory
@@ -45,114 +45,115 @@ opSpec = operspec(simModel);
 
 
 %% STATE SPECIFICATIONS
-% List of State names
-stateList = get(opSpec.States, 'StateName');
+% List of State names from the simulation
+specStateNameList = get(opSpec.States, 'StateName');
 
-% Set steadystate to zero
-for indxState = 1:length(stateList)
-    opSpec.States(indxState).SteadyState = 0 * opSpec.States(indxState).SteadyState;
-end
+% Set steadystate to zero by default
+% for indxSpecState = 1:length(specStateNameList)
+%     opSpec.States(indxSpecState).SteadyState = 0 * opSpec.States(indxSpecState).SteadyState;
+% end
 
 % Field names of the Target variables
-trimStateNames = fieldnames(trimState);
+targStateNameList = fieldnames(trimTargState);
 
-numTrimState = length(trimStateNames);
-for indxState = 1:numTrimState
+% Loop over the defined Target States
+numTargState = length(targStateNameList);
+for indxSpecState = 1:numTargState
     % Current target signal name
-    trimStateName = trimStateNames{indxState};
+    trimStateName = targStateNameList{indxSpecState};
     
-    % Corresponding index of the Output Signal
-    indxStateFind = find(strcmp(stateList, trimStateName));
+    % Corresponding index of the opSpec
+    indxStateFind = find(strcmp(specStateNameList, trimStateName));
     
     if ~isempty(indxStateFind) % Set State Conditions
-        if isfield(trimState.(trimStateName), 'Known')
-            opSpec.States(indxStateFind).Known = trimState.(trimStateName).Known;
+        if isfield(trimTargState.(trimStateName), 'Known')
+            opSpec.States(indxStateFind).Known = trimTargState.(trimStateName).Known;
         end
-        if isfield(trimState.(trimStateName), 'steadystate')
-            opSpec.States(indxStateFind).steadystate = trimState.(trimStateName).steadystate;
+        if isfield(trimTargState.(trimStateName), 'steadystate')
+            opSpec.States(indxStateFind).steadystate = trimTargState.(trimStateName).steadystate;
         end
-        if isfield(trimState.(trimStateName), 'x')
-            opSpec.States(indxStateFind).x = trimState.(trimStateName).x;
+        if isfield(trimTargState.(trimStateName), 'x')
+            opSpec.States(indxStateFind).x = trimTargState.(trimStateName).x;
         end
-        if isfield(trimState.(trimStateName), 'Min')
-            opSpec.States(indxStateFind).Min = trimState.(trimStateName).Min;
+        if isfield(trimTargState.(trimStateName), 'Min')
+            opSpec.States(indxStateFind).Min = trimTargState.(trimStateName).Min;
         end
-        if isfield(trimState.(trimStateName), 'Max')
-            opSpec.States(indxStateFind).Max = trimState.(trimStateName).Max;
+        if isfield(trimTargState.(trimStateName), 'Max')
+            opSpec.States(indxStateFind).Max = trimTargState.(trimStateName).Max;
         end
         
     else % Target not found in the States
-        error(['Target not defined: State = ' trimStateName]);
+        error(['Target not defined in Spec: State = ' trimStateName]);
     end
 end
 
 
 %% OUTPUT SPECIFICATIONS
 % Create a cell array of Output Names from the opSpec
-simOutList = strrep(get(opSpec.Outputs, 'Block'), [simModel '/'], '');
+specOutNameList = strrep(get(opSpec.Outputs, 'Block'), [simModel '/'], '');
 
 % Field names of the Target variables
-targOutList = fieldnames(trimOut);
+targOutNameList = fieldnames(trimTargOut);
 
-numTargOut = length(targOutList);
-for indxOut = 1:numTargOut
+numTargOut = length(targOutNameList);
+for indxTargOut = 1:numTargOut
     % Current target signal name
-    targOutName = targOutList{indxOut};
+    targOutName = targOutNameList{indxTargOut};
     
     % Corresponding index of the Output Signal
-    indxOutFind = find(strcmp(simOutList, targOutName));
+    indxOutFind = find(strcmp(specOutNameList, targOutName));
     
     if ~isempty(indxOutFind) % Set Output Conditions
-        if isfield(trimOut.(targOutName), 'Known')
-            opSpec.Outputs(indxOutFind).Known = trimOut.(targOutName).Known;
+        if isfield(trimTargOut.(targOutName), 'Known')
+            opSpec.Outputs(indxOutFind).Known = trimTargOut.(targOutName).Known;
         end
-        if isfield(trimOut.(targOutName), 'y')
-            opSpec.Outputs(indxOutFind).y = trimOut.(targOutName).y;
+        if isfield(trimTargOut.(targOutName), 'y')
+            opSpec.Outputs(indxOutFind).y = trimTargOut.(targOutName).y;
         end
-        if isfield(trimOut.(targOutName), 'Min')
-            opSpec.Outputs(indxOutFind).Min = trimOut.(targOutName).Min;
+        if isfield(trimTargOut.(targOutName), 'Min')
+            opSpec.Outputs(indxOutFind).Min = trimTargOut.(targOutName).Min;
         end
-        if isfield(trimOut.(targOutName), 'Max')
-            opSpec.Outputs(indxOutFind).Max = trimOut.(targOutName).Max;
+        if isfield(trimTargOut.(targOutName), 'Max')
+            opSpec.Outputs(indxOutFind).Max = trimTargOut.(targOutName).Max;
         end
         
     else % Target not found in the Output signals
-        error(['Target not defined: Output = ' targOutName]);
+        error(['Target not defined in Spec: Output = ' targOutName]);
     end
 end
 
 
 %% INPUT SPECIFICATIONS
 % Create a cell array of Output Names from the opSpec
-inList = strrep(get(opSpec.Inputs, 'Block'), [simModel '/'], '');
+specInNameList = strrep(get(opSpec.Inputs, 'Block'), [simModel '/'], '');
 
 % Field names of the Target variables
-targInNames = fieldnames(trimIn);
+targInNameList = fieldnames(trimTargIn);
 
-numTargIn = length(targInNames);
-for indxIn = 1:numTargIn
+numTargIn = length(targInNameList);
+for indxSpecIn = 1:numTargIn
     % Current target signal name
-    trimInName = targInNames{indxIn};
+    targInName = targInNameList{indxSpecIn};
     
     % Corresponding index of the Input Signal
-    indxInFind = find(strcmp(inList, trimInName));
+    indxInFind = find(strcmp(specInNameList, targInName));
     
     if ~isempty(indxInFind) % Set Input Conditions
-        if isfield(trimIn.(trimInName), 'Known')
-            opSpec.Inputs(indxInFind).Known = trimIn.(trimInName).Known;
+        if isfield(trimTargIn.(targInName), 'Known')
+            opSpec.Inputs(indxInFind).Known = trimTargIn.(targInName).Known;
         end
-        if isfield(trimIn.(trimInName), 'u')
-            opSpec.Inputs(indxInFind).u = trimIn.(trimInName).u;
+        if isfield(trimTargIn.(targInName), 'u')
+            opSpec.Inputs(indxInFind).u = trimTargIn.(targInName).u;
         end
-        if isfield(trimIn.(trimInName), 'Min')
-            opSpec.Inputs(indxInFind).Min = trimIn.(trimInName).Min;
+        if isfield(trimTargIn.(targInName), 'Min')
+            opSpec.Inputs(indxInFind).Min = trimTargIn.(targInName).Min;
         end
-        if isfield(trimIn.(trimInName), 'Max')
-            opSpec.Inputs(indxInFind).Max = trimIn.(trimInName).Max;
+        if isfield(trimTargIn.(targInName), 'Max')
+            opSpec.Inputs(indxInFind).Max = trimTargIn.(targInName).Max;
         end
         
     else % Target not found in the Input signals
-        error(['Target not defined: Input = ' trimInName]);
+        error(['Target not defined in Spec: Input = ' targInName]);
     end
 end
 
@@ -177,37 +178,41 @@ opt.OptimizationOptions.ScaleProblem = 'true';
 [opPoint, opReport] = findop(simModel, opSpec, opt);
 
 %
-Sim.Trim.opSpec   = opSpec;
-Sim.Trim.opPoint  = opPoint;
-Sim.Trim.opReport = opReport;
+Trim.opSpec   = opSpec;
+Trim.opPoint  = opPoint;
+Trim.opReport = opReport;
 
-%% Generate Initial Conditions
-stateList = get(opPoint.States, 'StateName');
+%% Generate Initial Conditions, from the Trimmed State Spec
+specStateNameList = get(opPoint.States, 'StateName');
 
-numSimState = length(stateList);
-for indxState = 1:numSimState
+% Loop over the Trimmed State Specs
+numSpecState = length(specStateNameList);
+for indxSpecState = 1:numSpecState
     % Current target signal name
-    simStateName = stateList{indxState};
+    specStateName = specStateNameList{indxSpecState};
     
-    % Copy States to Init Structure
-    trimInit.(simStateName) = opPoint.States(indxState).x;
+    if ~isempty(specStateName)
+        % Copy States to Init Structure
+        trimInit.(specStateName) = opPoint.States(indxSpecState).x;
+    end
 end
 
-Sim.Trim.Init = trimInit;
+Trim.Init = trimInit;
 
-%% Generate Input Conditions
-inList = strrep(get(opPoint.Inputs, 'Block'), [simModel '/'], '');
+%% Generate Input Conditions, from the Trimmed Input Spec
+specInNameList = strrep(get(opPoint.Inputs, 'Block'), [simModel '/'], '');
 
-numSimIn = length(inList);
-for indxIn = 1:numSimIn
+% Loop over the Trimmed Input Specs
+numSpecIn = length(specInNameList);
+for indxSpecIn = 1:numSpecIn
     % Current target signal name
-    simInName = inList{indxIn};
+    specInName = specInNameList{indxSpecIn};
     
-    % Copy States to Init Structure
-    trimIn.(simInName) = opPoint.Inputs(indxIn).u;
+    % Copy States to Input Structure
+    trimIn.(specInName) = opPoint.Inputs(indxSpecIn).u;
 end
 
-Sim.Trim.In = trimIn;
+Trim.In = trimIn;
 
 
 %% Cleanup

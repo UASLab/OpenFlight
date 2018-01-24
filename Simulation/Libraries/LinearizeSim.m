@@ -35,6 +35,7 @@ Sim.Trim.io = getlinio(simModel);
 
 %% Obtain lineariziation
 linOpt = linearizeOptions;
+linOpt.SampleTime = 0;
 linOpt.UseBusSignalLabels = 'on';
 linOpt.BlockReduction = 'off';
 linOpt.StoreOffsets = true;
@@ -45,7 +46,8 @@ sysModel = linearize(simModel, Sim.Trim.opPoint, Sim.Trim.io, linOpt);
 %% Fix I/O and State Names
 % Fix Input Names
 % Fix Input Names of the linear model
-inList = get(Sim.Trim.opSpec.inputs, 'Block');
+% inList = get(Sim.Trim.opSpec.inputs, 'Block');
+inList = sysModel.InputName;
 
 % Remove the input signal path
 numIn = length(inList);
@@ -57,13 +59,17 @@ end
 set(sysModel, 'InputName', inList);
 
 % Fix Output Names of the linear model
-outList = get(Sim.Trim.opSpec.Outputs, 'Block');
+% outList = get(Sim.Trim.opSpec.Outputs, 'Block');
+outList = sysModel.OutputName;
 
 % Remove the output signal path
-numOut = length(outList);
-for indxOut = 1:numOut
+numState = length(outList);
+for indxOut = 1:numState
     [~, outList{indxOut}] = fileparts(outList{indxOut});
 end
+
+% Cleanup the strings
+outList = regexprep(outList, '<|>', '');
 
 % Write the signal names to the SS model
 set(sysModel, 'OutputName', outList);
@@ -74,8 +80,8 @@ indxW = strcmp(sysModel.StateName, 'wState_BI_B_rps');
 if sum(indxW) == 3, sysModel.StateName(indxW) = {'p_rps', 'q_rps', 'r_rps'}; end
 
 % Quaterions
-indxQuat = strcmp(sysModel.StateName, 'quatState');
-if sum(indxQuat) == 4, sysModel.StateName(indxQuat) = {'quatState1', 'quatState2', 'quatState3', 'quatState4'}; end
+indxQuat = strcmp(sysModel.StateName, 'quatState_BL_nd');
+if sum(indxQuat) == 4, sysModel.StateName(indxQuat) = {'quatState1_nd', 'quatState2_nd', 'quatState3_nd', 'quatState4_nd'}; end
 
 % Euler Angles
 indxQuat = strcmp(sysModel.StateName, 'sState_BL_rad');
@@ -89,7 +95,7 @@ if sum(indxV) == 3, sysModel.StateName(indxV) = {'vX_mps', 'vY_mps', 'vZ_mps'}; 
 indxR = strcmp(sysModel.StateName, 'rState_BI_L_m');
 if sum(indxR) == 3, sysModel.StateName(indxR) = {'rN_m', 'rE_m', 'rD_m'}; end
 
-
+%% Reduced Order Models
 if nargout > 1
     %% Complete Model
     sys.sysModel = sysModel;
@@ -98,7 +104,7 @@ if nargout > 1
     %% Longitudinal Linear Model
     inNames = {'elev_rad', 'throttle_nd'};
     outNames = {'vTrue_mps', 'alpha_rad', 'q_rps', 'theta_rad', 'altAgl_m', 'aX_mps2', 'aZ_mps2'};
-    stateNames = {'vX_mps', 'vZ_mps', 'q_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4', 'omegaState_rps', 'elevStateDef', 'elevStateRate'};
+    stateNames = {'vX_mps', 'vZ_mps', 'q_rps', 'quatState1_nd', 'quatState2_nd', 'quatState3_nd', 'quatState4_nd', 'omegaState_rps', 'elevStateDef_rad', 'elevStateRate_rad'};
     
     sysLong = ModelReduce(sysModel, inNames, outNames, stateNames);
     sys.sysLong = sysLong;
@@ -106,7 +112,7 @@ if nargout > 1
     %% Short-Period Linear Model
     inNames = {'elev_rad'};
     outNames = {'alpha_rad', 'q_rps', 'aZ_mps2'};
-    stateNames = {'q_rps', 'vZ_mps', 'elevStateDef', 'elevStateRate'};
+    stateNames = {'q_rps', 'vZ_mps', 'elevStateDef_rad', 'elevStateRate_rad'};
     
     sysSP = ModelReduce(sysModel, inNames, outNames, stateNames);
     sys.sysSP = sysSP;
@@ -115,7 +121,7 @@ if nargout > 1
     %% Lateral-Directional Linear Model
     inNames = {'ailL_rad', 'ailR_rad', 'rud_rad'};
     outNames = {'beta_rad', 'p_rps', 'r_rps', 'phi_rad', 'psi_rad'};
-    stateNames = {'vY_mps', 'p_rps', 'r_rps', 'quatState1', 'quatState2', 'quatState3', 'quatState4', 'ailLStateDef', 'ailLStateRate', 'ailRStateDef', 'ailRStateRate', 'rudStateDefl', 'rudStateRate'};
+    stateNames = {'vY_mps', 'p_rps', 'r_rps', 'quatState1_nd', 'quatState2_nd', 'quatState3_nd', 'quatState4_nd', 'ailLStateDef_rad', 'ailLStateRate_rad', 'ailRStateDef_rad', 'ailRStateRate_rad', 'rudStateDefl_rad', 'rudStateRate_rad'};
     
     sysLat = ModelReduce(sysModel, inNames, outNames, stateNames);
     sys.sysLat = sysLat;
