@@ -62,7 +62,8 @@ if 1
     % Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Faser';
     Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Mjolnir';
     
-    Sim.Aero.type = 'OpenVSP'; % Use the reference model defined by the AVL model
+    % Sim.Aero.type = 'OpenVSP'; % Use the reference model defined by the OpenVSP model
+    Sim.Aero.type = 'AVL'; % Use the reference model defined by the AVL model
     % Sim.Aero.type = 'Faser'; % Use aero Model as derived from Faser Wind Tunnel data
     
     % Define Aircraft Specific Parameters
@@ -73,7 +74,7 @@ if 1
     % Aircraft Config
     % Core Sub-System Variant Selections
     Sim.MassP.VarSel = 1; % Select Mass Property Model Variant
-    Sim.Aero.VarSel = 2; % Select Aero Model Variant
+    Sim.Aero.VarSel = 1; % Select Aero Model Variant
     Sim.Prop.VarSel = 1; % Select Prop Model Variant
     
     % Configurable Subsystems Selections
