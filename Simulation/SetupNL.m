@@ -7,10 +7,10 @@
 %
 % Note: the model is not opened by default. This is not
 % necessary to trim, linearize, and simulate via command line inputs.
-% 
-% University of Minnesota 
-% Aerospace Engineering and Mechanics 
-% Copyright 2017 Regents of the University of Minnesota. 
+%
+% University of Minnesota
+% Aerospace Engineering and Mechanics
+% Copyright 2017 Regents of the University of Minnesota.
 % All rights reserved.
 %
 
@@ -21,50 +21,81 @@ d2r = pi/180;
 
 
 %% Configure Aircraft
-Sim.model = 'UltraStick25e';
-
-% Simulation sample time
-Sim.timeSample_s = 0.02; % sec
-
-% Sim.MassP.type = 'AVL'; % Use the reference model defined by the AVL model
-Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Thor';
-
-% Sim.Aero.type = 'AVL'; % Use the reference model defined by the AVL model
-Sim.Aero.type = 'Flight'; % Use aero Model as derived from flight data, use with Thor mass properties
-
-% Aircraft Config
-% Core Sub-System Variant Selections
-Sim.MassP.VarSel = 1; % Select Mass Property Model Variant
-Sim.Aero.VarSel = 1; % Select Aero Model Variant
-Sim.Prop.VarSel = 1; % Select Prop Model Variant
-
-% Define Aircraft Specific Parameters
-AC = [];
-[Sim, AC] = Config_UltraStick25e(Sim, AC);
-
-
-% Configurable Subsystems Selections
-Sim.SensSim = 'Sensors_UltraStick25e';
-Sim.Sens.BlockChoiceList = {[Sim.SensSim '/Sensor_IMU'], 'IMU_Err'; ...
-    [Sim.SensSim '/Sensor_GPS'], 'GPS_Err'; ...
-    [Sim.SensSim '/Sensor_Pitot'], 'Pitot_Err'};
-
-Sim.EffSim = 'SubSys_UltraStick25e';
-Sim.Eff.BlockChoiceList = [];
-for indxSurf = 1:length(Sim.Surf.surfList)
-    Sim.Eff.BlockChoiceList{indxSurf, 1} = [Sim.EffSim '/' Sim.Surf.surfList{indxSurf}];
-    Sim.Eff.BlockChoiceList{indxSurf, 2} = 'act_NL1';
+if 0
+    Sim.model = 'UltraStick25e';
+    
+    % Sim.MassP.type = 'AVL'; % Use the reference model defined by the AVL model
+    Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Thor';
+    
+    % Sim.Aero.type = 'AVL'; % Use the reference model defined by the AVL model
+    Sim.Aero.type = 'Flight'; % Use aero Model as derived from flight data, use with Thor mass properties
+    
+    % Define Aircraft Specific Parameters
+    AC = [];
+    [Sim, AC] = Config_UltraStick25e(Sim, AC);
+    
+    % Aircraft Config
+    % Core Sub-System Variant Selections
+    Sim.MassP.VarSel = 1; % Select Mass Property Model Variant
+    Sim.Aero.VarSel = 1; % Select Aero Model Variant
+    Sim.Prop.VarSel = 1; % Select Prop Model Variant
+    
+    % Configurable Subsystems Selections
+    Sim.SensSim = 'Sensors_UltraStick25e';
+    Sim.Sens.BlockChoiceList = {[Sim.SensSim '/Sensor_IMU'], 'IMU_Err'; ...
+        [Sim.SensSim '/Sensor_GPS'], 'GPS_Err'; ...
+        [Sim.SensSim '/Sensor_Pitot'], 'Pitot_Err'};
+    
+    Sim.EffSim = 'SubSys_UltraStick25e';
+    Sim.Eff.BlockChoiceList = [];
+    for indxSurf = 1:length(Sim.Surf.surfList)
+        Sim.Eff.BlockChoiceList{indxSurf, 1} = [Sim.EffSim '/' Sim.Surf.surfList{indxSurf}];
+        Sim.Eff.BlockChoiceList{indxSurf, 2} = 'act_NL1';
+    end
+    
 end
 
-% get_param([Sim.SensSim '/Sensor_IMU'], 'MemberBlocks');
-% get_param([Sim.SensSim '/Sensor_IMU'], 'BlockChoice');
-% set_param([Sim.SensSim '/Sensor_IMU'], 'BlockChoice', 'IMU_Err');
-% indxBlock = 1;
-% set_param(Sim.Sens.BlockChoiceList{indxBlock,1}, 'BlockChoice', Sim.Sens.BlockChoiceList{indxBlock,2});
-
+if 1
+    Sim.model = 'UltraStick120';
+    
+    % Sim.MassP.type = 'OpenVSP'; % Use the reference model defined by the OpenVSP model
+    % Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Faser';
+    Sim.MassP.type = 'Flight'; Sim.MassP.model = 'Mjolnir';
+    
+    Sim.Aero.type = 'OpenVSP'; % Use the reference model defined by the AVL model
+    % Sim.Aero.type = 'Faser'; % Use aero Model as derived from Faser Wind Tunnel data
+    
+    % Define Aircraft Specific Parameters
+    AC = [];
+    [Sim, AC] = Config_UltraStick120(Sim, AC);
+    
+    
+    % Aircraft Config
+    % Core Sub-System Variant Selections
+    Sim.MassP.VarSel = 1; % Select Mass Property Model Variant
+    Sim.Aero.VarSel = 2; % Select Aero Model Variant
+    Sim.Prop.VarSel = 1; % Select Prop Model Variant
+    
+    % Configurable Subsystems Selections
+    Sim.SensSim = 'Sensors_UltraStick120';
+    Sim.Sens.BlockChoiceList = {[Sim.SensSim '/Sensor_IMU'], 'IMU_Err'; ...
+        [Sim.SensSim '/Sensor_GPS'], 'GPS_Err'; ...
+        [Sim.SensSim '/Sensor_Pitot'], 'Pitot_Err'};
+    
+    Sim.EffSim = 'SubSys_UltraStick120';
+    Sim.Eff.BlockChoiceList = [];
+    for indxSurf = 1:length(Sim.Surf.surfList)
+        Sim.Eff.BlockChoiceList{indxSurf, 1} = [Sim.EffSim '/' Sim.Surf.surfList{indxSurf}];
+        Sim.Eff.BlockChoiceList{indxSurf, 2} = 'act_NL1';
+    end
+    
+end
 
 
 %% Define the Core Simulation Parameters, Variants, and Buses
+% Simulation sample time
+Sim.timeSample_s = 0.02; % sec
+
 % Define Environment Parameters
 Env = [];
 
@@ -79,7 +110,7 @@ Sim.Eom.VarSel = 1; % Equation of Motion Selection
 [Sim, Env] = Config_Core(Sim, Env);
 
 
-%% Set aircraft trim conditions 
+%% Set aircraft trim conditions
 % Set Initial Position
 Env.Terr.altGrd_m = 287.0; % Ground Elevation at Jensen Field
 Sim.Trim.Init.altAgl_m = 100.0; % Initial Altitude in AGL
@@ -90,7 +121,7 @@ switch lower(Sim.model)
     case 'ultrastick120'
         % Initial Velocity of Aircraft
         Sim.Trim.Out.vTrue_mps = struct('Known', 1, 'y', 23);
-
+        
         % Throttle initial values
         Sim.Trim.MotorNames = {'throttle_nd'};
         Sim.Trim.In.Motor = struct('Known', 0, 'u', 0.6, 'Min', 0, 'Max', 1.0);
@@ -101,7 +132,7 @@ switch lower(Sim.model)
         
         % Initial Motor Speed [rad/s]
         Sim.Trim.Init.omegaState_rps = 800;
-                
+        
     case 'ultrastick25e'
         % Initial Velocity of Aircraft
         Sim.Trim.Out.vTrue_mps = struct('Known', 1, 'y', 17);

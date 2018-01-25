@@ -1,12 +1,10 @@
-function MassP = Config_UltraStick25e_MassP(Sim, T_S2SB)
+function MassP = Config_UltraStick120_MassP(Sim, T_S2SB)
 
 
 % Load the Reference Mass Properties
 switch lower(Sim.type)
-    case {'avl'}
-        MassP = US25e_avl_v1(Sim);
     case {'flight', 'old'}
-        MassP = US25e_flight_v1(Sim); % Test derived mass properties
+        MassP = US120_flight_v1(Sim); % Test derived mass properties
     otherwise
         
 end
@@ -31,51 +29,26 @@ MassP.I_B_kgm2 = ...
 
 end
 
-function MassP = US25e_flight_v1(MassP)
+function MassP = US120_flight_v1(MassP)
 % Gross aircraft mass [kg]
 switch lower(MassP.model)
-    case 'loki'
-        MassP.massRef_kg  = 1.9; % Loki
-    case 'thor'
-        MassP.massRef_kg  = 1.959; % Thor
-    case 'frigg'
-        MassP.massRef_kg  = 1.865; % Frigg
+    case 'faser'
+        MassP.massRef_kg  = 7.411; % AMM 10/29/11
+    case 'mjolnir'
+        MassP.massRef_kg  = 7.500; % Mjolnir Jan2018
 end
 
 % CG location [x y z], [m]
-MassP.rCGRef_S_m = [0.222; 0; 0.046];
+MassP.rCGRef_S_m = [0.315; 0; 0.072];
 
 % Refernece Moments of Inertia [kg*m^2]
-MassP.IxxRef_B_kgm2 = 0.07151;
-MassP.IyyRef_B_kgm2 = 0.08636;
-MassP.IzzRef_B_kgm2 = 0.15364;
+MassP.IxxRef_B_kgm2 = 0.8568; % 10/29/11
+MassP.IyyRef_B_kgm2 = 1.0095; % 10/29/11
+MassP.IzzRef_B_kgm2 = 1.7005; % 10/29/11
 
 MassP.IxyRef_B_kgm2 = 0.0;
-MassP.IxzRef_B_kgm2 = 0.014;
+MassP.IxzRef_B_kgm2 = -0.759258051/4; % reduced to match flight data AMM 9/14/11
 MassP.IyzRef_B_kgm2 = 0.0;
-
-MassP.IRef_B_kgm2 = [MassP.IxxRef_B_kgm2, -MassP.IxyRef_B_kgm2, -MassP.IxzRef_B_kgm2;
-    -MassP.IxyRef_B_kgm2, MassP.IyyRef_B_kgm2, -MassP.IyzRef_B_kgm2;
-    -MassP.IxzRef_B_kgm2, -MassP.IyzRef_B_kgm2, MassP.IzzRef_B_kgm2];
-end
-
-
-function MassP = US25e_avl_v1(MassP)
-% Gross aircraft mass [kg]
-MassP.massRef_kg = 1.793; % AVL Model
-MassP.gravRef_mps2 = 9.81;
-
-% CG location [x y z], [m]
-MassP.rCGRef_S_m = [0.2223; 0; 0.02713];
-
-% Refernece Moments of Inertia [kg*m^2]
-MassP.IxxRef_B_kgm2 = 0.04382;
-MassP.IyyRef_B_kgm2 = 0.08373;
-MassP.IzzRef_B_kgm2 = 0.1193;
-
-MassP.IxyRef_B_kgm2 = 0;
-MassP.IxzRef_B_kgm2 = 0.00048;
-MassP.IyzRef_B_kgm2 = 0;
 
 MassP.IRef_B_kgm2 = [MassP.IxxRef_B_kgm2, -MassP.IxyRef_B_kgm2, -MassP.IxzRef_B_kgm2;
     -MassP.IxyRef_B_kgm2, MassP.IyyRef_B_kgm2, -MassP.IyzRef_B_kgm2;

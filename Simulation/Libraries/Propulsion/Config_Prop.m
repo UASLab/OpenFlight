@@ -5,6 +5,20 @@ in2m = 0.0254;
 
 %% Propulsion Data
 switch lower(Sim.propType)
+    case lower('apc_16x8') % APC 16 x 8 propeller
+        
+        % Propeller radius %[m]
+        Prop.radius_m = 16 / 2 * in2m;
+        
+        % Coefficient of Thrust, polynomial coefficients, advance ratio input
+        Prop.CT = [-0.4314 1.08 -0.896 0.1089 0.0604 ]; % FIXIT - Copy of 12X6e
+        
+        % Coefficient of Power, polynomial coefficients, advance ratio input
+        Prop.CP = [0.5054 -0.5304 0.0412 0.01664 0.0223]; % FIXIT - Copy of 12X6e
+        
+        % Electric motor and propeller combine moment of inertia
+        Prop.Jmp_kgm2 = 0.00012991; % FIXIT - Copy of 12X6e
+        
     case lower('apc_12x6e') % APC 12 x 6E propeller
         % EFlite Power 25, AEM wind tunnel test data Jan 2011
         % Castle Creations ICE Lite 50 used to collect motor data

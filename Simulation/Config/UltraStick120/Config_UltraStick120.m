@@ -1,7 +1,7 @@
-function [Sim, AC] = Config_UltraStick25e(Sim, AC)
-% Configures the Aircraft (UltraStick25e) for the Simulation.
+function [Sim, AC] = Config_UltraStick120(Sim, AC)
+% Configures the Aircraft (Config_UltraStick120) for the Simulation.
 %
-%Usage:  [Sim, AC] = Config_UltraStick25e(Sim, AC);
+%Usage:  [Sim, AC] = Config_UltraStick120(Sim, AC);
 %
 %Inputs:
 % Sim      - Simulation Configuration Structure []
@@ -50,18 +50,18 @@ AC.Geometry.T_S2SB = [-1, 0, 0; 0, 1, 0; 0, 0, -1];
 
 %% Load Mass Properties
 % Define the specific Mass Properties
-AC.MassP = Config_UltraStick25e_MassP(Sim.MassP, AC.Geometry.T_S2SB);
+AC.MassP = Config_UltraStick120_MassP(Sim.MassP, AC.Geometry.T_S2SB);
 
 
 %% Load Aerodynamics
 % Define the specific the Aero Model
-AC.Aero = Config_UltraStick25e_Aero(Sim.Aero, AC.Geometry.T_S2SB);
+AC.Aero = Config_UltraStick120_Aero(Sim.Aero, AC.Geometry.T_S2SB);
 
 
 %% Propulsion
 % Populate the Motor/Prop Types
-AC.Motor.Def.motorType = 'Power25';
-AC.Prop.Def.propType = 'APC_12X6e';
+AC.Motor.Def.motorType = 'Power110';
+AC.Prop.Def.propType = 'APC_16X8';
 
 % Motor Model Parameters
 [AC.Motor.Def, AC.Motor] = Config_Motor(AC.Motor.Def, []);
@@ -77,7 +77,7 @@ AC.Prop.rProp_S_m = [-0.075; 0; 0]; % [m] Propeller in front of reference point
 AC.Prop.rProp_SB_m = AC.Geometry.T_S2SB * AC.Prop.rProp_S_m;
 
 % Thrust alignment orientation (Body to Prop rotations 3-2-1), radians
-AC.Prop.sProp_B_rad = [0; 0; -3] * pi/180; % FIXME - Thrust line is slightly up and slightly right of Body X
+AC.Prop.sProp_B_rad = [0; 0; 0] * pi/180;
 
 
 % Motor and Prop Buses
@@ -87,7 +87,7 @@ Sim.Motor.BusThrot = CreateBus(Sim.Motor.elemNames);
 
 %% Configure Effectors
 Sim.Surf.surfList = {'elev', 'rud', 'ailL', 'ailR', 'flapL', 'flapR'};
-Sim.Act.servoList = repmat({'225BB'}, size(Sim.Surf.surfList));
+Sim.Act.servoList = repmat({'5645'}, size(Sim.Surf.surfList));
 for indxSurf = 1:length(Sim.Surf.surfList)
     surf = Sim.Surf.surfList{indxSurf};
     AC.Surf.Def.(surf).servoType = Sim.Act.servoList{indxSurf};
@@ -124,7 +124,7 @@ AC.Sens.IMU.rImu_SB_m = AC.Geometry.T_S2SB * AC.Sens.IMU.rImu_S_m;
 AC.Sens.IMU.sImu_B_rad = [0.0; 0.0; 0.0] * d2r; % IMU sensor orientation
 AC.Sens.IMU.T_B2IMU = eye(3); % FIXME - compute from orientation
 
-Sim.Sens.IMU.type = 'ADIS16405';
+Sim.Sens.IMU.type = 'MPU9250';
 [Sim.Sens.IMU, AC.Sens.IMU] = Config_IMU(Sim.Sens.IMU, AC.Sens.IMU); % IMU Model
 AC.Sens.IMU.errEnable = 1; % Enable the Error Model
 AC.Sens.IMU.timeSample_s = 1/50; % time Sample, used for Noise Generation only

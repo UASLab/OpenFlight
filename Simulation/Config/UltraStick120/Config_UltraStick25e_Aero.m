@@ -5,9 +5,7 @@ function Aero = Config_UltraStick120_Aero(Sim, T_S2SB)
 
 switch lower(Sim.type)
     case {'avl', 'avl_v1'}
-        Aero = US25e_AVL_v1();
-    case {'OpenVSP', 'OpenVSP_v1'}
-        Aero = 
+        Aero = US25e_AVL_v1();s
     case {'flight', 'old'}
         Aero = US25e_flight_v1(); % Established Aero PID derived from flight data with Thor using Goldy 1.
     otherwise

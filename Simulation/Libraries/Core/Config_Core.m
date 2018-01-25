@@ -41,7 +41,7 @@ Sim.SampleTime = 0.02; % sec
 %% Subsystem Model Setup
 % Simulation Aerodynamic Variants Definition
 assignin('base', 'VarAero_Gen', Simulink.Variant('VarAeroSel == 1')); % Variant 1 - Generic, Table Look-ups with V, alpha, beta input
-assignin('base', 'VarAero_120', Simulink.Variant('VarAeroSel == 2')); % Variant 2 - UltraStick120 Table Look-ups
+assignin('base', 'VarAero_Vsp', Simulink.Variant('VarAeroSel == 2')); % Variant 2 - OpenVSP Table Look-ups
 assignin('base', 'VarAeroSel', Sim.Aero.VarSel);
 
 % Aerodynamic Model Bus
